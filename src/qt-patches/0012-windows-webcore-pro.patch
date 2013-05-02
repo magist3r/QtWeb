@@ -1,0 +1,10 @@
+--- src/3rdparty/webkit/Source/WebCore/WebCore.pro	2012-11-23 16:09:57.000000000 +0600
++++ src/3rdparty/webkit/Source/WebCore/WebCore.pro.new	2013-05-01 22:28:00.459968834 +0600
+@@ -16,7 +16,6 @@
+ DESTDIR = $$WEBCORE_DESTDIR
+ 
+ DEFINES += BUILDING_WEBKIT
+-DEFINES += QT_MAKEDLL
+ 
+ contains(DEFINES, WTF_USE_QT_MOBILE_THEME=1) {
+     DEFINES += ENABLE_NO_LISTBOX_RENDERING=1

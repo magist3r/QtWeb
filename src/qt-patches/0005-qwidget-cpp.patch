@@ -1,0 +1,10 @@
+--- src/gui/kernel/qwidget.cpp	2012-11-23 16:09:53.000000000 +0600
++++ src/gui/kernel/qwidget.cpp.new	2013-05-03 00:02:54.749580429 +0600
+@@ -11063,6 +11063,7 @@
+ bool QWidget::testAttribute_helper(Qt::WidgetAttribute attribute) const
+ {
+     Q_D(const QWidget);
++    if (!d) return false;
+     const int x = attribute - 8*sizeof(uint);
+     const int int_off = x / (8*sizeof(uint));
+     return (d->high_attributes[int_off] & (1<<(x-(int_off*8*sizeof(uint)))));
