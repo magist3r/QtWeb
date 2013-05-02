@@ -1,0 +1,111 @@
+<ui version="4.0" >
+ <class>SearchDialog</class>
+ <widget class="QDialog" name="SearchDialog" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>446</width>
+    <height>185</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Search Provider</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout" >
+   <item row="0" column="2" >
+    <widget class="QLabel" name="introLabel" >
+     <property name="text" >
+      <string>Enter provider's name to be displayed as well as search URL.&lt;br>URL should contain provider's domain and search query parameter(s),&lt;br>for example:</string>
+     </property>
+     <property name="wordWrap" >
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="2" >
+    <widget class="QLabel" name="usernameLabel" >
+     <property name="text" >
+      <string>Name:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2" >
+    <widget class="QLineEdit" name="searchName" />
+   </item>
+   <item row="3" column="0" colspan="2" >
+    <widget class="QLabel" name="passwordLabel" >
+     <property name="text" >
+      <string>Search URL:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="2" >
+    <widget class="QLineEdit" name="searchURL" >
+     <property name="echoMode" >
+      <enum>QLineEdit::Normal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="3" >
+    <widget class="QDialogButtonBox" name="buttonBox" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons" >
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0" >
+    <widget class="QLabel" name="iconLabel" >
+     <property name="text" >
+      <string>ICON</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2" >
+    <widget class="QLabel" name="label" >
+     <property name="text" >
+      <string>&lt;b>http://shop.ebay.com/?_nkw=&lt;/b></string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>SearchDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>SearchDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

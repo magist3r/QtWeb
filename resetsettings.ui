@@ -1,0 +1,206 @@
+<ui version="4.0" >
+ <class>ResetSettings</class>
+ <widget class="QDialog" name="ResetSettings" >
+  <property name="windowModality" >
+   <enum>Qt::WindowModal</enum>
+  </property>
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>320</width>
+    <height>354</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Reset QtWeb</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout" >
+   <item row="3" column="1" colspan="3" >
+    <layout class="QVBoxLayout" >
+     <item>
+      <widget class="QCheckBox" name="chkClearHistory" >
+       <property name="text" >
+        <string>Clear History</string>
+       </property>
+       <property name="checked" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="chkEmptyCache" >
+       <property name="text" >
+        <string>Empty the Cache</string>
+       </property>
+       <property name="checked" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="chkClearDownloads" >
+       <property name="text" >
+        <string>Clear Downloads</string>
+       </property>
+       <property name="checked" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="chkClearCookies" >
+       <property name="text" >
+        <string>Clear All Cookies</string>
+       </property>
+       <property name="checked" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="chkClearIcons" >
+       <property name="text" >
+        <string>Clear Icons Cache</string>
+       </property>
+       <property name="checked" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="chkClearPasswords" >
+       <property name="text" >
+        <string>Clear Passwords and User Names</string>
+       </property>
+       <property name="checked" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="chkClearSearches" >
+       <property name="text" >
+        <string>Clear Recent Web Searches</string>
+       </property>
+       <property name="checked" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="chkClearSSL" >
+       <property name="text" >
+        <string>Clear Approved SSL Certificates</string>
+       </property>
+       <property name="checked" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="chkCloseWindows" >
+       <property name="text" >
+        <string>Close All QtWeb Windows</string>
+       </property>
+       <property name="checked" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="chkResetSettings" >
+       <property name="text" >
+        <string>Reset All Changed QtWeb Settings to Defaults</string>
+       </property>
+       <property name="checked" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="4" column="1" >
+    <spacer name="horizontalSpacer" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>83</width>
+       <height>22</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="4" column="2" >
+    <widget class="QPushButton" name="pushButtonOK" >
+     <property name="text" >
+      <string>Reset</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="3" >
+    <widget class="QPushButton" name="pushButtonCancel" >
+     <property name="text" >
+      <string>Cancel</string>
+     </property>
+     <property name="autoDefault" >
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" >
+    <spacer name="horizontalSpacer_2" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="1" column="0" colspan="4" >
+    <widget class="QLabel" name="label" >
+     <property name="font" >
+      <font>
+       <weight>75</weight>
+       <italic>false</italic>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text" >
+      <string>Are you sure you want to reset QtWeb?</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="4" >
+    <widget class="QLabel" name="lbl" >
+     <property name="text" >
+      <string>Select the items you want to reset, then click Reset.&lt;br>You cannot undo this operation.</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <tabstops>
+  <tabstop>chkClearHistory</tabstop>
+  <tabstop>chkEmptyCache</tabstop>
+  <tabstop>chkClearDownloads</tabstop>
+  <tabstop>chkClearCookies</tabstop>
+  <tabstop>chkClearIcons</tabstop>
+  <tabstop>chkClearPasswords</tabstop>
+  <tabstop>chkClearSearches</tabstop>
+  <tabstop>chkClearSSL</tabstop>
+  <tabstop>chkCloseWindows</tabstop>
+  <tabstop>chkResetSettings</tabstop>
+  <tabstop>pushButtonOK</tabstop>
+  <tabstop>pushButtonCancel</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

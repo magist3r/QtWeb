@@ -1,0 +1,33 @@
+﻿1. Keywords: 
+
+QtWeb, Qt, WebKit, internet, web, böngésző, biztonságos, adatvédelem, kompakt, hordozható, könnyen használható, alternatív, hordozható böngésző, könnyen használható böngésző, alternatív böngésző, privát böngészés, biztonságos böngészés, testreszabható, stílusok, gyors, chrome, safari
+
+
+
+2. 45 Char. Description:
+
+QtWeb-könnyen használható,hordozható böngésző
+
+
+
+3. 80 Char. Description:
+
+QtWeb - gyors, kompakt, hordozható böngésző egyedülálló adatvédelmi funkciókkal.
+
+
+
+4. 250 Char. Description:
+
+A QtWeb gyors, kompakt, hordozható és biztonságos internet böngésző, egyedülálló felhasználói felülettel és adatvédelmi funkciókkal. A QtWeb nyílt forráskódú, nem kereskedelmi program az Apple WebKit Qt framework motorjára épül.
+
+
+
+5. 450 Char. Description:
+
+A QtWeb gyors, kompakt, hordozható és biztonságos internet böngésző, egyedülálló felhasználói felülettel és adatvédelmi funkciókkal. A QtWeb szabad szoftver, ez a nem kereskedelmi és nyílt forráskódú program a Nokia Qt framework és az Apple WebKit motorjára épül (ezt használja az Apple Safari és a Google Chrome). Egyetlen EXE -(6MB). Minimális függőségek - boot CD/DVD-ről is fut (BartPE, Boot Disk). Erős adatvédelem. Egyéni alkalmazás stílusok.
+
+
+
+6. 2000 Char. Description:
+
+A QtWeb gyors, kompakt, hordozható és biztonságos internet böngésző, egyedülálló felhasználói felülettel és adatvédelmi funkciókkal. A QtWeb szabad szoftver, ez a nem kereskedelmi és nyílt forráskódú program a Qt framework és a WebKit motorjára épül (ezt használja a Safari és a Chrome). Testreszabható felhasználói felület: az alkalmazás stílusa menetközben változtatható és látszik, hogy a böngésző és a weboldalak hogyan néznek ki a Windows és Unix különböző veziói alatt; testreszabható web kereső szolgáltatók, menü címek, hozzárendelhető gyorsbillentyűk; böngésző lapok használata illetve ezek kikapcsolása. Adatvédelmi és biztonsági funkciók: privát bögészés mód, hogy elkerüljük a böngészés nyomonkövetését, sőt a UserAgent álcázott adatokat küld a web szervernek; lehetőség van teljes alaphelyzetbe állításra - ilyenkor a teljes gyorsítótárat törli és az összes helyi beállítást visszaállítja abba a helyzetbe, amilyen a telepítés után volt (mintha még sohase futott volna a számítógépen); SSL támogatás a biztonságos oldalak hozzáféréséhez. A hitelesítési információk és a tanúsítvány útvonala megjeleníthető. Könnyen használható, gyors és hordozható böngésző: a futtatható fájl mérete csak 6 MB, nincs szükség további DLL vagy más fájlokra; támogatja a parancssori utasításokat; korlátozott Windows veziók alatt is fut (WinPE), Active@ Boot Disk, vagy BartPE, CD-ről/USB-ről is futtatható; a Web Inspector engedélyezi a HTML elemek megtekintését és vizsgálatát, a JavaScriptek hibakeresését, az oldalak betöltési idejének és az egyéni beállítások összességének megtekintését.

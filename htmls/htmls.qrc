@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/" >
+        <file>Welcome.html</file>
+        <file>notfound.html</file>
+    </qresource>
+</RCC>

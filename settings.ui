@@ -1,0 +1,1925 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Settings</class>
+ <widget class="QDialog" name="Settings">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>736</width>
+    <height>403</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Settings</string>
+  </property>
+  <layout class="QGridLayout">
+   <item row="4" column="0">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>General</string>
+      </attribute>
+      <layout class="QGridLayout">
+       <item row="11" column="1" colspan="2">
+        <spacer>
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>391</width>
+           <height>262</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Home Page:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1" colspan="2">
+        <widget class="QLineEdit" name="homeLineEdit"/>
+       </item>
+       <item row="2" column="1">
+        <widget class="QPushButton" name="setHomeToCurrentPageButton">
+         <property name="text">
+          <string>Set to current page</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Remove history items:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1" colspan="2">
+        <widget class="QComboBox" name="expireHistory">
+         <item>
+          <property name="text">
+           <string>After one day</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>After one week</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>After two weeks</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>After one month</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>After one year</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Manually</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="label_7">
+         <property name="text">
+          <string>Save downloads to:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1" colspan="2">
+        <widget class="QLineEdit" name="downloadsLocation"/>
+       </item>
+       <item row="8" column="0">
+        <widget class="QLabel" name="label_16">
+         <property name="text">
+          <string>Links to Audio/Video content:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" colspan="2">
+        <widget class="QComboBox" name="startupAction">
+         <item>
+          <property name="text">
+           <string>Show my home page</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Show a blank page</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Show my windows and tabs from last session</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_17">
+         <property name="text">
+          <string>When QtWeb starts:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <widget class="QPushButton" name="restoreToDefaultButton">
+         <property name="text">
+          <string>Restore to &amp;Default</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="1">
+        <widget class="QCheckBox" name="checkBoxAsk">
+         <property name="text">
+          <string>Ask where to save each download</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_18">
+         <property name="text">
+          <string>New Tab Action:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1" colspan="2">
+        <widget class="QComboBox" name="newTabAction">
+         <item>
+          <property name="text">
+           <string>Welcome page</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Home page</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Blank page</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="8" column="1" colspan="2">
+        <widget class="QComboBox" name="comboBoxAV">
+         <item>
+          <property name="text">
+           <string>Open and Play with an external application, like Media Player or QuickTime</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Do not launch an external application, just download and store to Downloads</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="10" column="1" colspan="2">
+        <widget class="QComboBox" name="mouseweelClick">
+         <item>
+          <property name="text">
+           <string>Not assigned</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Start webpage font resizing using the weel</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="10" column="0">
+        <widget class="QLabel" name="label_19">
+         <property name="text">
+          <string>Mouseweel click default action:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="1" colspan="2">
+        <widget class="QComboBox" name="openLinksIn">
+         <item>
+          <property name="text">
+           <string>In a tab in the current window</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>In a new window</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="7" column="0">
+        <widget class="QLabel" name="label_8">
+         <property name="text">
+          <string>Open links:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_3">
+      <attribute name="title">
+       <string>Appearance</string>
+      </attribute>
+      <layout class="QGridLayout">
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>Standard font:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLabel" name="standardLabel">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="text">
+          <string>Times 16</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2">
+        <widget class="QPushButton" name="standardFontButton">
+         <property name="text">
+          <string>Select...</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>Fixed-width font:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QLabel" name="fixedLabel">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="text">
+          <string>Courier 13</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <widget class="QPushButton" name="fixedFontButton">
+         <property name="text">
+          <string>Select...</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QComboBox" name="comboBoxStyle">
+         <property name="sizeAdjustPolicy">
+          <enum>QComboBox::AdjustToMinimumContentsLength</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="label_15">
+         <property name="text">
+          <string>Application Style:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="1">
+        <widget class="QGroupBox" name="groupBox_4">
+         <property name="title">
+          <string>Show/Hide toolbar buttons</string>
+         </property>
+         <widget class="QToolButton" name="tbGoBack">
+          <property name="geometry">
+           <rect>
+            <x>50</x>
+            <y>30</y>
+            <width>31</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="toolTip">
+           <string>Back</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>://arrow_left_green.png</normaloff>://arrow_left_green.png</iconset>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+          <property name="toolButtonStyle">
+           <enum>Qt::ToolButtonTextBesideIcon</enum>
+          </property>
+         </widget>
+         <widget class="QToolButton" name="tbGoForward">
+          <property name="geometry">
+           <rect>
+            <x>90</x>
+            <y>30</y>
+            <width>31</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="toolTip">
+           <string>Forward</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>://arrow_right_green.png</normaloff>://arrow_right_green.png</iconset>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+          <property name="toolButtonStyle">
+           <enum>Qt::ToolButtonTextBesideIcon</enum>
+          </property>
+         </widget>
+         <widget class="QToolButton" name="tbAddBook">
+          <property name="geometry">
+           <rect>
+            <x>170</x>
+            <y>30</y>
+            <width>31</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="toolTip">
+           <string>Add Bookmark</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>://add2.png</normaloff>://add2.png</iconset>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+          <property name="toolButtonStyle">
+           <enum>Qt::ToolButtonTextBesideIcon</enum>
+          </property>
+         </widget>
+         <widget class="QToolButton" name="tbHome">
+          <property name="geometry">
+           <rect>
+            <x>130</x>
+            <y>30</y>
+            <width>31</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="toolTip">
+           <string>Home</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>://house.png</normaloff>://house.png</iconset>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+          <property name="toolButtonStyle">
+           <enum>Qt::ToolButtonTextBesideIcon</enum>
+          </property>
+         </widget>
+         <widget class="QToolButton" name="tbRefresh">
+          <property name="geometry">
+           <rect>
+            <x>250</x>
+            <y>30</y>
+            <width>31</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="toolTip">
+           <string>Refresh / Go</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>://nav_refresh_green.png</normaloff>://nav_refresh_green.png</iconset>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+          <property name="toolButtonStyle">
+           <enum>Qt::ToolButtonTextBesideIcon</enum>
+          </property>
+         </widget>
+         <widget class="QToolButton" name="tbAppStyle">
+          <property name="geometry">
+           <rect>
+            <x>90</x>
+            <y>70</y>
+            <width>31</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="toolTip">
+           <string>Application Style</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>://app_style.png</normaloff>://app_style.png</iconset>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+          <property name="toolButtonStyle">
+           <enum>Qt::ToolButtonTextBesideIcon</enum>
+          </property>
+         </widget>
+         <widget class="QToolButton" name="tbPrivMode">
+          <property name="geometry">
+           <rect>
+            <x>130</x>
+            <y>70</y>
+            <width>31</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="toolTip">
+           <string>Privacy Mode</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>://spy.png</normaloff>://spy.png</iconset>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+          <property name="toolButtonStyle">
+           <enum>Qt::ToolButtonTextBesideIcon</enum>
+          </property>
+         </widget>
+         <widget class="QToolButton" name="tbReset">
+          <property name="geometry">
+           <rect>
+            <x>330</x>
+            <y>70</y>
+            <width>31</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="toolTip">
+           <string>Reset QtWeb</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>://delete.png</normaloff>://delete.png</iconset>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+          <property name="toolButtonStyle">
+           <enum>Qt::ToolButtonTextBesideIcon</enum>
+          </property>
+         </widget>
+         <widget class="QToolButton" name="tbImages">
+          <property name="geometry">
+           <rect>
+            <x>290</x>
+            <y>70</y>
+            <width>31</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="toolTip">
+           <string>Images On/Off</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>://images.png</normaloff>://images.png</iconset>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+          <property name="toolButtonStyle">
+           <enum>Qt::ToolButtonTextBesideIcon</enum>
+          </property>
+         </widget>
+         <widget class="QToolButton" name="tbPrefs">
+          <property name="geometry">
+           <rect>
+            <x>170</x>
+            <y>70</y>
+            <width>31</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="toolTip">
+           <string>Preferences</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>://settings.png</normaloff>://settings.png</iconset>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+          <property name="toolButtonStyle">
+           <enum>Qt::ToolButtonTextBesideIcon</enum>
+          </property>
+         </widget>
+         <widget class="QToolButton" name="tbProxy">
+          <property name="geometry">
+           <rect>
+            <x>250</x>
+            <y>70</y>
+            <width>31</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="toolTip">
+           <string>Proxy On/Off</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>://proxy.png</normaloff>://proxy.png</iconset>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+          <property name="toolButtonStyle">
+           <enum>Qt::ToolButtonTextBesideIcon</enum>
+          </property>
+         </widget>
+         <widget class="QToolButton" name="tbCompatibility">
+          <property name="geometry">
+           <rect>
+            <x>50</x>
+            <y>70</y>
+            <width>31</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="toolTip">
+           <string>Compatibility</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>://logo.png</normaloff>://logo.png</iconset>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+          <property name="toolButtonStyle">
+           <enum>Qt::ToolButtonTextBesideIcon</enum>
+          </property>
+         </widget>
+         <widget class="QToolButton" name="tbTextSize">
+          <property name="geometry">
+           <rect>
+            <x>330</x>
+            <y>30</y>
+            <width>31</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="toolTip">
+           <string>Change Text Size</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>://textsize.png</normaloff>://textsize.png</iconset>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+          <property name="toolButtonStyle">
+           <enum>Qt::ToolButtonTextBesideIcon</enum>
+          </property>
+         </widget>
+         <widget class="QToolButton" name="tbBookmarks">
+          <property name="geometry">
+           <rect>
+            <x>210</x>
+            <y>30</y>
+            <width>31</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="toolTip">
+           <string>Show All Bookmarks</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>://bookmarks.png</normaloff>://bookmarks.png</iconset>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+          <property name="toolButtonStyle">
+           <enum>Qt::ToolButtonTextBesideIcon</enum>
+          </property>
+         </widget>
+         <widget class="QToolButton" name="tbInspect">
+          <property name="geometry">
+           <rect>
+            <x>210</x>
+            <y>70</y>
+            <width>31</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="toolTip">
+           <string>Inspect Element</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>://inspect.png</normaloff>://inspect.png</iconset>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+          <property name="toolButtonStyle">
+           <enum>Qt::ToolButtonTextBesideIcon</enum>
+          </property>
+         </widget>
+         <widget class="QToolButton" name="tbVirtKeyb">
+          <property name="geometry">
+           <rect>
+            <x>290</x>
+            <y>30</y>
+            <width>31</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="toolTip">
+           <string>Virtual Keyboard</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>://keyboard.png</normaloff>://keyboard.png</iconset>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+          <property name="toolButtonStyle">
+           <enum>Qt::ToolButtonTextBesideIcon</enum>
+          </property>
+         </widget>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QComboBox" name="comboMainMenu">
+         <item>
+          <property name="text">
+           <string>Display the Menu Bar and Menu Icons</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Display the Menu Bar, but hide Menu Icons (re-start is required when changed)</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Hide the Menu Bar (functionality can be accessed via Shortcuts)</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="label_14">
+         <property name="text">
+          <string>Main Menu:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QComboBox" name="comboLangs">
+         <item>
+          <property name="text">
+           <string>English (en_US)</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Chinese Traditional (zh_tw)</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Chinese Simplified (zh_cn)</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Czech (cz)</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Farsi (fa)</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>French (fr)</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>German (de)</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Hungarian (hu)</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Italian (it)</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Japanese (ja)</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Russian (ru)</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Spanish (es)</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Swedish (sv)</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_22">
+         <property name="text">
+          <string>Language:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_2">
+      <attribute name="title">
+       <string>Privacy</string>
+      </attribute>
+      <layout class="QGridLayout">
+       <item row="0" column="1">
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="title">
+          <string>Downloads</string>
+         </property>
+         <widget class="QCheckBox" name="checkBoxDeleteDownloads">
+          <property name="geometry">
+           <rect>
+            <x>11</x>
+            <y>25</y>
+            <width>301</width>
+            <height>19</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Delete downloaded files with a history</string>
+          </property>
+         </widget>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QGroupBox" name="groupBox_2">
+         <property name="title">
+          <string>Passwords</string>
+         </property>
+         <widget class="QCheckBox" name="chkSavePasswords">
+          <property name="geometry">
+           <rect>
+            <x>11</x>
+            <y>25</y>
+            <width>211</width>
+            <height>19</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Save user names and passwords</string>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="showPasswordsButton">
+          <property name="geometry">
+           <rect>
+            <x>230</x>
+            <y>22</y>
+            <width>77</width>
+            <height>25</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Show...</string>
+          </property>
+         </widget>
+        </widget>
+       </item>
+       <item row="0" column="0" rowspan="2">
+        <widget class="QGroupBox" name="groupBox">
+         <property name="title">
+          <string>Web Content</string>
+         </property>
+         <widget class="QCheckBox" name="enableLocalStorage">
+          <property name="geometry">
+           <rect>
+            <x>11</x>
+            <y>136</y>
+            <width>289</width>
+            <height>19</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Enable HTML5 local &amp;&amp; offline storage</string>
+          </property>
+         </widget>
+         <widget class="QCheckBox" name="enableJavascript">
+          <property name="geometry">
+           <rect>
+            <x>11</x>
+            <y>21</y>
+            <width>289</width>
+            <height>19</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Enable JavaScript</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+         <widget class="QCheckBox" name="autoLoadImages">
+          <property name="geometry">
+           <rect>
+            <x>11</x>
+            <y>44</y>
+            <width>289</width>
+            <height>19</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Load images automatically</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+         <widget class="QCheckBox" name="blockPopups">
+          <property name="geometry">
+           <rect>
+            <x>11</x>
+            <y>67</y>
+            <width>289</width>
+            <height>19</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Block Pop-Up windows</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+         <widget class="QCheckBox" name="enablePlugins">
+          <property name="geometry">
+           <rect>
+            <x>11</x>
+            <y>90</y>
+            <width>289</width>
+            <height>19</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Enable Plug-Ins</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+         <widget class="QCheckBox" name="enableDiskCache">
+          <property name="geometry">
+           <rect>
+            <x>11</x>
+            <y>113</y>
+            <width>291</width>
+            <height>19</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Enable disk cache to speed up webpage loading</string>
+          </property>
+         </widget>
+        </widget>
+       </item>
+       <item row="2" column="0" colspan="2">
+        <widget class="QGroupBox" name="cookiesGroupBox">
+         <property name="title">
+          <string>Cookies</string>
+         </property>
+         <layout class="QGridLayout">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>Accept Cookies:</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QComboBox" name="acceptCombo">
+            <item>
+             <property name="text">
+              <string>Always</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Never</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Only from sites you navigate to</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QPushButton" name="exceptionsButton">
+            <property name="text">
+             <string>Exceptions...</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Keep until:</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QComboBox" name="keepUntilCombo">
+            <item>
+             <property name="text">
+              <string>They expire</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>I exit the application</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>At most 90 days</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QPushButton" name="cookiesButton">
+            <property name="text">
+             <string>Cookies...</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_6">
+      <attribute name="title">
+       <string>AdBlock</string>
+      </attribute>
+      <widget class="QGroupBox" name="chkBlockAds">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>6</y>
+         <width>641</width>
+         <height>171</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>Block Ads</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <widget class="QListWidget" name="listAds">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>20</y>
+          <width>501</width>
+          <height>141</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="btnAddAd">
+        <property name="geometry">
+         <rect>
+          <x>520</x>
+          <y>20</y>
+          <width>111</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Add...</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="btnDelAd">
+        <property name="geometry">
+         <rect>
+          <x>520</x>
+          <y>64</y>
+          <width>111</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Remove</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="btnDelAds">
+        <property name="geometry">
+         <rect>
+          <x>520</x>
+          <y>86</y>
+          <width>111</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Remove All</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="btnEditAd">
+        <property name="geometry">
+         <rect>
+          <x>520</x>
+          <y>42</y>
+          <width>111</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Edit...</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="btnBlockMostAds">
+        <property name="geometry">
+         <rect>
+          <x>520</x>
+          <y>117</y>
+          <width>111</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Block Most Ads</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="btnBlockMostCnts">
+        <property name="geometry">
+         <rect>
+          <x>520</x>
+          <y>139</y>
+          <width>111</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Block Most Counters</string>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QGroupBox" name="chkBlockAdsEx">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>186</y>
+         <width>641</width>
+         <height>90</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>Exceptions</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+       <widget class="QListWidget" name="listAdEx">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>20</y>
+          <width>501</width>
+          <height>61</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="btnAddAdEx">
+        <property name="geometry">
+         <rect>
+          <x>520</x>
+          <y>16</y>
+          <width>111</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Add...</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="btnEditAdEx">
+        <property name="geometry">
+         <rect>
+          <x>520</x>
+          <y>38</y>
+          <width>111</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Edit...</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="btnDelAdEx">
+        <property name="geometry">
+         <rect>
+          <x>520</x>
+          <y>60</y>
+          <width>111</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Remove</string>
+        </property>
+       </widget>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="tab_4">
+      <attribute name="title">
+       <string>Proxy</string>
+      </attribute>
+      <layout class="QVBoxLayout">
+       <item>
+        <widget class="QGroupBox" name="proxySupport">
+         <property name="title">
+          <string>Enable proxy</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <layout class="QGridLayout">
+          <item row="8" column="0">
+           <spacer name="verticalSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_9">
+            <property name="text">
+             <string>Type:</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1" colspan="3">
+           <widget class="QComboBox" name="proxyType">
+            <item>
+             <property name="text">
+              <string>Socks5</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Http</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_10">
+            <property name="text">
+             <string>Host:</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLineEdit" name="proxyHostName"/>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_12">
+            <property name="text">
+             <string>User Name:</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1" colspan="3">
+           <widget class="QLineEdit" name="proxyUserName"/>
+          </item>
+          <item row="5" column="0">
+           <widget class="QLabel" name="label_13">
+            <property name="text">
+             <string>Password:</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1" colspan="3">
+           <widget class="QLineEdit" name="proxyPassword">
+            <property name="echoMode">
+             <enum>QLineEdit::Password</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="3">
+           <widget class="QSpinBox" name="proxyPort">
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+            <property name="value">
+             <number>1080</number>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2">
+           <widget class="QLabel" name="label_11">
+            <property name="text">
+             <string>Port:</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="1" rowspan="3" colspan="3">
+           <widget class="QGroupBox" name="proxyExcept">
+            <property name="title">
+             <string>Exceptions</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+            <widget class="QWidget" name="layoutWidget">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>20</y>
+               <width>471</width>
+               <height>70</height>
+              </rect>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_3">
+              <item>
+               <widget class="QLabel" name="label_20">
+                <property name="text">
+                 <string>Do not use proxy server for addresses beginning with:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="proxyExceptions"/>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_21">
+                <property name="text">
+                 <string>Use semicolons (;) to separate entries</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="proxyAuto">
+         <property name="text">
+          <string>Enable Auto-proxy (use Internet Connection proxy settings)</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_5">
+      <attribute name="title">
+       <string>Advanced</string>
+      </attribute>
+      <widget class="QGroupBox" name="chkUserStyleSheet">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>10</y>
+         <width>641</width>
+         <height>51</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>Defaut Style Sheet:</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+       <widget class="QLineEdit" name="userStyleSheet">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>20</y>
+          <width>580</width>
+          <height>20</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="btnStylePath">
+        <property name="geometry">
+         <rect>
+          <x>610</x>
+          <y>20</y>
+          <width>21</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QGroupBox" name="chkUserAgent">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>130</y>
+         <width>641</width>
+         <height>51</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>Custom User Agent:</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+       <widget class="QComboBox" name="comboAgents">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>20</y>
+          <width>600</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="editable">
+         <bool>true</bool>
+        </property>
+        <property name="maxVisibleItems">
+         <number>20</number>
+        </property>
+        <item>
+         <property name="text">
+          <string>Internet Explorer</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Mozilla/4.0 (compatible; MSIE 8.0; %W;  Trident/4.0)</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Mozilla/4.0 (compatible; MSIE 7.0; %W)</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Mozilla/4.0 (compatible; MSIE 5.5; Windows NT 5.1)</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Mozilla/4.0 (compatible; MSIE 5.23; Mac_PowerPC)</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string/>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Opera</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Opera/9.63 (%W; U; en) Presto/2.1.1</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Opera/9.63 (Macintosh; Intel Mac OS X; U; en) Presto/2.1.1</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string/>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Chrome</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Mozilla/5.0 (Windows; U; %W; %L) AppleWebKit/525.13 (KHTML, like Gecko) Chrome/0.A.B.C Safari/525.13</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string/>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Firefox</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Mozilla/5.0 (Windows; U; %W; %L; rv:1.9.0.5) Gecko/2008120121 Firefox/3.0.5</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.5; %L; rv:1.9.0.5) Gecko/2008120121 Firefox/3.0.5</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Mozilla/5.0 (Windows; U; %W; %L; rv:1.8.1.20) Gecko/20081217 Firefox/2.0.0.20</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Mozilla/5.0 (Macintosh; U; Intel Mac OS X; %L; rv:1.8.1.20) Gecko/20081217 Firefox/2.0.0.20</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Mozilla/5.0 (Windows; U; Windows NT 5.1; %L; rv:1.8.0.12) Gecko/20070508 Firefox/1.5.0.12</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Mozilla/5.0 (Macintosh; U; PPC Mac OS X Mach-O; %L; rv:1.8.0.12) Gecko/20070508 Firefox/1.5.0.12</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string/>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Safari</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Mozilla/5.0 (Windows; U; %W; %L) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Safari/528.17</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_5_6; %L) AppleWebKit/528.12 (KHTML, like Gecko) Version/4.0 Safari/528.12</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Mozilla/5.0 (Windows; U; %W; %L) AppleWebKit/525.27.1 (KHTML, like Gecko) Version/3.2.1 Safari/525.27.1</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_5_6; %L) AppleWebKit/525.27.1 (KHTML, like Gecko) Version/3.2.1 Safari/525.27.1</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en) AppleWebKit/419 (KHTML, like Gecko) Safari/419.3</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Mozilla/5.0 (Macintosh; U; PPC Mac OS X; en) AppleWebKit/312.8 (KHTML, like Gecko) Safari/312.6</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Mozilla/5.0 (Macintosh; U; PPC Mac OS X; en) AppleWebKit/125.5.7 (KHTML, like Gecko) Safari/125.12</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Mozilla/5.0 (iPhone; U; CPU iPhone OS 2_2_1 like Mac OS X; en-us) AppleWebKit/525.18.1 (KHTML, like Gecko) Version/3.1.1 Mobile/5H11 Safari/525.20</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Mozilla/5.0 (iPod; U; CPU iPhone OS 2_2_1 like Mac OS X; en-us) AppleWebKit/525.18.1 (KHTML, like Gecko) Version/3.1.1 Mobile/5H11 Safari/525.20</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Mozilla/5.0 (iPhone; U; CPU like Mac OS X; en) AppleWebKit/420.1 (KHTML, like Gecko) Version/3.0 Mobile/4A102 Safari/419.3</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Mozilla/5.0 (iPod; U; CPU like Mac OS X; en) AppleWebKit/420.1 (KHTML, like Gecko) Version/3.0 Mobile/4A102 Safari/419.3</string>
+         </property>
+        </item>
+       </widget>
+      </widget>
+      <widget class="QGroupBox" name="groupBox_5">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>200</y>
+         <width>641</width>
+         <height>61</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>Advanced Customization:</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+       <widget class="QPushButton" name="buttonSearchProviders">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>20</y>
+          <width>290</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Search Providers</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="buttonEditShortcuts">
+        <property name="geometry">
+         <rect>
+          <x>330</x>
+          <y>20</y>
+          <width>300</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Menus &amp;&amp; &amp;Shortcuts</string>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QGroupBox" name="chkExtViewer">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>70</y>
+         <width>641</width>
+         <height>51</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>Web Page Source Viewer:</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+       <widget class="QLineEdit" name="txtExtViewer">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>20</y>
+          <width>580</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="btnExtView">
+        <property name="geometry">
+         <rect>
+          <x>610</x>
+          <y>20</y>
+          <width>21</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+      </widget>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>startupAction</tabstop>
+  <tabstop>homeLineEdit</tabstop>
+  <tabstop>setHomeToCurrentPageButton</tabstop>
+  <tabstop>restoreToDefaultButton</tabstop>
+  <tabstop>newTabAction</tabstop>
+  <tabstop>expireHistory</tabstop>
+  <tabstop>downloadsLocation</tabstop>
+  <tabstop>checkBoxAsk</tabstop>
+  <tabstop>comboBoxAV</tabstop>
+  <tabstop>mouseweelClick</tabstop>
+  <tabstop>standardFontButton</tabstop>
+  <tabstop>fixedFontButton</tabstop>
+  <tabstop>comboBoxStyle</tabstop>
+  <tabstop>comboMainMenu</tabstop>
+  <tabstop>tbGoBack</tabstop>
+  <tabstop>tbGoForward</tabstop>
+  <tabstop>tbHome</tabstop>
+  <tabstop>tbBookmarks</tabstop>
+  <tabstop>tbAddBook</tabstop>
+  <tabstop>tbRefresh</tabstop>
+  <tabstop>tbVirtKeyb</tabstop>
+  <tabstop>tbTextSize</tabstop>
+  <tabstop>tbCompatibility</tabstop>
+  <tabstop>tbAppStyle</tabstop>
+  <tabstop>tbPrivMode</tabstop>
+  <tabstop>tbPrefs</tabstop>
+  <tabstop>tbInspect</tabstop>
+  <tabstop>tbProxy</tabstop>
+  <tabstop>tbImages</tabstop>
+  <tabstop>tbReset</tabstop>
+  <tabstop>enableJavascript</tabstop>
+  <tabstop>autoLoadImages</tabstop>
+  <tabstop>blockPopups</tabstop>
+  <tabstop>enablePlugins</tabstop>
+  <tabstop>enableDiskCache</tabstop>
+  <tabstop>checkBoxDeleteDownloads</tabstop>
+  <tabstop>chkSavePasswords</tabstop>
+  <tabstop>showPasswordsButton</tabstop>
+  <tabstop>acceptCombo</tabstop>
+  <tabstop>exceptionsButton</tabstop>
+  <tabstop>keepUntilCombo</tabstop>
+  <tabstop>cookiesButton</tabstop>
+  <tabstop>proxyType</tabstop>
+  <tabstop>proxyHostName</tabstop>
+  <tabstop>proxyUserName</tabstop>
+  <tabstop>proxyPassword</tabstop>
+  <tabstop>proxyExcept</tabstop>
+  <tabstop>proxyExceptions</tabstop>
+  <tabstop>chkUserStyleSheet</tabstop>
+  <tabstop>userStyleSheet</tabstop>
+  <tabstop>chkExtViewer</tabstop>
+  <tabstop>txtExtViewer</tabstop>
+  <tabstop>btnExtView</tabstop>
+  <tabstop>chkUserAgent</tabstop>
+  <tabstop>comboAgents</tabstop>
+  <tabstop>groupBox_5</tabstop>
+  <tabstop>buttonSearchProviders</tabstop>
+  <tabstop>buttonEditShortcuts</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>buttonBox</tabstop>
+ </tabstops>
+ <resources>
+  <include location="data/data.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>Settings</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>Settings</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

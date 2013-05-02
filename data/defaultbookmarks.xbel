@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xbel>
+<xbel version="1.0">
+  <folder folded="no">
+        <title>Bookmarks Bar</title>
+        <bookmark href="http://www.qtweb.net/">
+          <title>QtWeb</title>
+        </bookmark>
+        <bookmark href="http://www.opera.com/">
+          <title>Opera Browser</title>
+        </bookmark>
+        <bookmark href="http://www.mozilla.com/en-US/">
+          <title>Mozilla Firefox</title>
+        </bookmark>
+        <bookmark href="http://www.apple.com/safari/">
+          <title>Apple Safari</title>
+        </bookmark>
+        <bookmark href="http://www.google.com/chrome">
+          <title>Google Chrome</title>
+        </bookmark>
+        <bookmark href="http://kmeleon.sourceforge.net/">
+          <title>K-Meleon</title>
+        </bookmark>
+        <bookmark href="http://www.cnn.com/">
+          <title>CNN News</title>
+        </bookmark>
+        <bookmark href="http://www.youtube.com/">
+          <title>YouTube</title>
+        </bookmark>
+        <bookmark href="http://maps.google.com/">
+          <title>Google Maps</title>
+        </bookmark>
+        <bookmark href="http://www.ntfs.com/products.htm">
+          <title>NTFS Disk Tools</title>
+        </bookmark>
+  </folder>
+  <folder folded="no">
+        <title>Bookmarks Menu</title>
+      <folder folded="yes">
+        <title>Popular Links</title>
+        <bookmark href="http://www.google.com/">
+          <title>Google - search engine and more</title>
+        </bookmark>
+        <bookmark href="http://www.youtube.com/">
+          <title>YouTube - bunch of videos</title>
+        </bookmark>
+        <bookmark href="http://www.microsoft.com/">
+          <title>Microsoft - you know ...</title>
+        </bookmark>
+        <bookmark href="http://www.apple.com/">
+          <title>Apple - iMac, iPhone, iPod...</title>
+        </bookmark>
+        <bookmark href="http://www.qtweb.net/">
+          <title>QtWeb - Portable Internet Browser</title>
+        </bookmark>
+        <bookmark href="http://www.sourceforge.net/">
+          <title>SourceForge - Open Source Projects</title>
+        </bookmark>
+        <bookmark href="http://www.ntfs.com/products.htm">
+          <title>NTFS - Disk Repair Utilities</title>
+        </bookmark>
+      </folder>
+  </folder>
+</xbel>

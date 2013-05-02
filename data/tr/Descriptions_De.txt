@@ -1,0 +1,26 @@
+﻿1. Keywords: 
+
+QtWeb, Qt, WebKit, Internet, Web, Browser, Sicherheit, Privat, Kompakt, Portable, Klein, Schnell, Alternative, portabler Browser, schneller Browser, alternativer Browser, sicheres Browsing, Anpassbar, Styles, schnell, Chrome, Safari
+
+
+2. 45 Char. Description:
+
+QtWeb-kleiner, schneller & portabler Browser
+
+3. 80 Char. Description:
+
+QtWeb-schnell,klein,portabel-der altnative Browser mit einzigartigen Fähigkeiten
+
+
+4. 250 Char. Description:
+
+QtWeb ist ein schneller, kleiner, portabler und sicherer Internetbrowser mit einzigartigen Oberfläche und vielen Sicherheitsfeatures. Er baut auf das Qt-Framework und Apple's Webkit (Rendering Engine) als nicht-kommerzielles Open-Source-Projekt auf.
+
+5. 450 Char. Description:
+
+QtWeb ist ein schneller, sehr sicherer, kleiner und portabler Browser mit einzigartiger Oberfläche und besonderen Sicherheitsfeatures. Er ist frei, nicht kommerziell und Open-Source. QtWeb basiert auf Nokia's Qt-Framework und Apple's WebKit Rendering-Engine (die gleiche wie bei Apple's Safari und Google's Chrome). QtWeb ist kompakt (4 MB), mit minimalen Abhängigkeiten - er kann von einer bootbaren CD/DVD (BartPE, Boot Disk) gestartet werden. 
+
+6. 2000 Char. Description:
+
+QtWeb ist ein schneller, sicherer, kleiner und portabler Webbrowser mit einzigartiger Oberfläche und Sicherheitsfeatures. QtWeb ist kostenlos, unkommerziell und Open-Source. Er basiert auf dem Qt-Framework und Apple's WebKit Rendering-Engine (diese kommt auch in Safari und Chrome zum Einsatz). Das Userinterface ist zur Laufzeit anpassbar, das Aussehen veränderbar. Sehen Sie selbst wie Webseiten auf verschiedenen Betriebssystemen wie Unix oder Windows aussehen würden. Fügen Sie Suchmaschinen hinzu, ändern Sie die Menutitel oder erstellen sie Hotkeys und shortcuts. (De)Aktivieren Sie Tabs. Nutzen Sie die Vorteile des privaten und sicheren Modus um Verfolgung der Internetspuren zu verhindern - verstecken Sie sogar die Identität ihres Browser. Sie können alles zurücksetzen - Caches, Verlauf, Einstellungen - bis hin zum Auslieferungszustand. Besuchen Sie mit SSL geschützte Seiten, schauen Sie sich Zertifikate und weitere Informationen zu diesen an. QtWeb ist klein, schnel
+ l und portabel - die ausführbare Datei ist nur 4 MB groß und es werden weder weitere DLLs oder Dateien gebraucht. Nutzen Sie auch das Command Line Scripting. QtWeb läuft sogar auf eingeschränkten Windowsumgebungen wie WinPE, Active@ Boot Disk oder BartPE, und das sogar von CD oder USB. Mit dem Web Inspector können Sie HTML-Elemente betrachten, JavaScript debuggen oder Informationen wie Ladezeiten von Resourcen betrachten.
