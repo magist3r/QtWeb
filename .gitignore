@@ -1,3 +1,6 @@
+# qt source directory
+src/qt
+
 # C++ objects and libs
 
 *.slo
