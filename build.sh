@@ -8,6 +8,7 @@ PATCH1='0002-webkit-pro.patch'
 PATCH2='0003-qtwebkit-pro.patch'
 PATCH3='0005-qwidget-cpp.patch'
 PATCH4='0004-qstyles-qrc.patch'
+PATCH5='0006-webkit-disable-video-and-npapi.patch'
 
 OPTIONS=''
 OPTIONS+=' -opensource'
@@ -95,6 +96,7 @@ patch -p0 -N < "../qt-patches/$PATCH1"
 patch -p0 -N < "../qt-patches/$PATCH2"
 patch -p0 -N < "../qt-patches/$PATCH3"
 patch -p0 -N < "../qt-patches/$PATCH4"
+patch -p0 -N < "../qt-patches/$PATCH5"
 
 # make clean if we have previous build in src/qt
 if $CLEAN_QT_BUILD; then
