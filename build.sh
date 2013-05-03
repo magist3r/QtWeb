@@ -106,7 +106,7 @@ if ! $SKIP_QT_BUILD; then
 fi
 cd ../.. && mkdir -p build && cd build
 export QTDIR=../src/qt
-../src/qt/bin/qmake -config release
+../src/qt/bin/qmake -config release ../QtWeb.pro
 make -j$COMPILE_JOBS
 
 exit 0

@@ -40,12 +40,6 @@
 #include "browserapplication.h"
 #include <QtPlugin>
 
-#ifndef Q_WS_MAC
-	Q_IMPORT_PLUGIN(qjpeg)
-	Q_IMPORT_PLUGIN(qgif)
-#endif
-
-
 #ifndef Q_WS_WIN
 	Q_IMPORT_PLUGIN(qico)
 #endif

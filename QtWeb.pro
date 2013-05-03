@@ -6,8 +6,7 @@ TARGET = QtWeb
 DESTDIR = ./release
 QT += network xml webkit
 CONFIG += static
-QTPLUGIN += qcncodecs qjpcodecs qkrcodecs qtwcodecs  qgif qjpeg qico 
-macx:QTPLUGIN -= qjpeg qgif
+QTPLUGIN += qcncodecs qjpcodecs qkrcodecs qtwcodecs qico 
 DEFINES += QT_NO_UITOOLS
 
 INCLUDEPATH += ./tmp/moc/release_static \
