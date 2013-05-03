@@ -106,7 +106,7 @@ fi
 if ! $SKIP_QT_BUILD; then
     ./configure -prefix $PWD $OPTIONS && make -j$COMPILE_JOBS || qt_error
 fi
-cd ../.. && mkdir -p build && cd build
+cd ../.. && rm -rf build && mkdir -p build && cd build
 export QTDIR=../src/qt
 ../src/qt/bin/qmake -config release ../QtWeb.pro
 make -j$COMPILE_JOBS
