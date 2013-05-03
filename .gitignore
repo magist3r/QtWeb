@@ -1,5 +1,5 @@
 # qt source directory
-src/qt
+src/qt/.*
 build
 
 # C++ objects and libs
