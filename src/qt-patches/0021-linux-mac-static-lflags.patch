@@ -1,0 +1,20 @@
+--- mkspecs/common/gcc-base.conf	2012-11-23 16:11:21.000000000 +0600
++++ mkspecs/common/gcc-base.conf.new	2013-05-04 19:22:10.613255353 +0600
+@@ -35,7 +35,7 @@
+ QMAKE_CFLAGS_DEPS           += -M
+ QMAKE_CFLAGS_WARN_ON        += -Wall -W
+ QMAKE_CFLAGS_WARN_OFF       += -w
+-QMAKE_CFLAGS_RELEASE        += -O2
++QMAKE_CFLAGS_RELEASE        += -Os
+ QMAKE_CFLAGS_DEBUG          += -g
+ QMAKE_CFLAGS_SHLIB          += -fPIC
+ QMAKE_CFLAGS_STATIC_LIB     += -fPIC
+@@ -53,7 +53,7 @@
+ QMAKE_CXXFLAGS_YACC       += $$QMAKE_CFLAGS_YACC
+ QMAKE_CXXFLAGS_HIDESYMS   += $$QMAKE_CFLAGS_HIDESYMS -fvisibility-inlines-hidden
+ 
+-QMAKE_LFLAGS         +=
++QMAKE_LFLAGS         += -s -static-libgcc -static-libstdc++
+ QMAKE_LFLAGS_DEBUG   +=
+ QMAKE_LFLAGS_APP     +=
+ QMAKE_LFLAGS_RELEASE +=

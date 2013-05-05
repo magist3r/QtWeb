@@ -1,0 +1,22 @@
+--- src/corelib/kernel/qcore_unix_p.h	2012-11-23 16:09:55.000000000 +0600
++++ src/corelib/kernel/qcore_unix_p.h.new	2013-05-04 19:09:35.680107850 +0600
+@@ -73,6 +73,8 @@
+ 
+ struct sockaddr;
+ 
++#undef O_CLOEXEC
++
+ #if defined(Q_OS_LINUX) && defined(O_CLOEXEC)
+ # define QT_UNIX_SUPPORTS_THREADSAFE_CLOEXEC 1
+ QT_BEGIN_NAMESPACE
+--- src/corelib/io/qfilesystemwatcher_inotify.cpp	2012-11-23 16:09:55.000000000 +0600
++++ src/corelib/io/qfilesystemwatcher_inotify.cpp.new	2013-05-04 20:49:18.570624550 +0600
+@@ -72,7 +72,7 @@
+ # define __NR_inotify_init      291
+ # define __NR_inotify_add_watch 292
+ # define __NR_inotify_rm_watch  293
+-# define __NR_inotify_init1     332
++//# define __NR_inotify_init1     332
+ #elif defined(__x86_64__)
+ # define __NR_inotify_init      253
+ # define __NR_inotify_add_watch 254

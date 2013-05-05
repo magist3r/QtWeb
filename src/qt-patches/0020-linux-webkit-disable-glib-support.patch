@@ -1,0 +1,23 @@
+--- src/3rdparty/webkit/Source/JavaScriptCore/wtf/wtf.pri	2012-11-23 16:10:05.000000000 +0600
++++ src/3rdparty/webkit/Source/JavaScriptCore/wtf/wtf.pri.new	2013-05-05 18:02:54.208586939 +0600
+@@ -41,13 +41,13 @@
+     wtf/unicode/icu/CollatorICU.cpp \
+     wtf/unicode/UTF8.cpp
+ 
+-linux-*:!contains(DEFINES, USE_QTMULTIMEDIA=1) {
+-    !contains(QT_CONFIG, no-pkg-config):system(pkg-config --exists glib-2.0 gio-2.0 gstreamer-0.10): {
+-        DEFINES += ENABLE_GLIB_SUPPORT=1
+-        PKGCONFIG += glib-2.0 gio-2.0
+-        CONFIG += link_pkgconfig
+-    }
+-}
++#linux-*:!contains(DEFINES, USE_QTMULTIMEDIA=1) {
++#    !contains(QT_CONFIG, no-pkg-config):system(pkg-config --exists glib-2.0 gio-2.0 gstreamer-0.10): {
++#        DEFINES += ENABLE_GLIB_SUPPORT=1
++#        PKGCONFIG += glib-2.0 gio-2.0
++#        CONFIG += link_pkgconfig
++#    }
++#}
+ 
+ unix:!symbian: SOURCES += wtf/OSAllocatorPosix.cpp
+ symbian: SOURCES += wtf/OSAllocatorSymbian.cpp

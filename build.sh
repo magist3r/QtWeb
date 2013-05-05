@@ -9,6 +9,8 @@ PATCH2='0003-qtwebkit-pro.patch'
 PATCH3='0005-qwidget-cpp.patch'
 PATCH4='0004-qstyles-qrc.patch'
 PATCH5='0006-webkit-disable-video-and-npapi.patch'
+PATCH6='0021-linux-mac-static-lflags.patch'
+PATCH7='0020-linux-webkit-disable-glib-support.patch'
 
 OPTIONS=''
 OPTIONS+=' -opensource'
@@ -52,6 +54,7 @@ OPTIONS+=' -no-phonon-backend'
 OPTIONS+=' -no-gstreamer'
 OPTIONS+=' -no-sql-sqlite'
 OPTIONS+=' -no-accessibility'
+OPTIONS+=' -no-glib'
 
 until [ -z "$1" ]; do
     case $1 in
@@ -97,6 +100,10 @@ patch -p0 -N < "../qt-patches/$PATCH2"
 patch -p0 -N < "../qt-patches/$PATCH3"
 patch -p0 -N < "../qt-patches/$PATCH4"
 patch -p0 -N < "../qt-patches/$PATCH5"
+patch -p0 -N < "../qt-patches/$PATCH6"
+if [[ $OSTYPE = linux ]]; then
+    patch -p0 -N < "../qt-patches/$PATCH7"
+fi
 
 # make clean if we have previous build in src/qt
 if $CLEAN_QT_BUILD; then
