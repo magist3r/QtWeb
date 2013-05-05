@@ -20,7 +20,7 @@ OPTIONS+=' -release'
 OPTIONS+=' -fast'
 
 if [[ $OSTYPE = darwin* ]]; then
-    OPTIONS+=' -xplatform unsupported/macx-clang'
+    OPTIONS+=' -platform macx-clang'
     OPTIONS+=' -arch x86'
 else
     OPTIONS+=' -system-freetype'
@@ -107,6 +107,7 @@ if [[ $OSTYPE = linux ]]; then
 fi
 if [[ $OSTYPE = darwin* ]]; then
     patch -p0 -N < "../qt-patches/$PATCH7"
+    cp -r mkspecs/unsupported/macx-clang mkspecs
 fi
 
 # make clean if we have previous build in src/qt
