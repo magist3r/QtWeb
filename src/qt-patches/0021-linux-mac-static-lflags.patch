@@ -14,7 +14,7 @@
  QMAKE_CXXFLAGS_HIDESYMS   += $$QMAKE_CFLAGS_HIDESYMS -fvisibility-inlines-hidden
  
 -QMAKE_LFLAGS         +=
-+QMAKE_LFLAGS         += -S -static-libgcc -static-libstdc++
++QMAKE_LFLAGS         += -s -static-libgcc -static-libstdc++
  QMAKE_LFLAGS_DEBUG   +=
  QMAKE_LFLAGS_APP     +=
 -QMAKE_LFLAGS_RELEASE +=
