@@ -6,11 +6,10 @@ COMPILE_JOBS=4
 PATCH0='0001-configure.patch'
 PATCH1='0002-webkit-pro.patch'
 PATCH2='0003-qtwebkit-pro.patch'
-PATCH3='0005-qwidget-cpp.patch'
-PATCH4='0004-qstyles-qrc.patch'
+PATCH3='0004-qstyles-qrc.patch'
+PATCH4='0005-qwidget-cpp.patch'
 PATCH5='0006-webkit-disable-video-and-npapi.patch'
 PATCH6='0021-linux-mac-static-lflags.patch'
-PATCH7='0020-linux-webkit-disable-glib-support.patch'
 
 OPTIONS=''
 OPTIONS+=' -opensource'
@@ -24,6 +23,7 @@ if [[ $OSTYPE = darwin* ]]; then
 else
     OPTIONS+=' -system-freetype'
     OPTIONS+=' -fontconfig'
+    OPTIONS+=' -reduce-relocations'
 fi
 
 OPTIONS+=' -webkit'
