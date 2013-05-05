@@ -107,7 +107,7 @@ if [[ $OSTYPE = linux ]]; then
     patch -p0 -N < "../qt-patches/$PATCH6"
 fi
 if [[ $OSTYPE = darwin* ]]; then
-    patch -p0 -N < "../qt-patches/$PATCH7"
+    patch -p1 -N < "../qt-patches/$PATCH7"
 fi
 
 # make clean if we have previous build in src/qt
@@ -122,5 +122,11 @@ cd ../.. && rm -rf build && mkdir -p build && cd build
 export QTDIR=../src/qt
 ../src/qt/bin/qmake -config release ../QtWeb.pro
 make -j$COMPILE_JOBS
+
+#fix qt_menu.nib issue
+if [[ $OSTYPE = darwin* ]]; then
+    cd ..
+    cp -r src/qt/src/gui/mac/qt_menu.nib build/release/QtWeb.app/Contents/Resources/
+fi
 
 exit 0
