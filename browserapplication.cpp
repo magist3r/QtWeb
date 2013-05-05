@@ -95,7 +95,7 @@ QReadWriteLock lockIcons;
 
 int BrowserApplication::getApplicationBuild()
 {
-	return 101; // Current Build 
+    return 102; // Current Build
 }
 
 BrowserApplication::BrowserApplication(int &argc, char **argv)
@@ -105,7 +105,7 @@ BrowserApplication::BrowserApplication(int &argc, char **argv)
 {
     QCoreApplication::setOrganizationName(QLatin1String("QtWeb.NET"));
     QCoreApplication::setApplicationName(QLatin1String("QtWeb Internet Browser"));
-    QCoreApplication::setApplicationVersion(QLatin1String("3.7.5"));
+    QCoreApplication::setApplicationVersion(QLatin1String("3.8.4"));
     QString serverName = QCoreApplication::applicationName();
 	
 	// Define the base location - Should be ended with a slash!

@@ -181,7 +181,7 @@ void WebPage::setDefaultAgent(  )
 		else if (m_userAgent == "Opera")
 			m_userAgent = "Opera/9.63 (%W; U; en) Presto/2.1.1";
 		else if (m_userAgent == "Safari")
-			m_userAgent = "Mozilla/5.0 (Windows; U; %W; %L) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Safari/528.17";
+            m_userAgent = "Mozilla/5.0 (Windows; U; %W; %L) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Safari/528.17";
 		else if (m_userAgent == "Chrome")
 			m_userAgent = "Mozilla/5.0 (Windows; U; %W; %L) AppleWebKit/525.13 (KHTML, like Gecko) Chrome/0.A.B.C Safari/525.13";
 
@@ -212,7 +212,7 @@ void WebPage::setDefaultAgent(  )
     ua.append(QLatin1String(") "));
 
     // webkit/qt version
-    ua.append(QLatin1String("AppleWebKit/533.3 (KHTML, like Gecko) "));
+    ua.append(QLatin1String("AppleWebKit/534.34 (KHTML, like Gecko) "));
 
     // Application name/version
     QString appName = QCoreApplication::applicationName();

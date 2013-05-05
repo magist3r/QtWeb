@@ -44,6 +44,7 @@ OPTIONS+=' -no-opengl'
 OPTIONS+=' -no-openvg'
 OPTIONS+=' -no-phonon'
 OPTIONS+=' -no-qt3support'
+OPTIONS+=' -no-script'
 OPTIONS+=' -no-scripttools'
 OPTIONS+=' -no-dbus'
 OPTIONS+=' -no-stl'
@@ -54,7 +55,6 @@ OPTIONS+=' -no-phonon-backend'
 OPTIONS+=' -no-gstreamer'
 OPTIONS+=' -no-sql-sqlite'
 OPTIONS+=' -no-accessibility'
-OPTIONS+=' -no-glib'
 
 until [ -z "$1" ]; do
     case $1 in
@@ -102,7 +102,7 @@ patch -p0 -N < "../qt-patches/$PATCH4"
 patch -p0 -N < "../qt-patches/$PATCH5"
 patch -p0 -N < "../qt-patches/$PATCH6"
 if [[ $OSTYPE = linux ]]; then
-    patch -p0 -N < "../qt-patches/$PATCH7"
+#    patch -p0 -N < "../qt-patches/$PATCH7"
 fi
 
 # make clean if we have previous build in src/qt
