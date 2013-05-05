@@ -101,9 +101,9 @@ patch -p0 -N < "../qt-patches/$PATCH3"
 patch -p0 -N < "../qt-patches/$PATCH4"
 patch -p0 -N < "../qt-patches/$PATCH5"
 patch -p0 -N < "../qt-patches/$PATCH6"
-if [[ $OSTYPE = linux ]]; then
+#if [[ $OSTYPE = linux ]]; then
 #    patch -p0 -N < "../qt-patches/$PATCH7"
-fi
+#fi
 
 # make clean if we have previous build in src/qt
 if $CLEAN_QT_BUILD; then
