@@ -1,0 +1,18 @@
+--- mkspecs/common/gcc-base.conf	2013-05-06 02:02:13.001739929 +0600
++++ mkspecs/common/gcc-base.conf.new	2013-05-06 02:01:55.398401518 +0600
+@@ -35,7 +35,7 @@
+ QMAKE_CFLAGS_DEPS           += -M
+ QMAKE_CFLAGS_WARN_ON        += -Wall -W
+ QMAKE_CFLAGS_WARN_OFF       += -w
+-QMAKE_CFLAGS_RELEASE        += -O2
++QMAKE_CFLAGS_RELEASE        += -Os -fdata-sections -ffunction-sections
+ QMAKE_CFLAGS_DEBUG          += -g
+ QMAKE_CFLAGS_SHLIB          += -fPIC
+ QMAKE_CFLAGS_STATIC_LIB     += -fPIC
+@@ -56,5 +56,5 @@
+ QMAKE_LFLAGS         += 
+ QMAKE_LFLAGS_DEBUG   +=
+ QMAKE_LFLAGS_APP     +=
+-QMAKE_LFLAGS_RELEASE += 
++QMAKE_LFLAGS_RELEASE += -Wl,--gc-sections
+ 

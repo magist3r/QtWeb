@@ -9,7 +9,8 @@ PATCH2='0003-qtwebkit-pro.patch'
 PATCH3='0004-qstyles-qrc.patch'
 PATCH4='0005-qwidget-cpp.patch'
 PATCH5='0006-webkit-disable-video-and-npapi.patch'
-PATCH6='0021-linux-mac-static-lflags.patch'
+PATCH6='0021-linux-mkspec.patch'
+PATCH7='0031-mac-mkspec.patch'
 
 OPTIONS=''
 OPTIONS+=' -opensource'
@@ -19,6 +20,7 @@ OPTIONS+=' -release'
 OPTIONS+=' -fast'
 
 if [[ $OSTYPE = darwin* ]]; then
+    OPTIONS+=' -xplatform unsupported/macx-clang'
     OPTIONS+=' -arch x86'
 else
     OPTIONS+=' -system-freetype'
@@ -100,10 +102,12 @@ patch -p0 -N < "../qt-patches/$PATCH2"
 patch -p0 -N < "../qt-patches/$PATCH3"
 patch -p0 -N < "../qt-patches/$PATCH4"
 patch -p0 -N < "../qt-patches/$PATCH5"
-patch -p0 -N < "../qt-patches/$PATCH6"
-#if [[ $OSTYPE = linux ]]; then
-#    patch -p0 -N < "../qt-patches/$PATCH7"
-#fi
+if [[ $OSTYPE = linux ]]; then
+    patch -p0 -N < "../qt-patches/$PATCH6"
+fi
+if [[ $OSTYPE = darwin* ]]; then
+    patch -p0 -N < "../qt-patches/$PATCH7"
+fi
 
 # make clean if we have previous build in src/qt
 if $CLEAN_QT_BUILD; then
