@@ -48,5 +48,5 @@ AboutDialog::AboutDialog(QWidget *parent)
 void AboutDialog::credits()
 {
 	QMessageBox::information(this, tr("Credits..."), QString("<b>Nokia Qt Team<br>Apple WebKit Team<br>OpenSSL Project Team</b><br>" \
-		"Alex Harder<br>Tony Yu<br>Alex Chaloupov<br>Yury Zimin<br>Olga Volkova<br>") + QChar(0x00C5) +  "ke Engelbrektson<br>Otsubo Kanako<br>Istvan Somlai<br>Hessam Mohamadi");
+        "Alex Harder<br>Tony Yu<br>Alex Chaloupov<br>Yury Zimin<br>Olga Volkova<br>") + QChar(0x00C5) +  "ke Engelbrektson<br>Otsubo Kanako<br>Istvan Somlai<br>Hessam Mohamadi<br>Sergei Lopatin");
 }
