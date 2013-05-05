@@ -10,7 +10,8 @@ PATCH3='0004-qstyles-qrc.patch'
 PATCH4='0005-qwidget-cpp.patch'
 PATCH5='0006-webkit-disable-video-and-npapi.patch'
 PATCH6='0021-linux-mkspec.patch'
-PATCH7='0031-mac-mkspec.patch'
+PATCH7='0031-mac-qtbug-29373-00.patch'
+#PATCH7='0031-mac-mkspec.patch'
 
 OPTIONS=''
 OPTIONS+=' -opensource'
@@ -20,7 +21,7 @@ OPTIONS+=' -release'
 OPTIONS+=' -fast'
 
 if [[ $OSTYPE = darwin* ]]; then
-    OPTIONS+=' -platform macx-clang'
+    OPTIONS+=' -platform unsupported/macx-clang'
     OPTIONS+=' -arch x86'
 else
     OPTIONS+=' -system-freetype'
@@ -107,7 +108,6 @@ if [[ $OSTYPE = linux ]]; then
 fi
 if [[ $OSTYPE = darwin* ]]; then
     patch -p0 -N < "../qt-patches/$PATCH7"
-    cp -r mkspecs/unsupported/macx-clang mkspecs
 fi
 
 # make clean if we have previous build in src/qt

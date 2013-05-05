@@ -25,6 +25,7 @@ include(QtWeb.pri)
 
 #Windows resource file
 win32:RC_FILE = QtWeb.rc
+macx:QMAKE_CXXFLAGS = -fvisibility-hidden -fvisibility-inlines-hidden
 
 macx:ICON = qtweb.icns
 
