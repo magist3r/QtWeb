@@ -61,105 +61,110 @@ until [ -z "$1" ]; do
     esac
 done
 
-OPTIONS=''
-OPTIONS+=' -opensource'
-OPTIONS+=' -confirm-license'
-OPTIONS+=' -static'
-OPTIONS+=' -release'
-OPTIONS+=' -v'
-OPTIONS+=' -fast'
-
-if [[ $OSTYPE = darwin* ]]; then
-    OPTIONS+=' -platform unsupported/macx-clang'
-    OPTIONS+=' -arch x86'
-    OPTIONS+=' -openssl'
-else
-    if $CROSS_COMPILE; then
-        OPTIONS+=' -xplatform win32-g++'
-        OPTIONS+=" -device-option CROSS_COMPILE=$CROSS_COMPILE_PREFIX"
-        OPTIONS+=' -openssl-linked'
-    else
-        OPTIONS+=' -system-freetype'
-        OPTIONS+=' -fontconfig'
-        OPTIONS+=' -reduce-relocations'
-        OPTIONS+=' -openssl'
-    fi
-fi
-
-OPTIONS+=' -webkit'
-OPTIONS+=' -qt-libjpeg'
-OPTIONS+=' -qt-libpng'
-#OPTIONS+=' -qt-zlib'
-
-OPTIONS+=' -nomake demos'
-OPTIONS+=' -nomake docs'
-OPTIONS+=' -nomake examples'
-OPTIONS+=' -nomake translations'
-OPTIONS+=' -nomake tests'
-OPTIONS+=' -nomake tools'
-OPTIONS+=' -no-declarative'
-OPTIONS+=' -no-multimedia'
-OPTIONS+=' -no-opengl'
-OPTIONS+=' -no-openvg'
-OPTIONS+=' -no-phonon'
-OPTIONS+=' -no-qt3support'
-OPTIONS+=' -no-script'
-OPTIONS+=' -no-scripttools'
-OPTIONS+=' -no-dbus'
-OPTIONS+=' -no-stl'
-OPTIONS+=' -no-libtiff'
-OPTIONS+=' -no-libmng'
-OPTIONS+=' -no-audio-backend'
-OPTIONS+=' -no-phonon-backend'
-OPTIONS+=' -no-gstreamer'
-OPTIONS+=' -no-sql-sqlite'
-OPTIONS+=' -no-accessibility'
-OPTIONS+=' -D QT_NO_STYLE_CDE'
-OPTIONS+=' -D QT_NO_STYLE_MOTIF'
-OPTIONS+=' -D QT_NO_STYLE_PLASTIQUE'
-
 function qt_error {
     echo "Qt build error! See logs above."
     exit 1
 }
 
-#Applying patches for Qt
-cd src/qt
-if [ ! -e ./configure ]; then
-    echo "Looks like you forgot to extract Qt sources in src/qt directory!"
-    exit 1
-fi
-patch -p0 -N < "../qt-patches/$PATCH0"
-patch -p0 -N < "../qt-patches/$PATCH1"
-patch -p0 -N < "../qt-patches/$PATCH2"
-patch -p0 -N < "../qt-patches/$PATCH3"
-patch -p0 -N < "../qt-patches/$PATCH4"
-patch -p0 -N < "../qt-patches/$PATCH5"
-
-if [[ $OSTYPE = linux* ]]; then
-    patch -p0 -N < "../qt-patches/$PATCHL0"
-    patch -p0 -N < "../qt-patches/$PATCHL1"
-fi
-
-if [[ $OSTYPE = darwin* ]]; then
-    patch -p1 -N < "../qt-patches/$PATCHM0"
-fi
-
-if $CROSS_COMPILE; then
-    patch -p0 -N < "../qt-patches/$PATCHW0"
-    patch -p0 -N < "../qt-patches/$PATCHW1"
-    patch -p0 -N < "../qt-patches/$PATCHW2"
-fi
-
-# make clean if we have previous build in src/qt
-if $CLEAN_QT_BUILD; then
-    make confclean
-fi
-
 if ! $SKIP_QT_BUILD; then
+
+    OPTIONS=''
+    OPTIONS+=' -opensource'
+    OPTIONS+=' -confirm-license'
+    OPTIONS+=' -static'
+    OPTIONS+=' -release'
+    OPTIONS+=' -v'
+    OPTIONS+=' -fast'
+
+    if [[ $OSTYPE = darwin* ]]; then
+        OPTIONS+=' -platform unsupported/macx-clang'
+        OPTIONS+=' -arch x86'
+        OPTIONS+=' -openssl'
+    else
+        if $CROSS_COMPILE; then
+            OPTIONS+=' -xplatform win32-g++'
+            OPTIONS+=" -device-option CROSS_COMPILE=$CROSS_COMPILE_PREFIX"
+            OPTIONS+=' -openssl-linked'
+        else
+            OPTIONS+=' -system-freetype'
+            OPTIONS+=' -fontconfig'
+            OPTIONS+=' -reduce-relocations'
+            OPTIONS+=' -openssl'
+        fi
+    fi
+
+    OPTIONS+=' -webkit'
+    OPTIONS+=' -qt-libjpeg'
+    OPTIONS+=' -qt-libpng'
+    #OPTIONS+=' -qt-zlib'
+
+    OPTIONS+=' -nomake demos'
+    OPTIONS+=' -nomake docs'
+    OPTIONS+=' -nomake examples'
+    OPTIONS+=' -nomake translations'
+    OPTIONS+=' -nomake tests'
+    OPTIONS+=' -nomake tools'
+    OPTIONS+=' -no-declarative'
+    OPTIONS+=' -no-multimedia'
+    OPTIONS+=' -no-opengl'
+    OPTIONS+=' -no-openvg'
+    OPTIONS+=' -no-phonon'
+    OPTIONS+=' -no-qt3support'
+    OPTIONS+=' -no-script'
+    OPTIONS+=' -no-scripttools'
+    OPTIONS+=' -no-dbus'
+    OPTIONS+=' -no-stl'
+    OPTIONS+=' -no-libtiff'
+    OPTIONS+=' -no-libmng'
+    OPTIONS+=' -no-audio-backend'
+    OPTIONS+=' -no-phonon-backend'
+    OPTIONS+=' -no-gstreamer'
+    OPTIONS+=' -no-sql-sqlite'
+    OPTIONS+=' -no-accessibility'
+    OPTIONS+=' -D QT_NO_STYLE_CDE'
+    OPTIONS+=' -D QT_NO_STYLE_MOTIF'
+    OPTIONS+=' -D QT_NO_STYLE_PLASTIQUE'
+
+    #Applying patches for Qt
+    cd src/qt
+    if [ ! -e ./configure ]; then
+        echo "Looks like you forgot to extract Qt sources in src/qt directory!"
+        exit 1
+    fi
+
+    patch -p0 -N < "../qt-patches/$PATCH0"
+    patch -p0 -N < "../qt-patches/$PATCH1"
+    patch -p0 -N < "../qt-patches/$PATCH2"
+    patch -p0 -N < "../qt-patches/$PATCH3"
+    patch -p0 -N < "../qt-patches/$PATCH4"
+    patch -p0 -N < "../qt-patches/$PATCH5"
+
+    if [[ $OSTYPE = linux* ]] && ! $CROSS_COMPILE; then
+	echo "works great"
+        patch -p0 -N < "../qt-patches/$PATCHL0"
+        patch -p0 -N < "../qt-patches/$PATCHL1"
+    fi
+
+    if [[ $OSTYPE = darwin* ]]; then
+        patch -p1 -N < "../qt-patches/$PATCHM0"
+    fi
+
+    if $CROSS_COMPILE; then
+        patch -p0 -N < "../qt-patches/$PATCHW0"
+        patch -p0 -N < "../qt-patches/$PATCHW1"
+        patch -p0 -N < "../qt-patches/$PATCHW2"
+    fi
+
+    # make clean if we have previous build in src/qt
+    if $CLEAN_QT_BUILD; then
+        make confclean
+    fi
+
     ./configure -prefix $PWD $OPTIONS && make -j$COMPILE_JOBS || qt_error
-fi
-cd ../.. && rm -rf build && mkdir -p build && cd build
+    cd ../..
+fi # end of Qt build
+
+rm -rf build && mkdir -p build && cd build
 export QTDIR=../src/qt
 ../src/qt/bin/qmake -config release ../QtWeb.pro
 make -j$COMPILE_JOBS
