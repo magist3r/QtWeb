@@ -264,14 +264,14 @@ void DownloadItem::mouseDoubleClickEvent ( QMouseEvent * event )
 bool ShellOpenApp(QString app, QString cmd)
 {
 	app = QDir::toNativeSeparators(app);
-	return ( (int)::ShellExecute(NULL, L"open", app.utf16(), cmd.utf16(), NULL, SW_SHOWNORMAL) > 32);
+    return ( (int)::ShellExecute(NULL, L"open", (LPCWSTR)app.utf16(), (LPCWSTR)cmd.utf16(), NULL, SW_SHOWNORMAL) > 32);
 }
 
 bool ShellOpenExplorer(QString path)
 {
 	path = QDir::toNativeSeparators(path);
 	QString line = "/select," + path;
-	return ( (int)::ShellExecute(NULL, L"open", L"explorer.exe", line.utf16(), NULL, SW_SHOWNORMAL) > 32);
+    return ( (int)::ShellExecute(NULL, L"open", L"explorer.exe", (LPCWSTR)line.utf16(), NULL, SW_SHOWNORMAL) > 32);
 }
 
 bool ShellExec(QString path)
@@ -279,7 +279,7 @@ bool ShellExec(QString path)
 	#define MESSAGE_TITLE QObject::tr("Open file error")
 
 	bool result = true;
-	HINSTANCE res = ShellExecute(NULL, L"open", path.utf16(), NULL, NULL, SW_SHOWNORMAL);
+    HINSTANCE res = ShellExecute(NULL, L"open", (LPCWSTR)path.utf16(), NULL, NULL, SW_SHOWNORMAL);
 	if ((int)res <= 32)
 	{
 		switch ((int)res)

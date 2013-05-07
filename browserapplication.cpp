@@ -353,7 +353,7 @@ BrowserApplication::~BrowserApplication()
 		wcscpy(key, L"Software");
 		if (ERROR_SUCCESS == RegOpenKeyExW(HKEY_CURRENT_USER, key, 0, DELETE, &hKey))
 		{
-			RegDeleteKey(hKey, organizationName().utf16());
+            RegDeleteKey(hKey, (LPCWSTR)organizationName().utf16());
 			RegCloseKey(hKey);
 		}
 #endif
@@ -798,7 +798,7 @@ void BrowserApplication::iconDownloadFinished(QNetworkReply* reply)
 			file.close();
 
 #ifdef Q_WS_WIN
-			HICON i = (HICON)LoadImage( NULL, filename.utf16(), IMAGE_ICON, 16 , 16 , LR_LOADFROMFILE);
+            HICON i = (HICON)LoadImage( NULL, (LPCWSTR)filename.utf16(), IMAGE_ICON, 16 , 16 , LR_LOADFROMFILE);
 			QPixmap pix = QPixmap::fromWinHICON( i ) ;
 #else
 			QIcon icon(filename);
@@ -946,7 +946,7 @@ bool BrowserApplication::handleMIME(QString content, const QUrl& url)
 
 	wchar_t key[256];
 	wcscpy(key, L"Mime\\Database\\Content Type\\");
-	wcscat(key, content.utf16());
+    wcscat(key, (LPCWSTR)content.utf16());
 	if (ERROR_SUCCESS != RegOpenKeyExW(HKEY_CLASSES_ROOT, key, 0, KEY_READ, &hKey))
 		return false;
 
@@ -1025,12 +1025,12 @@ bool BrowserApplication::handleMIME(QString content, const QUrl& url)
 
 		int res = (int)ShellExecute( NULL, (bOpen ? L"open" : L"play"), szExe, szCmd, NULL, SW_SHOWNORMAL);
 		if (res <= 32 )
-			res = (int)ShellExecute( NULL, (bOpen ? L"open" : L"play"), url.toString().utf16(), NULL, NULL, SW_SHOWNORMAL);
+            res = (int)ShellExecute( NULL, (bOpen ? L"open" : L"play"), (LPCWSTR)url.toString().utf16(), NULL, NULL, SW_SHOWNORMAL);
 
 		return (res > 32);
 	}
 	else
-		return ((int)ShellExecute( NULL, (bOpen ? L"open" : L"play"), url.toString().utf16(), NULL, NULL, SW_SHOWNORMAL) > 32);
+        return ((int)ShellExecute( NULL, (bOpen ? L"open" : L"play"), (LPCWSTR)url.toString().utf16(), NULL, NULL, SW_SHOWNORMAL) > 32);
 
 #endif
 
