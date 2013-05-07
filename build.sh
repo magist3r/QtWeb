@@ -11,15 +11,18 @@ PATCH2='0003-qtwebkit-pro.patch'
 PATCH3='0004-qstyles-qrc.patch'
 PATCH4='0005-qwidget-cpp.patch'
 PATCH5='0006-webkit-disable-video-and-npapi.patch'
+
 #linux
-PATCH6='0021-linux-mkspec.patch'
+PATCHL0='0021-linux-mkspec.patch'
+PATCHL1='0022-linux-qgtkstyle-qtbug-23569.patch'
+
 #mac
-PATCH7='0031-mac-qtbug-29373-00.patch'
+PATCHM0='0031-mac-qtbug-29373-00.patch'
+
 #win32
-PATCH8='0012-windows-webcore-pro.patch'
-PATCH9='0013-windows-dotnet-style.patch'
-PATCH10='0014-windows-mkspec-cross-compile.patch'
-#PATCH7='0031-mac-mkspec.patch'
+PATCHW0='0012-windows-webcore-pro.patch'
+PATCHW1='0013-windows-dotnet-style.patch'
+PATCHW2='0014-windows-mkspec-cross-compile.patch'
 
 until [ -z "$1" ]; do
     case $1 in
@@ -33,7 +36,7 @@ until [ -z "$1" ]; do
             CROSS_COMPILE=true
             shift
             if [ ! -z "$1" ]; then
-		CROSS_COMPILE_PREFIX="$1"
+                CROSS_COMPILE_PREFIX="$1"
                 shift
             fi
             ;;
@@ -132,16 +135,20 @@ patch -p0 -N < "../qt-patches/$PATCH2"
 patch -p0 -N < "../qt-patches/$PATCH3"
 patch -p0 -N < "../qt-patches/$PATCH4"
 patch -p0 -N < "../qt-patches/$PATCH5"
-if [[ $OSTYPE = linux ]]; then
-    patch -p0 -N < "../qt-patches/$PATCH6"
+
+if [[ $OSTYPE = linux* ]]; then
+    patch -p0 -N < "../qt-patches/$PATCHL0"
+    patch -p0 -N < "../qt-patches/$PATCHL1"
 fi
+
 if [[ $OSTYPE = darwin* ]]; then
-    patch -p1 -N < "../qt-patches/$PATCH7"
+    patch -p1 -N < "../qt-patches/$PATCHM0"
 fi
+
 if $CROSS_COMPILE; then
-    patch -p0 -N < "../qt-patches/$PATCH8"
-    patch -p0 -N < "../qt-patches/$PATCH9"
-    patch -p0 -N < "../qt-patches/$PATCH10"
+    patch -p0 -N < "../qt-patches/$PATCHW0"
+    patch -p0 -N < "../qt-patches/$PATCHW1"
+    patch -p0 -N < "../qt-patches/$PATCHW2"
 fi
 
 # make clean if we have previous build in src/qt
