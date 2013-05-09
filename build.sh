@@ -3,7 +3,7 @@ SKIP_QT_BUILD=false
 CLEAN_QT_BUILD=false
 CROSS_COMPILE=false
 CROSS_COMPILE_PREFIX='i686-w64-mingw32-'
-COMPILE_JOBS=4
+COMPILE_JOBS=8
 
 PATCH0='0001-configure.patch'
 PATCH1='0002-webkit-pro.patch'
@@ -79,6 +79,7 @@ if ! $SKIP_QT_BUILD; then
     if [[ $OSTYPE = darwin* ]]; then
         OPTIONS+=' -platform unsupported/macx-clang'
         OPTIONS+=' -arch x86'
+        OPTIONS+=' -carbon' # use carbon for compatibility reasons
         OPTIONS+=' -openssl'
     else
         if $CROSS_COMPILE; then
