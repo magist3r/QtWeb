@@ -1,5 +1,6 @@
 #!/bin/bash
 PATCHDIR="$(pwd)/src/qt-patches"
+SSL_LIBS=''
 SKIP_QT_BUILD=false
 CLEAN_QT_BUILD=false
 CROSS_COMPILE=false
@@ -89,6 +90,7 @@ if ! $SKIP_QT_BUILD; then
         if $CROSS_COMPILE; then
             OPTIONS+=' -xplatform win32-g++'
             OPTIONS+=" -device-option CROSS_COMPILE=$CROSS_COMPILE_PREFIX"
+            SSL_LIBS='-lssl -lcrypto -lcrypt32 -lgdi32'
             OPTIONS+=' -openssl-linked'
         else
             OPTIONS+=' -system-freetype'
@@ -165,7 +167,7 @@ if ! $SKIP_QT_BUILD; then
         make confclean
     fi
 
-    ./configure -prefix $PWD $OPTIONS && make -j$COMPILE_JOBS || qt_error
+    OPENSSL_LIBS="$SSL_LIBS" ./configure -prefix $PWD $OPTIONS && make -j$COMPILE_JOBS || qt_error
     cd ../..
 fi # end of Qt build
 
