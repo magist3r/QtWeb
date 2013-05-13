@@ -1,4 +1,5 @@
-#!/usr/bin/env bash
+#!/bin/bash
+PATCHDIR="$(pwd)/src/qt-patches"
 SKIP_QT_BUILD=false
 CLEAN_QT_BUILD=false
 CROSS_COMPILE=false
@@ -97,7 +98,7 @@ if ! $SKIP_QT_BUILD; then
     OPTIONS+=' -webkit'
     OPTIONS+=' -qt-libjpeg'
     OPTIONS+=' -qt-libpng'
-    #OPTIONS+=' -qt-zlib'
+    OPTIONS+=' -qt-zlib'
 
     OPTIONS+=' -nomake demos'
     OPTIONS+=' -nomake docs'
@@ -133,27 +134,26 @@ if ! $SKIP_QT_BUILD; then
         exit 1
     fi
 
-    patch -p0 -N < "../qt-patches/$PATCH0"
-    patch -p0 -N < "../qt-patches/$PATCH1"
-    patch -p0 -N < "../qt-patches/$PATCH2"
-    patch -p0 -N < "../qt-patches/$PATCH3"
-    patch -p0 -N < "../qt-patches/$PATCH4"
-    patch -p0 -N < "../qt-patches/$PATCH5"
+    patch -p0 -N < "$PATCHDIR/$PATCH0"
+    patch -p0 -N < "$PATCHDIR/$PATCH1"
+    patch -p0 -N < "$PATCHDIR/$PATCH2"
+    patch -p0 -N < "$PATCHDIR/$PATCH3"
+    patch -p0 -N < "$PATCHDIR/$PATCH4"
+    patch -p0 -N < "$PATCHDIR/$PATCH5"
 
     if [[ $OSTYPE = linux* ]] && ! $CROSS_COMPILE; then
-	echo "works great"
-        patch -p0 -N < "../qt-patches/$PATCHL0"
-        patch -p0 -N < "../qt-patches/$PATCHL1"
+        patch -p0 -N < "$PATCHDIR/$PATCHL0"
+        patch -p0 -N < "$PATCHDIR/$PATCHL1"
     fi
 
     if [[ $OSTYPE = darwin* ]]; then
-        patch -p1 -N < "../qt-patches/$PATCHM0"
+        patch -p1 -N < "$PATCHDIR/$PATCHM0"
     fi
 
     if $CROSS_COMPILE; then
-        patch -p0 -N < "../qt-patches/$PATCHW0"
-        patch -p0 -N < "../qt-patches/$PATCHW1"
-        patch -p0 -N < "../qt-patches/$PATCHW2"
+        patch -p0 -N < "$PATCHDIR/$PATCHW0"
+        patch -p0 -N < "$PATCHDIR/$PATCHW1"
+        patch -p0 -N < "$PATCHDIR/$PATCHW2"
     fi
 
     # make clean if we have previous build in src/qt
