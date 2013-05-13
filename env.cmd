@@ -1,17 +1,16 @@
 @ECHO OFF
  
-set DEV=D:\code
-set QTDIR=%DEV%\qt-windows
+set QTDIR=%cd%\src\qt\
 set PATH=%SystemRoot%;%SystemRoot%\system32;%QTDIR%\bin;%PATH%
  
 echo Setting OpenSSL Env.
-set OPENSSL=%DEV%\OpenSSL
+set OPENSSL=%cd%\src\qt\openssl\
 set PATH=%OPENSSL%\bin;%PATH%
 set LIB=%OPENSSL%\lib
 set INCLUDE=%OPENSSL%\include
  
 echo Setting Windows SDK Env.
-set WindowsSdkDir=D:\Microsoft SDKs\
+set WindowsSdkDir=C:\Program Files\Microsoft SDKs\Windows\v7.1\
 set PATH=%WindowsSdkDir%\Bin;%PATH%
 set LIB=%WindowsSdkDir%\Lib;%LIB%
 set INCLUDE=%WindowsSdkDir%\Include;%INCLUDE%
@@ -32,9 +31,6 @@ set Framework35Version=v3.5
 set FrameworkDir=%SystemRoot%\Microsoft.NET\Framework
 set LIBPATH=%FrameworkDir%\%FrameworkVersion%;%FrameworkDir%\%Framework35Version%;%LIBPATH%
 set PATH=%LIBPATH%;%PATH%
- 
+
 echo Env. ready.
- 
 title Qt Framework 4.8.4 Development Kit.
- 
-cd %DEV%
