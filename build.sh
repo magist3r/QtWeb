@@ -78,7 +78,6 @@ if ! $SKIP_QT_BUILD; then
     OPTIONS+=' -fast'
 
     if [[ $OSTYPE = darwin* ]]; then
-        OPTIONS+=' -platform unsupported/macx-clang'
         OPTIONS+=' -arch x86'
         OPTIONS+=' -carbon' # use carbon for compatibility reasons
         OPTIONS+=' -openssl'
