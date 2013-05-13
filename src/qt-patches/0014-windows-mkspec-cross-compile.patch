@@ -1,0 +1,24 @@
+--- mkspecs/win32-g++/qmake.conf	2012-11-23 16:11:21.000000000 +0600
++++ mkspecs/win32-g++/qmake.conf.new	2013-05-13 00:53:06.651151610 +0600
+@@ -31,7 +31,7 @@
+ QMAKE_CFLAGS_DEPS	= -M
+ QMAKE_CFLAGS_WARN_ON	= -Wall -Wextra
+ QMAKE_CFLAGS_WARN_OFF	= -w
+-QMAKE_CFLAGS_RELEASE	= -O2
++QMAKE_CFLAGS_RELEASE	= -Os -fdata-sections -ffunction-sections
+ QMAKE_CFLAGS_DEBUG	= -g
+ QMAKE_CFLAGS_YACC	= -Wno-unused -Wno-parentheses
+ 
+@@ -60,10 +60,10 @@
+ 
+ QMAKE_LINK		= $${CROSS_COMPILE}g++
+ QMAKE_LINK_C		= $${CROSS_COMPILE}gcc
+-QMAKE_LFLAGS		=
++QMAKE_LFLAGS		= -static -static-libgcc -static-libstdc++
+ QMAKE_LFLAGS_EXCEPTIONS_ON = -mthreads
+ QMAKE_LFLAGS_EXCEPTIONS_OFF =
+-QMAKE_LFLAGS_RELEASE	= -Wl,-s
++QMAKE_LFLAGS_RELEASE	= -Wl,-s -s -Wl,--gc-sections 
+ QMAKE_LFLAGS_DEBUG	=
+ QMAKE_LFLAGS_CONSOLE	= -Wl,-subsystem,console
+ QMAKE_LFLAGS_WINDOWS	= -Wl,-subsystem,windows
