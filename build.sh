@@ -81,6 +81,10 @@ if ! $SKIP_QT_BUILD; then
         OPTIONS+=' -arch x86'
         OPTIONS+=' -carbon' # use carbon for compatibility reasons
         OPTIONS+=' -openssl'
+    elif [[ $OSTYPE = beos ]]; then
+        OPTIONS+=' -no-largefile'
+        OPTIONS+=' -no-pch'
+        OPTIONS+=' -openssl'
     else
         if $CROSS_COMPILE; then
             OPTIONS+=' -xplatform win32-g++'
@@ -125,6 +129,7 @@ if ! $SKIP_QT_BUILD; then
     OPTIONS+=' -D QT_NO_STYLE_CDE'
     OPTIONS+=' -D QT_NO_STYLE_MOTIF'
     OPTIONS+=' -D QT_NO_STYLE_PLASTIQUE'
+    OPTIONS+=' -optimized-qmake'
 
     #Applying patches for Qt
     cd src/qt
