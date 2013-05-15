@@ -38,16 +38,18 @@
 ****************************************************************************/
 
 #include "browserapplication.h"
-#include <QtPlugin>
+#ifndef QT_SHARED
+	#include <QtPlugin>
 
-#ifndef Q_WS_WIN
-	Q_IMPORT_PLUGIN(qico)
+	#ifndef Q_WS_WIN
+		Q_IMPORT_PLUGIN(qico)
+	#endif
+
+	Q_IMPORT_PLUGIN(qcncodecs)
+	Q_IMPORT_PLUGIN(qjpcodecs)
+	Q_IMPORT_PLUGIN(qkrcodecs)
+	Q_IMPORT_PLUGIN(qtwcodecs)
 #endif
-
-Q_IMPORT_PLUGIN(qcncodecs)
-Q_IMPORT_PLUGIN(qjpcodecs)
-Q_IMPORT_PLUGIN(qkrcodecs)
-Q_IMPORT_PLUGIN(qtwcodecs)
 
 
 int main(int argc, char **argv)
