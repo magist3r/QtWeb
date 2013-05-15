@@ -821,6 +821,8 @@ void BrowserMainWindow::setupMenu()
 	// Disable JavaScript
     m_disableJavaScript = new QAction( cmds.JavaScriptTitle(), this);
 	m_disableJavaScript->setShortcuts(cmds.JavaScriptShortcuts());
+	m_disableJavaScript->setIcon(QIcon(":javascript.png"));
+	m_disableJavaScript->setIconVisibleInMenu(false);
     connect(m_disableJavaScript, SIGNAL(triggered()), this, SLOT(slotDisableJavaScript()));
 	privacyMenu->addAction(m_disableJavaScript);
 	this->addAction(m_disableJavaScript);
@@ -1313,6 +1315,7 @@ void BrowserMainWindow::setupToolBar()
     m_buttonsBar->addAction(m_proxyAction); 
     m_buttonsBar->addAction(m_imagesAction); 
     m_buttonsBar->addAction(m_resetAction); 
+	m_buttonsBar->addAction(m_disableJavaScript);
 	m_buttonsBar->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
 
 	//////////////////////////////////////
@@ -1378,11 +1381,16 @@ void BrowserMainWindow::checkToolBarButtons()
 	bool bShowTextSize = settings.value(QLatin1String("showTextSize"), false).toBool();
 	bool bShowKeyboard = settings.value(QLatin1String("showKeyboard"), false).toBool();
 	bool bShowBookmarks = settings.value(QLatin1String("showBookmarks"), false).toBool();
+	bool bShowDisableJavaScript = settings.value(QLatin1String("showDisableJavaScript"), false).toBool();
 
 	settings.endGroup();
     settings.beginGroup(QLatin1String("websettings"));
 	bool autoload_images = settings.value(QLatin1String("autoLoadImages"), true).toBool();
 	m_imagesAction->setChecked(!autoload_images);
+
+	bool enable_javascript = settings.value(QLatin1String("enableJavascript"), true).toBool();
+	m_disableJavaScript->setChecked(!enable_javascript);
+
     settings.endGroup();
 
 	settings.beginGroup(QLatin1String("proxy"));
@@ -1402,6 +1410,10 @@ void BrowserMainWindow::checkToolBarButtons()
 	m_compatAction->setVisible(bShowCompatibility);
 	m_imagesAction->setVisible(bShowImages);
 	m_proxyAction->setVisible(bShowProxy);
+	if (bShowDisableJavaScript)
+		m_buttonsBar->addAction(m_disableJavaScript);
+	else
+		m_buttonsBar->removeAction(m_disableJavaScript);
 
 	m_inspectAction->setVisible(bShowInspect); 
 	m_inspectAction->setEnabled(  QWebSettings::globalSettings()->testAttribute(QWebSettings::DeveloperExtrasEnabled) ); 

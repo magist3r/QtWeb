@@ -108,6 +108,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	connect(tbBookmarks, SIGNAL(clicked()), this, SLOT( checkAddressBarButtons() ));
 	connect(tbTextSize, SIGNAL(clicked()), this, SLOT( checkAddressBarButtons() ));
 	connect(tbVirtKeyb, SIGNAL(clicked()), this, SLOT( checkAddressBarButtons() ));
+	connect(tbJavaScript, SIGNAL(clicked()), this, SLOT( checkAddressBarButtons() ));
 }
 
 extern QString DefaultDownloadPath(bool create);
@@ -209,6 +210,7 @@ void SettingsDialog::loadDefaults()
 	proxyExcept->setChecked(false);
 	tbCompatibility->setChecked( true );
 	tbReset->setChecked( false );
+	tbJavaScript->setChecked( false );
 
 #ifndef Q_WS_WIN
 	proxyAuto->setVisible(false);
@@ -428,6 +430,8 @@ void SettingsDialog::loadFromSettings()
 	tbInspect->setChecked( settings.value(QLatin1String("showInspect"), tbInspect->isChecked()).toBool() );
 	tbTextSize->setChecked( settings.value(QLatin1String("showTextSize"), tbTextSize->isChecked()).toBool() );
 	tbBookmarks->setChecked( settings.value(QLatin1String("showBookmarks"), tbBookmarks->isChecked()).toBool() );
+
+	tbJavaScript->setChecked( settings.value(QLatin1String("showDisableJavaScript"), tbJavaScript->isChecked()).toBool() );
 
 	settings.endGroup();
     settings.beginGroup(QLatin1String("AdBlock"));
@@ -658,6 +662,8 @@ void SettingsDialog::checkAddressBarButtons()
 	settings.setValue(QLatin1String("showTextSize"), tbTextSize->isChecked());
 	settings.setValue(QLatin1String("showKeyboard"), tbVirtKeyb->isChecked());
 	settings.setValue(QLatin1String("showBookmarks"), tbBookmarks->isChecked());
+
+	settings.setValue(QLatin1String("showDisableJavascript"), tbJavaScript->isChecked());
 	settings.endGroup();
 
 	BrowserApplication::instance()->mainWindow()->checkToolBarButtons();

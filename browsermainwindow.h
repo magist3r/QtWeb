@@ -247,7 +247,6 @@ private:
 	QAction *m_enableProxy;
 	QAction *m_disablePopUps;
 
-
     QAction *m_goBackAction;
     QAction *m_goForwardAction;
     QAction *m_addBookmarkAction;
