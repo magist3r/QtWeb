@@ -1,15 +1,5 @@
 --- src/3rdparty/webkit/Source/WebCore/features.pri	2012-11-23 16:10:02.000000000 +0600
 +++ src/3rdparty/webkit/Source/WebCore/features.pri.new	2013-05-03 22:31:22.507710944 +0600
-@@ -96,6 +96,9 @@
- # Tiled Backing Store support
- !contains(DEFINES, ENABLE_TILED_BACKING_STORE=.): DEFINES += ENABLE_TILED_BACKING_STORE=1
- 
-+# Explicitly disable Netscape plugins support
-+DEFINES += ENABLE_NETSCAPE_PLUGIN_API=0
-+
- # Nescape plugins support (NPAPI)
- !contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=.) {
-     unix|win32-*:!embedded:!wince*: {
 @@ -156,6 +159,9 @@
  
  !contains(DEFINES, ENABLE_TOUCH_EVENTS=.): DEFINES += ENABLE_TOUCH_EVENTS=1

@@ -12,7 +12,7 @@ PATCH1='0002-webkit-pro.patch'
 PATCH2='0003-qtwebkit-pro.patch'
 PATCH3='0004-qstyles-qrc.patch'
 PATCH4='0005-qwidget-cpp.patch'
-PATCH5='0006-webkit-disable-video-and-npapi.patch'
+PATCH5='0006-webkit-disable-npapi.patch'
 
 #linux
 PATCHL0='0021-linux-mkspec.patch'
