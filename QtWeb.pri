@@ -137,6 +137,6 @@ RESOURCES += data/data.qrc \
 RESOURCES += data/data.qrc \
     htmls/htmls.qrc \
     ./torrent/icons.qrc \
-    $(QTDIR)/src/3rdparty/webkit/Source/WebCore/WebCore.qrc \
-    $(QTDIR)/src/3rdparty/webkit/Source/WebCore/inspector/front-end/WebKit.qrc
+    #$(QTDIR)/src/3rdparty/webkit/Source/WebCore/WebCore.qrc \
+    #$(QTDIR)/src/3rdparty/webkit/Source/WebCore/inspector/front-end/WebKit.qrc
 }
