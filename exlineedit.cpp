@@ -107,7 +107,8 @@ LineEdit::LineEdit(QWidget *parent, bool fix_url) :
 
 }
 
-void LineEdit::mouseReleaseEvent(QMouseEvent *event)
+// Do we really need this? QWidget have better behaviour
+/*void LineEdit::mouseReleaseEvent(QMouseEvent *event)
 {
 	if (event->button() == Qt::LeftButton)
 	{
@@ -116,7 +117,7 @@ void LineEdit::mouseReleaseEvent(QMouseEvent *event)
 	}
 
 	QLineEdit::mouseReleaseEvent(event);
-}
+}*/
 
 void LineEdit::keyPressEvent ( QKeyEvent * event )
 {

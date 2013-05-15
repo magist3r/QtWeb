@@ -74,7 +74,7 @@ public:
 	LineEdit(QWidget *parent = 0, bool fix_url = false);
 
 protected:
-    void mouseReleaseEvent(QMouseEvent *event);
+   //void mouseReleaseEvent(QMouseEvent *event);
 	void keyPressEvent ( QKeyEvent * event );
 
 	bool m_fix_url;

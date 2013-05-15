@@ -467,9 +467,11 @@ WebView *TabWidget::newTab(bool makeCurrent)
         currentChanged(currentIndex());
     emit tabsChanged();
 
-	// move focus to address bar to type a new site
-	currentLineEdit()->selectAll();
-    currentLineEdit()->setFocus();
+	// move focus to address bar to type a new site (if new tab is current)
+	if (makeCurrent) {
+		currentLineEdit()->selectAll();
+		currentLineEdit()->setFocus();
+	}
 
 	QSettings settings;
     settings.beginGroup(QLatin1String("MainWindow"));
