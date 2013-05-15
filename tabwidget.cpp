@@ -110,7 +110,7 @@ TabWidget::TabWidget(QWidget *parent)
 	m_newTabAction->setIcon(QIcon(QLatin1String(":addtab.png")));
 	m_newTabAction->setIconVisibleInMenu(!hide_icons);
     m_newTabAction->setShortcuts( cmds.NewTabShortcuts() );
-    connect(m_newTabAction, SIGNAL(triggered()), this, SLOT(newTab()));
+	connect(m_newTabAction, SIGNAL(triggered()), this, SLOT(newTab(true, true)));
 	this->addAction(m_newTabAction);
 
 	// Close Tab
@@ -388,7 +388,7 @@ int TabWidget::addNewTab(WebView *view)
 	return  index;
 }
 
-WebView *TabWidget::newTab(bool makeCurrent)
+WebView *TabWidget::newTab(bool makeCurrent, bool empty)
 {
     // line edit
     UrlLineEdit *urlLineEdit = new UrlLineEdit;
@@ -468,7 +468,7 @@ WebView *TabWidget::newTab(bool makeCurrent)
     emit tabsChanged();
 
 	// move focus to address bar to type a new site (if new tab is current)
-	if (makeCurrent) {
+	if (makeCurrent && empty) {
 		currentLineEdit()->selectAll();
 		currentLineEdit()->setFocus();
 	}

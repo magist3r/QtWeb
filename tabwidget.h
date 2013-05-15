@@ -116,7 +116,7 @@ public slots:
     void loadUrl(const QUrl &url, TabWidget::Tab type = CurrentTab, const QString &title = QString());
 	void loadUrlNewTab(const QUrl &url) { loadUrl(url, NewTab); }
     void loadUrlInCurrentTab(const QUrl &url);
-    WebView *newTab(bool makeCurrent = true);
+	WebView *newTab(bool makeCurrent = true, bool empty = false);
     void cloneTab(int index = -1);
     void closeTab(int index = -1);
     void closeOtherTabs(int index);
