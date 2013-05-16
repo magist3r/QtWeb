@@ -95,7 +95,7 @@ QReadWriteLock lockIcons;
 
 int BrowserApplication::getApplicationBuild()
 {
-    return 102; // Current Build
+	return 103; // Current Build
 }
 
 BrowserApplication::BrowserApplication(int &argc, char **argv)
