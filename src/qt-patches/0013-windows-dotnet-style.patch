@@ -1,5 +1,5 @@
---- src/gui/styles/qstylefactory.cpp	2012-11-23 16:09:53.000000000 +0600
-+++ src/gui/styles/qstylefactory.cpp.new	2013-05-03 00:15:19.067436361 +0600
+--- src/gui/styles/qstylefactory.cpp	2013-05-16 19:05:55.099564034 +0600
++++ src/gui/styles/qstylefactory.cpp.new	2013-05-16 19:09:00.293754719 +0600
 @@ -69,6 +69,9 @@
  #ifndef QT_NO_STYLE_WINDOWSMOBILE
  #include "qwindowsmobilestyle.h"
@@ -22,18 +22,42 @@
  #ifndef QT_NO_STYLE_MOTIF
      if (style == QLatin1String("motif"))
          ret = new QMotifStyle;
-@@ -233,6 +241,11 @@
-         (QSysInfo::WindowsVersion >= QSysInfo::WV_VISTA && (QSysInfo::WindowsVersion & QSysInfo::WV_NT_based)))
-         list << QLatin1String("WindowsVista");
+@@ -216,22 +224,27 @@
+         list << QLatin1String("Windows");
  #endif
+ #ifndef QT_NO_STYLE_WINDOWSCE
+-    if (!list.contains(QLatin1String("WindowsCE")))
+-        list << QLatin1String("WindowsCE");
++    if (!list.contains(QLatin1String("Windows CE")))
++        list << QLatin1String("Windows CE");
+ #endif
+ #ifndef QT_NO_STYLE_WINDOWSMOBILE
+-    if (!list.contains(QLatin1String("WindowsMobile")))
+-        list << QLatin1String("WindowsMobile");
++    if (!list.contains(QLatin1String("Windows Mobile")))
++        list << QLatin1String("Windows Mobile");
+ #endif
+ #ifndef QT_NO_STYLE_WINDOWSXP
+-    if (!list.contains(QLatin1String("WindowsXP")) &&
++    if (!list.contains(QLatin1String("Windows XP")) &&
+         (QSysInfo::WindowsVersion >= QSysInfo::WV_XP && (QSysInfo::WindowsVersion & QSysInfo::WV_NT_based)))
+-        list << QLatin1String("WindowsXP");
++        list << QLatin1String("Windows XP");
+ #endif
+ #ifndef QT_NO_STYLE_WINDOWSVISTA
+-    if (!list.contains(QLatin1String("WindowsVista")) &&
++    if (!list.contains(QLatin1String("Windows Vista")) &&
+         (QSysInfo::WindowsVersion >= QSysInfo::WV_VISTA && (QSysInfo::WindowsVersion & QSysInfo::WV_NT_based)))
+-        list << QLatin1String("WindowsVista");
++        list << QLatin1String("Windows Vista");
++#endif
 +#ifndef QT_NO_STYLE_QTDOTNET
 +    if (!list.contains(QLatin1String("Windows .NET")) &&
 +        (QSysInfo::WindowsVersion >= QSysInfo::WV_2000 && QSysInfo::WindowsVersion < QSysInfo::WV_NT_based))
-+        list << QLatin1String("Windows.NET");
-+#endif
++        list << QLatin1String("Windows .NET");
+ #endif
  #ifndef QT_NO_STYLE_MOTIF
      if (!list.contains(QLatin1String("Motif")))
-         list << QLatin1String("Motif");
 --- src/gui/styles/styles.pri	2012-11-23 16:09:53.000000000 +0600
 +++ src/gui/styles/styles.pri.new	2013-05-03 00:23:22.874458792 +0600
 @@ -184,3 +184,6 @@

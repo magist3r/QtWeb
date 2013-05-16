@@ -141,7 +141,7 @@ void SettingsDialog::setProxyEnabled(bool state)
 QString DefaultAppStyle()
 {
 #ifdef Q_WS_WIN
-    return QLatin1String("Windows.NET");
+	return QLatin1String("Windows .NET");
 #else
     #ifdef Q_WS_MAC
         return QLatin1String("Macintosh (aqua)");

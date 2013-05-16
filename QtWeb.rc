@@ -68,12 +68,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "QtWeb.NET"
             VALUE "FileDescription", "QtWeb Internet Browser"
-            VALUE "FileVersion", "3, 8, 4, 102"
+            VALUE "FileVersion", "3, 8, 4, 103"
             VALUE "InternalName", "QtWeb Internet Browser"
             VALUE "LegalCopyright", "Copyright (C) 2008-2013 QtWeb.NET"
             VALUE "OriginalFilename", "QtWeb.exe"
             VALUE "ProductName", "QtWeb Internet Browser"
-            VALUE "ProductVersion", "3, 8, 4, 102"
+            VALUE "ProductVersion", "3, 8, 4, 103"
         END
     END
     BLOCK "VarFileInfo"
