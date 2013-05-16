@@ -130,7 +130,6 @@ if ! $SKIP_QT_BUILD; then
     OPTIONS+=' -no-accessibility'
     OPTIONS+=' -D QT_NO_STYLE_CDE'
     OPTIONS+=' -D QT_NO_STYLE_MOTIF'
-    OPTIONS+=' -D QT_NO_STYLE_PLASTIQUE'
     OPTIONS+=' -optimized-qmake'
 
     #Applying patches for Qt
