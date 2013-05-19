@@ -387,7 +387,7 @@ int TabWidget::addNewTab(WebView *view, bool empty)
 
 WebView *TabWidget::newEmptyTab()
 {
-	newTab(true, true);
+	return newTab(true, true);
 }
 
 
