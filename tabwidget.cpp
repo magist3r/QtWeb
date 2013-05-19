@@ -150,7 +150,7 @@ TabWidget::TabWidget(QWidget *parent)
     addTabButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
     setCornerWidget(addTabButton, Qt::TopLeftCorner);
 
-    connect(this, SIGNAL(currentChanged(int)), this, SLOT(currentChanged(int)));
+	connect(this, SIGNAL(currentChanged(int)), this, SLOT(currentChanged(int)));
 
     m_lineEdits = new QStackedWidget(this);
 }
@@ -256,10 +256,7 @@ void TabWidget::currentChanged(int index)
     m_lineEdits->setCurrentIndex(index);
     emit loadProgress(webView->progress());
     emit showStatusBarMessage(webView->lastStatusBarText());
-    if (webView->url().isEmpty())
-        m_lineEdits->currentWidget()->setFocus();
-    else
-        webView->setFocus();
+	webView->setFocus();
 }
 
 QAction *TabWidget::newTabAction() const
