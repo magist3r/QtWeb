@@ -86,7 +86,7 @@ public:
     TabWidget(QWidget *parent = 0);
     TabBar *tabBar() { return m_tabBar; }
     void clear();
-	int addNewTab(WebView *view);
+	int addNewTab(WebView *view, bool empty = false);
     void addWebAction(QAction *action, QWebPage::WebAction webAction);
 	void setCurrentTabTitle( QString title) { setCurrentTitle(title); }
     QAction *newTabAction() const;
@@ -116,8 +116,9 @@ public slots:
     void loadUrl(const QUrl &url, TabWidget::Tab type = CurrentTab, const QString &title = QString());
 	void loadUrlNewTab(const QUrl &url) { loadUrl(url, NewTab); }
     void loadUrlInCurrentTab(const QUrl &url);
+	WebView *newEmptyTab();
 	WebView *newTab(bool makeCurrent = true, bool empty = false);
-    void cloneTab(int index = -1);
+	void cloneTab(int index = -1);
     void closeTab(int index = -1);
     void closeOtherTabs(int index);
     void reloadTab(int index = -1);

@@ -86,7 +86,7 @@ TabWidget::TabWidget(QWidget *parent)
     connect(m_tabBar, SIGNAL(loadUrl(const QUrl&)),
             this, SLOT(loadUrlNewTab(const QUrl&)));
 
-    connect(m_tabBar, SIGNAL(newTab()), this, SLOT(newTab()));
+	connect(m_tabBar, SIGNAL(newTab()), this, SLOT(newEmptyTab()));
     connect(m_tabBar, SIGNAL(closeTab(int)), this, SLOT(closeTab(int)));
     connect(m_tabBar, SIGNAL(cloneTab(int)), this, SLOT(cloneTab(int)));
     connect(m_tabBar, SIGNAL(closeOtherTabs(int)), this, SLOT(closeOtherTabs(int)));
@@ -110,7 +110,7 @@ TabWidget::TabWidget(QWidget *parent)
 	m_newTabAction->setIcon(QIcon(QLatin1String(":addtab.png")));
 	m_newTabAction->setIconVisibleInMenu(!hide_icons);
     m_newTabAction->setShortcuts( cmds.NewTabShortcuts() );
-	connect(m_newTabAction, SIGNAL(triggered()), this, SLOT(newTab(true, true)));
+	connect(m_newTabAction, SIGNAL(triggered()), this, SLOT(newEmptyTab()));
 	this->addAction(m_newTabAction);
 
 	// Close Tab
@@ -354,7 +354,7 @@ int TabWidget::webViewIndex(WebView *webView) const
     return index;
 }
 
-int TabWidget::addNewTab(WebView *view)
+int TabWidget::addNewTab(WebView *view, bool empty)
 {
 	int index = addTab(view, tr("about:blank"));
 	if (index == 0)
@@ -364,7 +364,7 @@ int TabWidget::addNewTab(WebView *view)
     settings.beginGroup(QLatin1String("MainWindow"));
 	int newTabAction = settings.value(QLatin1String("newTabAction"), 0).toInt();
 
-	if (newTabAction == 2 || newTabAction == 1)
+	if (newTabAction == 2 || newTabAction == 1 || !empty)
 	{
 		return index;
 	}
@@ -387,6 +387,12 @@ int TabWidget::addNewTab(WebView *view)
  
 	return  index;
 }
+
+WebView *TabWidget::newEmptyTab()
+{
+	newTab(true, true);
+}
+
 
 WebView *TabWidget::newTab(bool makeCurrent, bool empty)
 {
@@ -452,7 +458,8 @@ WebView *TabWidget::newTab(bool makeCurrent, bool empty)
             this, SIGNAL(statusBarVisibilityChangeRequested(bool)));
     connect(webView->page(), SIGNAL(toolBarVisibilityChangeRequested(bool)),
             this, SIGNAL(toolBarVisibilityChangeRequested(bool)));
-    addNewTab(webView);
+
+	addNewTab(webView, empty);
 
 	if (makeCurrent)
         setCurrentWidget(webView);
@@ -476,7 +483,7 @@ WebView *TabWidget::newTab(bool makeCurrent, bool empty)
 	QSettings settings;
     settings.beginGroup(QLatin1String("MainWindow"));
 	int newTabAction = settings.value(QLatin1String("newTabAction"), 0).toInt();
-	if (newTabAction == 1)
+	if (newTabAction == 1 && empty)
 	{
 	    QString home = settings.value(QLatin1String("home"), QLatin1String("http://www.qtweb.net/")).toString();
 	    loadUrlInCurrentTab(home);
