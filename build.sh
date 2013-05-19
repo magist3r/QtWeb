@@ -6,6 +6,7 @@ CLEAN_QT_BUILD=false
 CROSS_COMPILE=false
 CROSS_COMPILE_PREFIX='i686-w64-mingw32-'
 COMPILE_JOBS=8
+MAKE_COMMAND="make -j$COMPILE_JOBS"
 
 PATCH0='0001-configure.patch'
 PATCH1='0002-webkit-pro.patch'
@@ -22,9 +23,10 @@ PATCHL1='0022-linux-qgtkstyle-qtbug-23569.patch'
 PATCHM0='0031-mac-qtbug-29373-00.patch'
 
 #win32
-PATCHW0='0012-windows-webcore-pro.patch'
-PATCHW1='0013-windows-dotnet-style.patch'
-PATCHW2='0014-windows-mkspec-cross-compile.patch'
+PATCHW0='0011-windows-mkspec.patch'
+PATCHW1='0012-windows-webcore-pro.patch'
+PATCHW2='0013-windows-dotnet-style.patch'
+PATCHW3='0014-windows-mkspec-cross-compile.patch'
 
 until [ -z "$1" ]; do
     case $1 in
@@ -82,6 +84,12 @@ if ! $SKIP_QT_BUILD; then
         OPTIONS+=' -arch x86'
         OPTIONS+=' -carbon' # use carbon for compatibility reasons
         OPTIONS+=' -openssl'
+    elif [[ $OSTYPE = msys ]]; then
+        SSL_LIBS='-lssleay32 -llibeay32 -lcrypt32 -lgdi32'
+        OPTIONS+=' -openssl-linked'
+        OPTIONS+=' -mp'
+        OPTIONS+=' -no-s60'
+        MAKE_COMMAND=nmake
     elif [[ $OSTYPE = beos ]]; then
         OPTIONS+=' -no-largefile'
         OPTIONS+=' -no-pch'
@@ -154,11 +162,17 @@ if ! $SKIP_QT_BUILD; then
     if [[ $OSTYPE = darwin* ]]; then
         patch -p1 -N < "$PATCHDIR/$PATCHM0"
     fi
-
-    if $CROSS_COMPILE; then
+    
+    if [[ $OSTYPE = msys ]]; then
         patch -p0 -N < "$PATCHDIR/$PATCHW0"
         patch -p0 -N < "$PATCHDIR/$PATCHW1"
         patch -p0 -N < "$PATCHDIR/$PATCHW2"
+    fi
+
+    if $CROSS_COMPILE; then
+        patch -p0 -N < "$PATCHDIR/$PATCHW1"
+        patch -p0 -N < "$PATCHDIR/$PATCHW2"
+        patch -p0 -N < "$PATCHDIR/$PATCHW3"
     fi
 
     # make clean if we have previous build in src/qt
@@ -166,14 +180,14 @@ if ! $SKIP_QT_BUILD; then
         make confclean
     fi
 
-    OPENSSL_LIBS="$SSL_LIBS" ./configure -prefix $PWD $OPTIONS && make -j$COMPILE_JOBS || qt_error
+    OPENSSL_LIBS="$SSL_LIBS" ./configure -prefix $PWD $OPTIONS && $MAKE_COMMAND || qt_error
     cd ../..
 fi # end of Qt build
 
 rm -rf build && mkdir -p build && cd build
 export QTDIR=../src/qt
 ../src/qt/bin/qmake -config release ../QtWeb.pro
-make -j$COMPILE_JOBS
+$MAKE_COMMAND
 
 #fix qt_menu.nib issue
 if [[ $OSTYPE = darwin* ]]; then
