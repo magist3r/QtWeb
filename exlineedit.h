@@ -74,10 +74,14 @@ public:
 	LineEdit(QWidget *parent = 0, bool fix_url = false);
 
 protected:
-   //void mouseReleaseEvent(QMouseEvent *event);
+	void focusInEvent(QFocusEvent *);
+	void mousePressEvent(QMouseEvent *);
 	void keyPressEvent ( QKeyEvent * event );
 
 	bool m_fix_url;
+
+private:
+	bool m_selectOnMouse;
 };
 
 

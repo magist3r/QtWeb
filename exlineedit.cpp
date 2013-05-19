@@ -104,20 +104,25 @@ LineEdit::LineEdit(QWidget *parent, bool fix_url) :
 	QLineEdit( parent)
 	, m_fix_url(fix_url)
 {
-
+	m_selectOnMouse = false;
 }
 
-// Do we really need this? QWidget have better behaviour
-/*void LineEdit::mouseReleaseEvent(QMouseEvent *event)
+void LineEdit::focusInEvent(QFocusEvent *event)
 {
-	if (event->button() == Qt::LeftButton)
-	{
-		if (!hasSelectedText())
-			selectAll();
-	}
+	if (event->reason() == Qt::MouseFocusReason)
+		m_selectOnMouse = true;
 
-	QLineEdit::mouseReleaseEvent(event);
-}*/
+	QLineEdit::focusInEvent(event);
+}
+
+void LineEdit::mousePressEvent(QMouseEvent *event)
+{
+	QLineEdit::mousePressEvent(event);
+	if (event->button() == Qt::LeftButton && m_selectOnMouse) {
+		selectAll();
+		m_selectOnMouse = false;
+	}
+}
 
 void LineEdit::keyPressEvent ( QKeyEvent * event )
 {
