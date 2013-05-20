@@ -7,26 +7,22 @@ CROSS_COMPILE=false
 CROSS_COMPILE_PREFIX='i686-w64-mingw32-'
 COMPILE_JOBS=8
 MAKE_COMMAND="make -j$COMPILE_JOBS"
+PATCHES=() # Array of patches
 
-PATCH0='0001-configure.patch'
-PATCH1='0002-webkit-pro.patch'
-PATCH2='0003-qtwebkit-pro.patch'
-PATCH3='0004-qstyles-qrc.patch'
-PATCH4='0005-qwidget-cpp.patch'
-PATCH5='0006-webkit-disable-npapi.patch'
+PATCHES+=('0001-configure.patch')
+PATCHES+=('0002-webkit-pro.patch')
+PATCHES+=('0003-qtwebkit-pro.patch')
+PATCHES+=('0004-qstyles-qrc.patch')
+PATCHES+=('0005-qwidget-cpp.patch')
+PATCHES+=('0006-webkit-disable-npapi.patch')
 
-#linux
-PATCHL0='0021-linux-mkspec.patch'
-PATCHL1='0022-linux-qgtkstyle-qtbug-23569.patch'
+
 
 #mac
-PATCHM0='0031-mac-qtbug-29373-00.patch'
+
 
 #win32
-PATCHW0='0011-windows-mkspec.patch'
-PATCHW1='0012-windows-webcore-pro.patch'
-PATCHW2='0013-windows-dotnet-style.patch'
-PATCHW3='0014-windows-mkspec-cross-compile.patch'
+
 
 until [ -z "$1" ]; do
     case $1 in
@@ -84,12 +80,18 @@ if ! $SKIP_QT_BUILD; then
         OPTIONS+=' -arch x86'
         OPTIONS+=' -carbon' # use carbon for compatibility reasons
         OPTIONS+=' -openssl'
+        
+        PATCHES+=('0031-mac-qtbug-29373-00.patch')
     elif [[ $OSTYPE = msys ]]; then
         SSL_LIBS='-lssleay32 -llibeay32 -lcrypt32 -lgdi32'
         OPTIONS+=' -openssl-linked'
         OPTIONS+=' -mp'
         OPTIONS+=' -no-s60'
         MAKE_COMMAND=nmake
+
+        PATCHES+=('0011-windows-mkspec.patch')
+        PATCHES+=('0012-windows-webcore-pro.patch')
+        PATCHES+=('0013-windows-dotnet-style.patch')
     elif [[ $OSTYPE = beos ]]; then
         OPTIONS+=' -no-largefile'
         OPTIONS+=' -no-pch'
@@ -100,11 +102,18 @@ if ! $SKIP_QT_BUILD; then
             OPTIONS+=" -device-option CROSS_COMPILE=$CROSS_COMPILE_PREFIX"
             SSL_LIBS='-lssl -lcrypto -lcrypt32 -lgdi32'
             OPTIONS+=' -openssl-linked'
+            
+            PATCHES+=('0012-windows-webcore-pro.patch')
+            PATCHES+=('0013-windows-dotnet-style.patch')
+            PATCHES+=('0014-windows-mkspec-cross-compile.patch')
         else
             OPTIONS+=' -system-freetype'
             OPTIONS+=' -fontconfig'
             OPTIONS+=' -reduce-relocations'
             OPTIONS+=' -openssl'
+            
+            PATCHES+=('0021-linux-mkspec.patch')
+            PATCHES+=('0022-linux-qgtkstyle-qtbug-23569.patch')
         fi
     fi
 
@@ -140,40 +149,16 @@ if ! $SKIP_QT_BUILD; then
     OPTIONS+=' -D QT_NO_STYLE_MOTIF'
     OPTIONS+=' -optimized-qmake'
 
-    #Applying patches for Qt
     cd src/qt
     if [ ! -e ./configure ]; then
         echo "Looks like you forgot to extract Qt sources in src/qt directory!"
         exit 1
     fi
-
-    patch -p0 -N < "$PATCHDIR/$PATCH0"
-    patch -p0 -N < "$PATCHDIR/$PATCH1"
-    patch -p0 -N < "$PATCHDIR/$PATCH2"
-    patch -p0 -N < "$PATCHDIR/$PATCH3"
-    patch -p0 -N < "$PATCHDIR/$PATCH4"
-    patch -p0 -N < "$PATCHDIR/$PATCH5"
-
-    if [[ $OSTYPE = linux* ]] && ! $CROSS_COMPILE; then
-        patch -p0 -N < "$PATCHDIR/$PATCHL0"
-        patch -p0 -N < "$PATCHDIR/$PATCHL1"
-    fi
-
-    if [[ $OSTYPE = darwin* ]]; then
-        patch -p1 -N < "$PATCHDIR/$PATCHM0"
-    fi
     
-    if [[ $OSTYPE = msys ]]; then
-        patch -p0 -N < "$PATCHDIR/$PATCHW0"
-        patch -p0 -N < "$PATCHDIR/$PATCHW1"
-        patch -p0 -N < "$PATCHDIR/$PATCHW2"
-    fi
-
-    if $CROSS_COMPILE; then
-        patch -p0 -N < "$PATCHDIR/$PATCHW1"
-        patch -p0 -N < "$PATCHDIR/$PATCHW2"
-        patch -p0 -N < "$PATCHDIR/$PATCHW3"
-    fi
+    #Applying patches for Qt
+    for i in "${PATCHES[@]}"; do
+        patch -p0 -N < "$PATCHDIR/$i"
+    done
 
     # make clean if we have previous build in src/qt
     if $CLEAN_QT_BUILD; then
@@ -181,6 +166,12 @@ if ! $SKIP_QT_BUILD; then
     fi
 
     OPENSSL_LIBS="$SSL_LIBS" ./configure -prefix $PWD $OPTIONS && $MAKE_COMMAND || qt_error
+    
+    #Revert patches to clean sources
+    for i in "${PATCHES[@]}"; do
+        patch -p0 -R < "$PATCHDIR/$i"
+    done
+
     cd ../..
 fi # end of Qt build
 

@@ -1,7 +1,7 @@
-diff --git a/src/gui/kernel/qt_cocoa_helpers_mac_p.h b/src/gui/kernel/qt_cocoa_helpers_mac_p.h
+diff --git src/gui/kernel/qt_cocoa_helpers_mac_p.h src/gui/kernel/qt_cocoa_helpers_mac_p.h
 index c068234..aa25923 100644
---- a/src/gui/kernel/qt_cocoa_helpers_mac_p.h
-+++ b/src/gui/kernel/qt_cocoa_helpers_mac_p.h
+--- src/gui/kernel/qt_cocoa_helpers_mac_p.h
++++ src/gui/kernel/qt_cocoa_helpers_mac_p.h
 @@ -155,7 +155,7 @@ bool qt_dispatchKeyEvent(void * /*NSEvent * */ keyEvent, QWidget *widgetToGetEve
  void qt_dispatchModifiersChanged(void * /*NSEvent * */flagsChangedEvent, QWidget *widgetToGetEvent);
  bool qt_mac_handleTabletEvent(void * /*QCocoaView * */view, void * /*NSEvent * */event);
