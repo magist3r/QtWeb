@@ -40,7 +40,6 @@ set OPTIONS=%OPTIONS% -no-dbus
 set OPTIONS=%OPTIONS% -no-stl
 set OPTIONS=%OPTIONS% -no-libtiff
 set OPTIONS=%OPTIONS% -no-libmng
-set OPTIONS=%OPTIONS% -no-style-plastique
 set OPTIONS=%OPTIONS% -no-style-motif
 set OPTIONS=%OPTIONS% -no-style-cde
 set OPTIONS=%OPTIONS% -no-s60
