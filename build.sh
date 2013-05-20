@@ -8,6 +8,7 @@ CROSS_COMPILE_PREFIX='i686-w64-mingw32-'
 COMPILE_JOBS=8
 MAKE_COMMAND="make -j$COMPILE_JOBS"
 PATCHES=() # Array of patches
+MKSPEC_PATCHES=() # Patches for qmake.conf 
 
 PATCHES+=('0001-configure.patch')
 PATCHES+=('0002-webkit-pro.patch')
@@ -81,7 +82,8 @@ if ! $SKIP_QT_BUILD; then
         OPTIONS+=' -no-s60'
         MAKE_COMMAND=nmake
 
-        PATCHES+=('0011-windows-mkspec.patch')
+        MKSPEC_PATCHES+=('0011-windows-mkspec.patch')
+        
         PATCHES+=('0012-windows-webcore-pro.patch')
         PATCHES+=('0013-windows-dotnet-style.patch')
     elif [[ $OSTYPE = beos ]]; then
@@ -97,14 +99,16 @@ if ! $SKIP_QT_BUILD; then
             
             PATCHES+=('0012-windows-webcore-pro.patch')
             PATCHES+=('0013-windows-dotnet-style.patch')
-            PATCHES+=('0014-windows-mkspec-cross-compile.patch')
+            
+            MKSPEC_PATCHES+=('0014-windows-mkspec-cross-compile.patch')
         else
             OPTIONS+=' -system-freetype'
             OPTIONS+=' -fontconfig'
             OPTIONS+=' -reduce-relocations'
             OPTIONS+=' -openssl'
             
-            PATCHES+=('0021-linux-mkspec.patch')
+            MKSPEC_PATCHES+=('0021-linux-mkspec.patch')
+            
             PATCHES+=('0022-linux-qgtkstyle-qtbug-23569.patch')
         fi
     fi
@@ -150,6 +154,10 @@ if ! $SKIP_QT_BUILD; then
     #Applying patches for Qt
     for i in "${PATCHES[@]}"; do
         patch -p0 -N < "$PATCHDIR/$i"
+    done
+    
+    for j in "${MKSPEC_PATCHES[@]}"; do
+        patch -p0 -N < "$PATCHDIR/$j"
     done
 
     # make clean if we have previous build in src/qt
