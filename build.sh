@@ -16,14 +16,6 @@ PATCHES+=('0004-qstyles-qrc.patch')
 PATCHES+=('0005-qwidget-cpp.patch')
 PATCHES+=('0006-webkit-disable-npapi.patch')
 
-
-
-#mac
-
-
-#win32
-
-
 until [ -z "$1" ]; do
     case $1 in
         "--skip-qt-build")

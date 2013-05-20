@@ -6,6 +6,7 @@ cd src\qt\
 ..\..\bin\patch.exe -p0 -N < ..\qt-patches\0003-qtwebkit-pro.patch
 ..\..\bin\patch.exe -p0 -N < ..\qt-patches\0004-qstyles-qrc.patch
 ..\..\bin\patch.exe -p0 -N < ..\qt-patches\0005-qwidget-cpp.patch
+..\..\bin\patch.exe -p0 -N < ..\qt-patches\0006-webkit-disable-npapi.patch
 ..\..\bin\patch.exe -p0 -N < ..\qt-patches\0011-windows-mkspec.patch
 ..\..\bin\patch.exe -p0 -N < ..\qt-patches\0012-windows-webcore-pro.patch
 ..\..\bin\patch.exe -p0 -N < ..\qt-patches\0013-windows-dotnet-style.patch
@@ -25,7 +26,7 @@ set OPTIONS=%OPTIONS% -nomake translations
 set OPTIONS=%OPTIONS% -nomake tests
 set OPTIONS=%OPTIONS% -nomake tools
 set OPTIONS=%OPTIONS% -no-declarative
-::set OPTIONS=%OPTIONS% -no-multimedia
+set OPTIONS=%OPTIONS% -no-multimedia
 set OPTIONS=%OPTIONS% -no-opengl
 set OPTIONS=%OPTIONS% -no-openvg
 set OPTIONS=%OPTIONS% -no-phonon
@@ -46,6 +47,15 @@ set OPTIONS=%OPTIONS% -no-s60
 set OPTIONS=%OPTIONS% -mp
 set OPTIONS=%OPTIONS% -no-accessibility
 
-configure -prefix %cd% %OPTIONS% && nmake && cd ..\..
-mkdir build && cd build
+configure -prefix %cd% %OPTIONS% && nmake
+..\..\bin\patch.exe -p0 -R < ..\qt-patches\0001-configure.patch
+..\..\bin\patch.exe -p0 -R < ..\qt-patches\0002-webkit-pro.patch
+..\..\bin\patch.exe -p0 -R < ..\qt-patches\0003-qtwebkit-pro.patch
+..\..\bin\patch.exe -p0 -R < ..\qt-patches\0004-qstyles-qrc.patch
+..\..\bin\patch.exe -p0 -R < ..\qt-patches\0005-qwidget-cpp.patch
+..\..\bin\patch.exe -p0 -R < ..\qt-patches\0006-webkit-disable-npapi.patch
+..\..\bin\patch.exe -p0 -R < ..\qt-patches\0011-windows-mkspec.patch
+..\..\bin\patch.exe -p0 -R < ..\qt-patches\0012-windows-webcore-pro.patch
+..\..\bin\patch.exe -p0 -R < ..\qt-patches\0013-windows-dotnet-style.patch
+rmdir /S build && mkdir build && cd build
 ..\src\qt\bin\qmake.exe -config release ..\QtWeb.pro && nmake
