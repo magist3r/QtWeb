@@ -729,7 +729,7 @@ void SettingsDialog::warnLangChange(int)
 
 void SettingsDialog::setAppStyle(int index)
 {
-	QString style = comboBoxStyle->currentText().replace(" ","");
+	QString style = comboBoxStyle->currentText();
 	QApplication::setStyle(QStyleFactory::create(style));
 }
 

@@ -1,5 +1,5 @@
---- src/gui/styles/qstylefactory.cpp	2013-05-16 19:05:55.099564034 +0600
-+++ src/gui/styles/qstylefactory.cpp.new	2013-05-16 19:09:00.293754719 +0600
+--- src/gui/styles/qstylefactory.cpp	2013-05-21 00:09:09.545552490 +0600
++++ src/gui/styles/qstylefactory.cpp.new	2013-05-21 00:45:20.323658343 +0600
 @@ -69,6 +69,9 @@
  #ifndef QT_NO_STYLE_WINDOWSMOBILE
  #include "qwindowsmobilestyle.h"
@@ -10,12 +10,35 @@
  #ifndef QT_NO_STYLE_S60
  #include "qs60style.h"
  #endif
-@@ -147,6 +150,11 @@
+@@ -128,25 +131,30 @@
+     else
+ #endif
+ #ifndef QT_NO_STYLE_WINDOWSCE
+-    if (style == QLatin1String("windowsce"))
++    if (style == QLatin1String("windows ce"))
+         ret = new QWindowsCEStyle;
+     else
+ #endif
+ #ifndef QT_NO_STYLE_WINDOWSMOBILE
+-    if (style == QLatin1String("windowsmobile"))
++    if (style == QLatin1String("windows mobile"))
+         ret = new QWindowsMobileStyle;
+     else
+ #endif
+ #ifndef QT_NO_STYLE_WINDOWSXP
+-    if (style == QLatin1String("windowsxp"))
++    if (style == QLatin1String("windows xp"))
+         ret = new QWindowsXPStyle;
+     else
+ #endif
+ #ifndef QT_NO_STYLE_WINDOWSVISTA
+-    if (style == QLatin1String("windowsvista"))
++    if (style == QLatin1String("windows vista"))
          ret = new QWindowsVistaStyle;
      else
  #endif
 +#ifndef QT_NO_STYLE_QTDOTNET
-+    if (style == QLatin1String("windows.net"))
++    if (style == QLatin1String("windows .net"))
 +        ret = new QtDotNetStyle;
 +    else
 +#endif
