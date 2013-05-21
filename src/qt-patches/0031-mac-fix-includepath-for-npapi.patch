@@ -1,0 +1,11 @@
+--- src/3rdparty/webkit/Source/WebCore/WebCore.pri	2012-11-23 16:09:57.000000000 +0600
++++ src/3rdparty/webkit/Source/WebCore/WebCore.pri.new	2013-05-22 04:16:23.124764798 +0600
+@@ -192,7 +192,7 @@
+ contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
+     unix:!symbian {
+         mac {
+-            INCLUDEPATH += platform/mac
++            INCLUDEPATH += $$PWD/platform/mac
+             # Note: XP_MACOSX is defined in npapi.h
+         } else {
+             !embedded {
