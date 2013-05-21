@@ -1,5 +1,5 @@
---- src/3rdparty/webkit/Source/WebKit/qt/QtWebKit.pro	2012-11-23 16:10:05.000000000 +0600
-+++ src/3rdparty/webkit/Source/WebKit/qt/QtWebKit.pro.new	2013-05-01 22:34:04.882943305 +0600
+--- src/3rdparty/webkit/Source/WebKit/qt/QtWebKit.pro	2013-05-22 02:10:17.375295064 +0600
++++ src/3rdparty/webkit/Source/WebKit/qt/QtWebKit.pro.new	2013-05-22 02:23:48.988839727 +0600
 @@ -2,7 +2,6 @@
  CONFIG += building-libs
  CONFIG += depend_includepath
@@ -8,7 +8,7 @@
  TEMPLATE = lib
  
  DEFINES += BUILDING_WEBKIT
-@@ -15,23 +14,45 @@
+@@ -15,23 +14,50 @@
  
  SOURCE_DIR = $$replace(PWD, /WebKit/qt, "")
  
@@ -37,6 +37,11 @@
 +}
 +for(item, HEADERS):WEB_CORE_HEADERS += ../../WebCore/$$item
 +
++mac {
++    for(item, OBJECTIVE_SOURCES):WEB_CORE_OBJECTIVE_SOURCES += ../../WebCore/$$item
++    OBJECTIVE_SOURCES = $$WEB_CORE_OBJECTIVE_SOURCES
++}
++
 +SOURCES = $$JAVASCRIPT_CORE_SOURCES $$WEB_CORE_SOURCES
 +HEADERS = $$WEB_CORE_HEADERS
 +
@@ -61,7 +66,7 @@
  
  isEmpty(OUTPUT_DIR): OUTPUT_DIR = ../..
  
-@@ -42,6 +63,8 @@
+@@ -42,6 +68,8 @@
      contains(DEFINES, ENABLE_WEBGL=1)|contains(CONFIG, texmap): LIBS += $$QMAKE_LIBS_OPENGL
  }
  
