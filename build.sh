@@ -73,6 +73,7 @@ if ! $SKIP_QT_BUILD; then
         OPTIONS+=' -arch x86'
         OPTIONS+=' -carbon' # use carbon for compatibility reasons
         OPTIONS+=' -openssl'
+        OPTIONS+=' -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.6.sdk'
         
         PATCHES+=('0031-mac-qtbug-29373-00.patch')
     elif [[ $OSTYPE = msys ]]; then
