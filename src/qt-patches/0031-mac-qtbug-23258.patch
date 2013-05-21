@@ -1,0 +1,18 @@
+--- src/3rdparty/webkit/Source/WebCore/platform/graphics/mac/MediaPlayerPrivateQTKit.mm	2012-11-23 16:09:58.000000000 +0600
++++ src/3rdparty/webkit/Source/WebCore/platform/graphics/mac/MediaPlayerPrivateQTKit.mm.new	2013-05-21 23:51:41.544645688 +0600
+@@ -47,6 +47,15 @@
+ #import "SoftLinking.h"
+ #import "TimeRanges.h"
+ #import "WebCoreSystemInterface.h"
++
++#if PLATFORM(QT)
++// Avoid clash with slots member in CALayer.h
++#include <qobjectdefs.h>
++#if defined(slots)
++#undef slots
++#endif
++#endif
++
+ #import <QTKit/QTKit.h>
+ #import <objc/objc-runtime.h>
+ #import <wtf/UnusedParam.h>

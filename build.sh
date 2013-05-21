@@ -75,7 +75,7 @@ if ! $SKIP_QT_BUILD; then
         OPTIONS+=' -openssl'
         OPTIONS+=' -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.6.sdk'
         
-        PATCHES+=('0031-mac-qtbug-29373-00.patch')
+        PATCHES+=('0031-mac-qtbug-23258.patch')
     elif [[ $OSTYPE = msys ]]; then
         SSL_LIBS='-lssleay32 -llibeay32 -lcrypt32 -lgdi32'
         OPTIONS+=' -openssl-linked'
