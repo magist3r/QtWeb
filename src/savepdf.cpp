@@ -131,7 +131,7 @@ void SavePDF::save()
 
     accept();
 
-    QDesktopServices::openUrl("file://" + QFileInfo(ui.fileName->text()).absoluteFilePath());
+    QDesktopServices::openUrl(QUrl::fromLocalFile(ui.fileName->text()));
 }
 
 void SavePDF::getFileName()

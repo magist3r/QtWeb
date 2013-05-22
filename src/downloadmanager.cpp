@@ -264,7 +264,7 @@ void DownloadItem::open()
         return;
 
     QFileInfo info(m_output);
-    QDesktopServices::openUrl("file://" + info.absoluteFilePath());
+    QDesktopServices::openUrl(QUrl::fromLocalFile(info.absoluteFilePath()));
 }
 
 void DownloadItem::tryAgain()
@@ -729,7 +729,7 @@ QString dirDownloads(bool create_dir)
 
 void DownloadManager::open_downloads()
 {
-    QDesktopServices::openUrl("file://" + dirDownloads(true));
+    QDesktopServices::openUrl(QUrl::fromLocalFile(dirDownloads(true)));
 }
 
 

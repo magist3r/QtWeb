@@ -1008,9 +1008,7 @@ void BrowserMainWindow::setupMenu()
 
 void BrowserMainWindow::slotVirtualKeyboard()
 {
-    QProcess *myProcess = new QProcess(this);
-    myProcess->start("osk.exe");
-    myProcess->waitForFinished();
+    QDesktopServices::openUrl(QUrl::fromLocalFile("osk.exe"));
 }
 
 void BrowserMainWindow::slotResetQtWeb()
@@ -2099,7 +2097,7 @@ void BrowserMainWindow::slotViewPageSource()
 
         QFileInfo info(file);
 
-        QDesktopServices::openUrl("file://" + info.absoluteFilePath());
+        QDesktopServices::openUrl(QUrl::fromLocalFile(info.absoluteFilePath()));
     }
 }
 
