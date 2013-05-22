@@ -264,7 +264,10 @@ void DownloadItem::open()
         return;
 
     QFileInfo info(m_output);
-    QDesktopServices::openUrl(QUrl::fromLocalFile(info.absoluteFilePath()));
+    if ( tryAgainButton->isVisible() || stopButton->isVisible())
+        QDesktopServices::openUrl(QUrl::fromLocalFile(info.absolutePath()));
+    else
+        QDesktopServices::openUrl(QUrl::fromLocalFile(info.absoluteFilePath()));
 }
 
 void DownloadItem::tryAgain()
