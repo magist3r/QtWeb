@@ -8,7 +8,8 @@ DEFINES += QT_NO_UITOOLS
 
 INCLUDEPATH += $$DESTDIR/moc \
     $$DESTDIR/rcc \
-    $$DESTDIR/uic 
+    $$DESTDIR/uic \
+    .
     
 MOC_DIR = $$DESTDIR/moc/
 OBJECTS_DIR = $$DESTDIR/obj/

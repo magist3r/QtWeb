@@ -61,6 +61,7 @@
 #include <QtCore/QSettings>
 #include <QtCore/QMetaEnum>
 #include <QTextCodec>
+#include <QProcess>
 #include <QtGui/QDesktopWidget>
 #include <QtGui/QFileDialog>
 #include <QtGui/QPlainTextEdit>
@@ -71,6 +72,7 @@
 #include <QtGui/QStatusBar>
 #include <QtGui/QToolBar>
 #include <QtGui/QInputDialog>
+#include <QtGui/QDesktopServices>
 #include <QThread>
 #include <QFile>
 #include <QStyleFactory>
@@ -1006,7 +1008,9 @@ void BrowserMainWindow::setupMenu()
 
 void BrowserMainWindow::slotVirtualKeyboard()
 {
-	ShellExec(QLatin1String("osk.exe"));
+    QProcess *myProcess = new QProcess(this);
+    myProcess->start("osk.exe");
+    myProcess->waitForFinished();
 }
 
 void BrowserMainWindow::slotResetQtWeb()
@@ -1741,7 +1745,7 @@ void BrowserMainWindow::slotEmptyCache()
 
 void BrowserMainWindow::slotHelp()
 {
-	ShellExec("QtWeb.chm");
+    return;
 }
 
 void BrowserMainWindow::slotHelpOnline()
@@ -2093,9 +2097,9 @@ void BrowserMainWindow::slotViewPageSource()
 		file.write( markup.toUtf8() );
 		file.close();
 
+        QFileInfo info(file);
 
-		if (!ShellOpenApp(extViewer, temp_file_name))
-			ShellOpenApp(notepad, temp_file_name);
+        QDesktopServices::openUrl("file://" + info.absoluteFilePath());
 	}
 }
 

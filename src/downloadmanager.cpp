@@ -51,6 +51,7 @@
 #include <QtGui/QFileDialog>
 #include <QtGui/QHeaderView>
 #include <QtGui/QFileIconProvider>
+#include <QtGui/QDesktopServices>
 #include <QMessageBox>
 #include <QtCore/QDebug>
 #include <QtCore/QProcess>
@@ -257,129 +258,13 @@ void DownloadItem::mouseDoubleClickEvent ( QMouseEvent * event )
 	open();
 }
 
-#ifdef Q_WS_WIN
-	#include <windows.h>
-	#include <shellapi.h>
-
-bool ShellOpenApp(QString app, QString cmd)
-{
-	app = QDir::toNativeSeparators(app);
-    return ( (int)::ShellExecute(NULL, L"open", (LPCWSTR)app.utf16(), (LPCWSTR)cmd.utf16(), NULL, SW_SHOWNORMAL) > 32);
-}
-
-bool ShellOpenExplorer(QString path)
-{
-	path = QDir::toNativeSeparators(path);
-	QString line = "/select," + path;
-    return ( (int)::ShellExecute(NULL, L"open", L"explorer.exe", (LPCWSTR)line.utf16(), NULL, SW_SHOWNORMAL) > 32);
-}
-
-bool ShellExec(QString path)
-{
-	#define MESSAGE_TITLE QObject::tr("Open file error")
-
-	bool result = true;
-    HINSTANCE res = ShellExecute(NULL, L"open", (LPCWSTR)path.utf16(), NULL, NULL, SW_SHOWNORMAL);
-	if ((int)res <= 32)
-	{
-		switch ((int)res)
-		{
-			case ERROR_FILE_NOT_FOUND:
-			case ERROR_PATH_NOT_FOUND:
-				QMessageBox::critical(0, MESSAGE_TITLE, QObject::tr("The specified file/path was not found."));
-				result = false;
-				break;
-			case ERROR_BAD_FORMAT:
-				QMessageBox::warning(0, MESSAGE_TITLE, QObject::tr("The .exe file is invalid (non-Microsoft Win32 .exe or error in .exe image)."));
-				result = ShellOpenExplorer(path);
-				break;
-			case SE_ERR_ACCESSDENIED:
-				QMessageBox::warning(0, MESSAGE_TITLE, QObject::tr("The operating system denied access to the specified file."));
-				result = ShellOpenExplorer(path);
-				break;
-			case SE_ERR_ASSOCINCOMPLETE:
-			case SE_ERR_NOASSOC:	
-			case SE_ERR_DLLNOTFOUND:
-			case SE_ERR_OOM:
-				//"The file name association is incomplete or invalid."
-				result = ShellOpenExplorer(path);
-				break;
-			case SE_ERR_SHARE:
-				QMessageBox::warning(0, MESSAGE_TITLE, QObject::tr("A sharing violation occurred."));
-				result = ShellOpenExplorer(path);
-				break;
-		}
-	}
-	//result = ShellOpenExplorer(path);
-	return result;
-}
-
-#else // MacOS or Linux (GNOME or KDE)
-
-	bool ShellOpenApp(QString app, QString cmd)
-	{
-		QProcess* process = new QProcess(BrowserApplication::instance());
-		process->start( app, QStringList() << cmd);
-
-		return true;
-	}
-
-	bool ShellOpenExplorer(QString path)
-	{
-		return true;
-	}
-
-    #ifdef Q_WS_MAC
-    
-	bool ShellExec(QString path)
-	{
-		QProcess* process = new QProcess(BrowserApplication::instance());
-        process->start( QLatin1String("Open"), QStringList() << path);
-
-		return true;
-	}
-
-    #else // Linux
-
-        bool ShellExec(QString path)
-        {
-                QProcess* process = new QProcess(BrowserApplication::instance());
-                if (!process->startDetached( QLatin1String("konqueror"), QStringList() << path))
-                {
-                    QFileInfo info(path);
-                    if (!process->startDetached( QLatin1String("konqueror"), QStringList() << info.absolutePath()))
-                        return process->startDetached( QLatin1String("nautilus"), QStringList() << info.absolutePath());
-                }
-
-                return false;
-        }
-
-    #endif
-
-#endif
-
 void DownloadItem::open()
 {
 	if (checkAddTorrent())
 		return;
 
     QFileInfo info(m_output);
-#ifdef Q_WS_WIN
-	if ( tryAgainButton->isVisible() || stopButton->isVisible())
-		ShellOpenExplorer( info.absoluteFilePath() );
-	else
-		ShellExec(info.absoluteFilePath());
-#else
-	QProcess* process = new QProcess(this);
-    if ( info.isExecutable() )
-		process->start( info.absoluteFilePath() );
-	else
-    #ifdef Q_WS_MAC
-        process->start( QLatin1String("Open"), QStringList() << info.absoluteFilePath());
-    #else
-        ShellExec(info.absoluteFilePath());
-    #endif
-#endif
+    QDesktopServices::openUrl("file://" + info.absoluteFilePath());
 }
 
 void DownloadItem::tryAgain()
@@ -844,8 +729,7 @@ QString dirDownloads(bool create_dir)
 
 void DownloadManager::open_downloads()
 {
-
-	ShellExec( dirDownloads( true ) );
+    QDesktopServices::openUrl("file://" + dirDownloads(true));
 }
 
 

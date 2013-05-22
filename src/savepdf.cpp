@@ -1,4 +1,5 @@
 #include "savepdf.h"
+#include <QtGui/QDesktopServices>
 #include <QSettings>
 #include <QFileDialog>
 #include <QPrinter>
@@ -130,7 +131,7 @@ void SavePDF::save()
 
 	accept();
 
-	ShellOpenExplorer(ui.fileName->text());
+    QDesktopServices::openUrl("file://" + QFileInfo(ui.fileName->text()).absoluteFilePath());
 }
 
 void SavePDF::getFileName()

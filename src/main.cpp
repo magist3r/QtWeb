@@ -57,9 +57,12 @@ int main(int argc, char **argv)
 {
     Q_INIT_RESOURCE(data);
     Q_INIT_RESOURCE(icons);
+
+#ifndef QT_SHARED
     Q_INIT_RESOURCE(WebCore);
     Q_INIT_RESOURCE(InspectorBackendStub);
     Q_INIT_RESOURCE(WebKit);
+#endif
 
     BrowserApplication application(argc, argv);
     if (!application.isTheOnlyBrowser())
