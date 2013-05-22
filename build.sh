@@ -1,5 +1,5 @@
 #!/bin/bash
-PATCHDIR="$(pwd)/src/qt-patches"
+PATCHDIR="$(pwd)/qt-patches"
 SSL_LIBS=''
 SKIP_QT_BUILD=false
 CLEAN_QT_BUILD=false
@@ -66,7 +66,7 @@ if ! $SKIP_QT_BUILD; then
     OPTIONS+=' -confirm-license'
     OPTIONS+=' -static'
     OPTIONS+=' -release'
-    OPTIONS+=' -v'
+    OPTIONS+=' -silent'
     OPTIONS+=' -fast'
 
     if [[ $OSTYPE = darwin* ]]; then
@@ -152,6 +152,11 @@ if ! $SKIP_QT_BUILD; then
         exit 1
     fi
     
+    # make clean if we have previous build in src/qt
+    if $CLEAN_QT_BUILD; then
+        make confclean
+    fi
+    
     #Applying patches for Qt
     for i in "${PATCHES[@]}"; do
         patch -p0 -N < "$PATCHDIR/$i"
@@ -160,11 +165,6 @@ if ! $SKIP_QT_BUILD; then
     for j in "${MKSPEC_PATCHES[@]}"; do
         patch -p0 -N < "$PATCHDIR/$j"
     done
-
-    # make clean if we have previous build in src/qt
-    if $CLEAN_QT_BUILD; then
-        make confclean
-    fi
 
     OPENSSL_LIBS="$SSL_LIBS" ./configure -prefix $PWD $OPTIONS && $MAKE_COMMAND || qt_error
     
@@ -176,15 +176,14 @@ if ! $SKIP_QT_BUILD; then
     cd ../..
 fi # end of Qt build
 
-rm -rf build && mkdir -p build && cd build
-export QTDIR=../src/qt
-../src/qt/bin/qmake -config release ../QtWeb.pro
+src/qt/bin/qmake -config release
+make clean
 $MAKE_COMMAND
 
 #fix qt_menu.nib issue
 if [[ $OSTYPE = darwin* ]]; then
     cd ..
-    cp -r src/qt/src/gui/mac/qt_menu.nib build/release/QtWeb.app/Contents/Resources/
+    cp -r src/qt/src/gui/mac/qt_menu.nib build/QtWeb.app/Contents/Resources/
 fi
 
 exit 0

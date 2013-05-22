@@ -1,40 +1,39 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
-** Contact: Nokia Corporation (qt-info@nokia.com)
+** Copyright (C) 2012 Digia Plc and/or its subsidiary(-ies).
+** Contact: http://www.qt-project.org/legal
 **
 ** This file is part of the examples of the Qt Toolkit.
 **
-** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Commercial License Agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and Nokia.
+** $QT_BEGIN_LICENSE:BSD$
+** You may use this file under the terms of the BSD license as follows:
 **
-** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** "Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are
+** met:
+**   * Redistributions of source code must retain the above copyright
+**     notice, this list of conditions and the following disclaimer.
+**   * Redistributions in binary form must reproduce the above copyright
+**     notice, this list of conditions and the following disclaimer in
+**     the documentation and/or other materials provided with the
+**     distribution.
+**   * Neither the name of Digia Plc and its Subsidiary(-ies) nor the names
+**     of its contributors may be used to endorse or promote products derived
+**     from this software without specific prior written permission.
 **
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at http://www.qtsoftware.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -225,20 +224,20 @@ TorrentClient::TorrentClient(QObject *parent)
     : QObject(parent), d(new TorrentClientPrivate(this))
 {
     // Connect the file manager
-    connect(&d->fileManager, SIGNAL(dataRead(int, int, int, const QByteArray &)),
-            this, SLOT(sendToPeer(int, int, int, const QByteArray &)));
+    connect(&d->fileManager, SIGNAL(dataRead(int,int,int,QByteArray)),
+            this, SLOT(sendToPeer(int,int,int,QByteArray)));
     connect(&d->fileManager, SIGNAL(verificationProgress(int)),
             this, SLOT(updateProgress(int)));
     connect(&d->fileManager, SIGNAL(verificationDone()),
             this, SLOT(fullVerificationDone()));
-    connect(&d->fileManager, SIGNAL(pieceVerified(int, bool)),
-            this, SLOT(pieceVerified(int, bool)));
+    connect(&d->fileManager, SIGNAL(pieceVerified(int,bool)),
+            this, SLOT(pieceVerified(int,bool)));
     connect(&d->fileManager, SIGNAL(error()),
             this, SLOT(handleFileError()));
 
     // Connect the tracker client
-    connect(&d->trackerClient, SIGNAL(peerListUpdated(const QList<TorrentPeer> &)),
-            this, SLOT(addToPeerList(const QList<TorrentPeer> &)));
+    connect(&d->trackerClient, SIGNAL(peerListUpdated(QList<TorrentPeer>)),
+            this, SLOT(addToPeerList(QList<TorrentPeer>)));
     connect(&d->trackerClient, SIGNAL(stopped()),
             this, SIGNAL(stopped()));
 }
@@ -836,12 +835,12 @@ void TorrentClient::initializeConnection(PeerWireClient *client)
             this, SLOT(removeClient()));
     connect(client, SIGNAL(error(QAbstractSocket::SocketError)),
             this, SLOT(removeClient()));
-    connect(client, SIGNAL(piecesAvailable(const QBitArray &)),
-            this, SLOT(peerPiecesAvailable(const QBitArray &)));
-    connect(client, SIGNAL(blockRequested(int, int, int)),
-            this, SLOT(peerRequestsBlock(int, int, int)));
-    connect(client, SIGNAL(blockReceived(int, int, const QByteArray &)),
-            this, SLOT(blockReceived(int, int, const QByteArray &)));
+    connect(client, SIGNAL(piecesAvailable(QBitArray)),
+            this, SLOT(peerPiecesAvailable(QBitArray)));
+    connect(client, SIGNAL(blockRequested(int,int,int)),
+            this, SLOT(peerRequestsBlock(int,int,int)));
+    connect(client, SIGNAL(blockReceived(int,int,QByteArray)),
+            this, SLOT(blockReceived(int,int,QByteArray)));
     connect(client, SIGNAL(choked()),
             this, SLOT(peerChoked()));
     connect(client, SIGNAL(unchoked()),
@@ -1244,8 +1243,8 @@ void TorrentClient::schedulePieceForClient(PeerWireClient *client)
             // depending on the state we're in.
             int pieceIndex = 0;
             if (d->state == WarmingUp || (qrand() & 4) == 0) {
-                int *occurrances = new int[d->pieceCount];
-                memset(occurrances, 0, d->pieceCount * sizeof(int));
+                int *occurrences = new int[d->pieceCount];
+                memset(occurrences, 0, d->pieceCount * sizeof(int));
                 
                 // Count how many of each piece are available.
                 foreach (PeerWireClient *peer, d->connections) {
@@ -1253,38 +1252,38 @@ void TorrentClient::schedulePieceForClient(PeerWireClient *client)
                     int peerPiecesSize = peerPieces.size();
                     for (int i = 0; i < peerPiecesSize; ++i) {
                         if (peerPieces.testBit(i))
-                            ++occurrances[i];
+                            ++occurrences[i];
                     }
                 }
 
                 // Find the rarest or most common pieces.
-                int numOccurrances = d->state == WarmingUp ? 0 : 99999;
+                int numOccurrences = d->state == WarmingUp ? 0 : 99999;
                 QList<int> piecesReadyForDownload;
                 for (int i = 0; i < d->pieceCount; ++i) {
                     if (d->state == WarmingUp) {
                         // Add common pieces
-                        if (occurrances[i] >= numOccurrances
+                        if (occurrences[i] >= numOccurrences
                             && incompletePiecesAvailableToClient.testBit(i)) {
-                            if (occurrances[i] > numOccurrances)
+                            if (occurrences[i] > numOccurrences)
                                 piecesReadyForDownload.clear();
                             piecesReadyForDownload.append(i);
-                            numOccurrances = occurrances[i];
+                            numOccurrences = occurrences[i];
                         }
                     } else {
                         // Add rare pieces
-                        if (occurrances[i] <= numOccurrances
+                        if (occurrences[i] <= numOccurrences
                             && incompletePiecesAvailableToClient.testBit(i)) {
-                            if (occurrances[i] < numOccurrances)
+                            if (occurrences[i] < numOccurrences)
                                 piecesReadyForDownload.clear();
                             piecesReadyForDownload.append(i);
-                            numOccurrances = occurrances[i];
+                            numOccurrences = occurrences[i];
                         }
                     }
                 }
 
                 // Select one piece randomly
                 pieceIndex = piecesReadyForDownload.at(qrand() % piecesReadyForDownload.size());
-                delete [] occurrances;
+                delete [] occurrences;
             } else {
                 // Make up a list of available piece indices, and pick
                 // a random one.
