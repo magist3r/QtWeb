@@ -1,0 +1,17 @@
+-- v3.8.4, build 105
+ * webinspector is working again
+ * downloaded files are opening in the right program (or in the file manager) on all systems
+ * sources moved in src/ subdirectory 
+ * final fixes for qt build on all platforms
+ 
+-- v3.8.4, build 104
+ * fixed build scripts
+ 
+-- v3.8.4, build 103
+ * fixed address bar behaviour
+ * added button to disable javascript on toolbar 
+ * fixed build scripts
+  
+-- v3.8.4, build 102
+ * moved to Qt 4.8.4 (all platforms)
+ * added build scripts and patches for qt sources
