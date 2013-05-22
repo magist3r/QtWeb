@@ -47,9 +47,9 @@ private slots:
 private:
     Ui_CertificateInfo *form;
     QList<QSslCertificate> chain;
-	
-	QString		m_host;
-	QSslSocket	*m_socket;
+    
+    QString     m_host;
+    QSslSocket  *m_socket;
 };
 
 #endif

@@ -69,19 +69,19 @@ public:
     BrowserMainWindow *mainWindow();
 
     static void setUserAgent(QString agent);
-	static void setDefaultAgent( );
-	static const QString& getUserAgent();
+    static void setDefaultAgent( );
+    static const QString& getUserAgent();
 
-	enum OpenAction {
-		OpenDefault,
-		OpenNewTab,
-		OpenNewWin
-	};
+    enum OpenAction {
+        OpenDefault,
+        OpenNewTab,
+        OpenNewWin
+    };
 protected:
     virtual QString userAgentForUrl(const QUrl& url) const;
     bool acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &request, NavigationType type);
     QWebPage *createWindow(QWebPage::WebWindowType type);
-	void DefineHostIcon(const QUrl& host);
+    void DefineHostIcon(const QUrl& host);
 
 #if !defined(QT_NO_UITOOLS)
     QObject *createPlugin(const QString &classId, const QUrl &url, const QStringList &paramNames, const QStringList &paramValues);
@@ -97,9 +97,9 @@ private:
     Qt::KeyboardModifiers m_keyboardModifiers;
     Qt::MouseButtons m_pressedButtons;
  
-	OpenAction m_openAction;
+    OpenAction m_openAction;
     QUrl m_loadingUrl;
-	static QString m_userAgent;
+    static QString m_userAgent;
 };
 
 #endif // WEBPAGE_H

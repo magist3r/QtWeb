@@ -72,7 +72,7 @@ HistoryManager::HistoryManager(QObject *parent)
     , m_historyModel(0)
     , m_historyFilterModel(0)
     , m_historyTreeModel(0)
-	, m_historyCleaned(false)
+    , m_historyCleaned(false)
 {
     m_expiredTimer.setSingleShot(true);
     connect(&m_expiredTimer, SIGNAL(timeout()),
@@ -109,7 +109,7 @@ bool HistoryManager::historyContains(const QString &url) const
 void HistoryManager::addHistoryEntry(const QString &url)
 {
     QUrl cleanUrl(url);
-	cleanUrl.setPassword(QString());
+    cleanUrl.setPassword(QString());
     cleanUrl.setHost(cleanUrl.host().toLower());
     HistoryItem item(cleanUrl.toString(), QDateTime::currentDateTime(), cleanUrl.toString());
     addHistoryItem(item);
@@ -151,7 +151,7 @@ HistoryTreeModel *HistoryManager::historyTreeModel() const
 
 void HistoryManager::checkForExpired()
 {
-	m_historyCleaned = false;
+    m_historyCleaned = false;
     if (m_historyLimit < 0 || m_history.isEmpty())
         return;
 
@@ -171,7 +171,7 @@ void HistoryManager::checkForExpired()
             break;
         HistoryItem item = m_history.takeLast();
         // remove from saved file also
-		m_historyCleaned = true;
+        m_historyCleaned = true;
         m_lastSavedUrl = QString();
         emit entryRemoved(item);
     }
@@ -196,15 +196,15 @@ void HistoryManager::updateHistoryItem(const QUrl &url, const QString &title)
 {
     for (int i = 0; i < m_history.count(); ++i) {
         if (url == m_history.at(i).url && (m_history[i].title != title)) 
-		{
-			if (url.scheme() != "ftp" || (!title.isEmpty() && !m_history[i].title.isEmpty()))
-			{
-				m_history[i].title = title;
-				m_saveTimer->changeOccurred();
-				if (m_lastSavedUrl.isEmpty())
-					m_lastSavedUrl = m_history.at(i).url;
-				emit entryUpdated(i);
-			}
+        {
+            if (url.scheme() != "ftp" || (!title.isEmpty() && !m_history[i].title.isEmpty()))
+            {
+                m_history[i].title = title;
+                m_saveTimer->changeOccurred();
+                if (m_lastSavedUrl.isEmpty())
+                    m_lastSavedUrl = m_history.at(i).url;
+                emit entryUpdated(i);
+            }
 
             break;
         }
@@ -240,16 +240,16 @@ void HistoryManager::loadSettings()
     QSettings settings;
     settings.beginGroup(QLatin1String("history"));
 
-	// manual fix for clients that used QtWeb with a history cleaning bug
+    // manual fix for clients that used QtWeb with a history cleaning bug
     m_historyLimit = settings.value(QLatin1String("historyLimit"), 0).toInt();
-	if (m_historyLimit > 0)
-	{
-		m_historyLimit = 30;
-		settings.setValue(QLatin1String("historyLimit"), 0);
-		settings.setValue(QLatin1String("historyExpire"), 30);
-	}
+    if (m_historyLimit > 0)
+    {
+        m_historyLimit = 30;
+        settings.setValue(QLatin1String("historyLimit"), 0);
+        settings.setValue(QLatin1String("historyExpire"), 30);
+    }
 
-	m_historyLimit = settings.value(QLatin1String("historyExpire"), 7).toInt();
+    m_historyLimit = settings.value(QLatin1String("historyExpire"), 7).toInt();
 }
 
 void HistoryManager::load()
@@ -361,15 +361,15 @@ void HistoryManager::save()
     for (int i = first; i >= 0; --i) {
         HistoryItem item = m_history.at(i);
 
-		QDateTime checkForExpired = item.dateTime;
+        QDateTime checkForExpired = item.dateTime;
         checkForExpired.setDate(checkForExpired.date().addDays(m_historyLimit));
-		if (m_historyLimit == -1 || now < checkForExpired)
-		{
-			QByteArray data;
-			QDataStream stream(&data, QIODevice::WriteOnly);
-			stream << HISTORY_VERSION << item.url << item.dateTime << item.title;
-			out << data;
-		}
+        if (m_historyLimit == -1 || now < checkForExpired)
+        {
+            QByteArray data;
+            QDataStream stream(&data, QIODevice::WriteOnly);
+            stream << HISTORY_VERSION << item.url << item.dateTime << item.title;
+            out << data;
+        }
     }
     tempFile.close();
 
@@ -380,7 +380,7 @@ void HistoryManager::save()
             qWarning() << "History: error moving new history over old." << tempFile.errorString() << historyFile.fileName();
     }
     m_lastSavedUrl = m_history.value(0).url;
-	m_historyCleaned = false;
+    m_historyCleaned = false;
 }
 
 HistoryModel::HistoryModel(HistoryManager *history, QObject *parent)
@@ -648,19 +648,19 @@ void HistoryMenu::postPopulated()
     if (m_history->history().count() > 0)
         addSeparator();
 
-	MenuCommands cmds;
+    MenuCommands cmds;
     QAction *showAllAction = new QAction(cmds.AllHistTitle(), this);
     connect(showAllAction, SIGNAL(triggered()), this, SLOT(showHistoryDialog()));
-	showAllAction->setShortcuts(cmds.AllHistShortcuts());
+    showAllAction->setShortcuts(cmds.AllHistShortcuts());
     addAction(showAllAction);
-	((QWidget*)parent())->addAction(showAllAction);
+    ((QWidget*)parent())->addAction(showAllAction);
 
     QAction *clearAction = new QAction(cmds.ClearTitle(), this);
-	//QIcon(QLatin1String(":delete.png"))
+    //QIcon(QLatin1String(":delete.png"))
     connect(clearAction, SIGNAL(triggered()), m_history, SLOT(clear()));
-	clearAction->setShortcuts(cmds.ClearShortcuts());
+    clearAction->setShortcuts(cmds.ClearShortcuts());
     addAction(clearAction);
-	((QWidget*)parent())->addAction(clearAction);
+    ((QWidget*)parent())->addAction(clearAction);
 }
 
 void HistoryMenu::showHistoryDialog()

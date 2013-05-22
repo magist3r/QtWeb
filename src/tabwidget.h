@@ -86,9 +86,9 @@ public:
     TabWidget(QWidget *parent = 0);
     TabBar *tabBar() { return m_tabBar; }
     void clear();
-	int addNewTab(WebView *view, bool empty = false);
+    int addNewTab(WebView *view, bool empty = false);
     void addWebAction(QAction *action, QWebPage::WebAction webAction);
-	void setCurrentTabTitle( QString title) { setCurrentTitle(title); }
+    void setCurrentTabTitle( QString title) { setCurrentTitle(title); }
     QAction *newTabAction() const;
     QAction *closeTabAction() const;
     QAction *recentlyClosedTabsAction() const;
@@ -105,7 +105,7 @@ public:
     QByteArray saveState() const;
     bool restoreState(const QByteArray &state);
 
-	void prevSelectedTab();
+    void prevSelectedTab();
 
 protected:
     void mouseDoubleClickEvent(QMouseEvent *event);
@@ -114,11 +114,11 @@ protected:
 
 public slots:
     void loadUrl(const QUrl &url, TabWidget::Tab type = CurrentTab, const QString &title = QString());
-	void loadUrlNewTab(const QUrl &url) { loadUrl(url, NewTab); }
+    void loadUrlNewTab(const QUrl &url) { loadUrl(url, NewTab); }
     void loadUrlInCurrentTab(const QUrl &url);
-	WebView *newEmptyTab();
-	WebView *newTab(bool makeCurrent = true, bool empty = false);
-	void cloneTab(int index = -1);
+    WebView *newEmptyTab();
+    WebView *newTab(bool makeCurrent = true, bool empty = false);
+    void cloneTab(int index = -1);
     void closeTab(int index = -1);
     void closeOtherTabs(int index);
     void reloadTab(int index = -1);
@@ -131,8 +131,8 @@ private slots:
     void currentChanged(int index);
     void aboutToShowRecentTabsMenu();
     void aboutToShowRecentTriggeredAction(QAction *action);
-	void webViewLoadFinished(bool);
-	void webViewLoadStarted();
+    void webViewLoadFinished(bool);
+    void webViewLoadStarted();
     void webViewIconChanged();
     void webViewTitleChanged(const QString &title);
     void webViewUrlChanged(const QUrl &url);
@@ -152,8 +152,8 @@ private:
     static const int m_recentlyClosedTabsSize = 10;
     QList<QUrl> m_recentlyClosedTabs;
     QList<WebActionMapper*> m_actions;
-	int		m_prevSelectedTab;
-	int		m_prevSelectedTabMark;
+    int     m_prevSelectedTab;
+    int     m_prevSelectedTabMark;
 
     QStackedWidget *m_lineEdits;
     TabBar *m_tabBar;

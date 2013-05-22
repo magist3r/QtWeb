@@ -48,7 +48,7 @@
 #include <QtGui/QLineEdit>
 
 /* Clear button on the right hand side of the search widget.
-    Hidden by default	"A circle with an X in it" */
+    Hidden by default   "A circle with an X in it" */
 class ClearButton : public QAbstractButton
 {
     Q_OBJECT
@@ -71,17 +71,17 @@ class LineEdit : public QLineEdit
 
 
 public:
-	LineEdit(QWidget *parent = 0, bool fix_url = false);
+    LineEdit(QWidget *parent = 0, bool fix_url = false);
 
 protected:
-	void focusInEvent(QFocusEvent *);
-	void mousePressEvent(QMouseEvent *);
-	void keyPressEvent ( QKeyEvent * event );
+    void focusInEvent(QFocusEvent *);
+    void mousePressEvent(QMouseEvent *);
+    void keyPressEvent ( QKeyEvent * event );
 
-	bool m_fix_url;
+    bool m_fix_url;
 
 private:
-	bool m_selectOnMouse;
+    bool m_selectOnMouse;
 };
 
 

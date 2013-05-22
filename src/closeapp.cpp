@@ -20,12 +20,12 @@
 #include "qsettings.h"
 
 CloseApp::CloseApp(QWidget *parent)
-	: QDialog(parent)
+    : QDialog(parent)
 {
-	ui.setupUi(this);
+    ui.setupUi(this);
 
-	connect((const QObject*)((ui.buttonBox)->button(QDialogButtonBox::SaveAll)), SIGNAL(clicked()), this, SLOT(saveAll()));
-	connect((const QObject*)((ui.buttonBox)->button(QDialogButtonBox::Close)), SIGNAL(clicked()), this, SLOT(closeAll()));
+    connect((const QObject*)((ui.buttonBox)->button(QDialogButtonBox::SaveAll)), SIGNAL(clicked()), this, SLOT(saveAll()));
+    connect((const QObject*)((ui.buttonBox)->button(QDialogButtonBox::Close)), SIGNAL(clicked()), this, SLOT(closeAll()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 
 }
@@ -39,14 +39,14 @@ void CloseApp::closeAll()
     QSettings settings;
     settings.beginGroup(QLatin1String("MainWindow"));
 
-	if (ui.checkBoxDontAsk->isChecked())
-	{
-	    settings.setValue(QLatin1String("quitDontAsk"), true);
-	}
+    if (ui.checkBoxDontAsk->isChecked())
+    {
+        settings.setValue(QLatin1String("quitDontAsk"), true);
+    }
 
     settings.endGroup();
 
-	accept();
+    accept();
 }
 
 void CloseApp::saveAll()
@@ -55,12 +55,12 @@ void CloseApp::saveAll()
     settings.beginGroup(QLatin1String("MainWindow"));
     settings.setValue(QLatin1String("onStartup"), 2);
 
-	if (ui.checkBoxDontAsk->isChecked())
-	{
-	    settings.setValue(QLatin1String("quitDontAsk"), true);
-	}
+    if (ui.checkBoxDontAsk->isChecked())
+    {
+        settings.setValue(QLatin1String("quitDontAsk"), true);
+    }
 
     settings.endGroup();
 
-	accept();
+    accept();
 }

@@ -60,7 +60,7 @@ ToolbarSearch::ToolbarSearch(QWidget *parent)
     , m_autosaver(new AutoSaver(this))
     , m_maxSavedSearches(10)
     , m_stringListModel(new QStringListModel(this))
-	, m_completer(0)
+    , m_completer(0)
 {
     QMenu *m = menu();
     connect(m, SIGNAL(aboutToShow()), this, SLOT(aboutToShowMenu()));
@@ -75,7 +75,7 @@ ToolbarSearch::ToolbarSearch(QWidget *parent)
 
     load();
 
-	checkGoogleSuggest( inactiveText() == SEARCH_GOOGLE);
+    checkGoogleSuggest( inactiveText() == SEARCH_GOOGLE);
 }
 
 ToolbarSearch::~ToolbarSearch()
@@ -100,63 +100,63 @@ void ToolbarSearch::load()
     QStringList list = settings.value(QLatin1String("recentSearches")).toStringList();
     m_maxSavedSearches = settings.value(QLatin1String("maximumSaved"), m_maxSavedSearches).toInt();
     m_stringListModel->setStringList(list);
-	QString engine = settings.value(QLatin1String("searcher"), DEFAULT_PROVIDER).toString();
-	setInactiveText(engine);
+    QString engine = settings.value(QLatin1String("searcher"), DEFAULT_PROVIDER).toString();
+    setInactiveText(engine);
     settings.endGroup();
 }
 
 void ToolbarSearch::searchNow()
 {
     QString searchText = lineEdit()->text().trimmed();
-	
-	QStringList lst = searchText.split(QChar(' '));
-	QString keyword_provider = "";
-	if (lst.size() > 1)
-	{
-		QSettings settings;
-		settings.beginGroup(QLatin1String("SearchProviders"));
-		QStringList providers = settings.allKeys();
-		QString kw = lst[0].toLower();
-		if (providers.size() > 0)
-		{
-			foreach(QString prov, providers)
-			{
-				if (kw == prov.toLower())
-				{
-					keyword_provider = inactiveText();
-					setInactiveText(prov);
-					break;
-				}
-			}
-		}
-		else
-		{
-			if (kw == SEARCH_GOOGLE.toLower())
-			{
-				keyword_provider = inactiveText();
-				setInactiveText(SEARCH_GOOGLE);
-			} else
-			if (kw == SEARCH_YAHOO.toLower())
-			{
-				keyword_provider = inactiveText();
-				setInactiveText(SEARCH_YAHOO);
-			}else
-			if (kw == SEARCH_BING.toLower())
-			{
-				keyword_provider = inactiveText();
-				setInactiveText(SEARCH_BING);
-			}else
-			if (kw == SEARCH_CUIL.toLower())
-			{
-				keyword_provider = inactiveText();
-				setInactiveText(SEARCH_CUIL);
-			}
-		}
-		if (!keyword_provider.isEmpty())
-		{
-			searchText = searchText.remove(0, kw.length()).trimmed();
-		}
-	}
+    
+    QStringList lst = searchText.split(QChar(' '));
+    QString keyword_provider = "";
+    if (lst.size() > 1)
+    {
+        QSettings settings;
+        settings.beginGroup(QLatin1String("SearchProviders"));
+        QStringList providers = settings.allKeys();
+        QString kw = lst[0].toLower();
+        if (providers.size() > 0)
+        {
+            foreach(QString prov, providers)
+            {
+                if (kw == prov.toLower())
+                {
+                    keyword_provider = inactiveText();
+                    setInactiveText(prov);
+                    break;
+                }
+            }
+        }
+        else
+        {
+            if (kw == SEARCH_GOOGLE.toLower())
+            {
+                keyword_provider = inactiveText();
+                setInactiveText(SEARCH_GOOGLE);
+            } else
+            if (kw == SEARCH_YAHOO.toLower())
+            {
+                keyword_provider = inactiveText();
+                setInactiveText(SEARCH_YAHOO);
+            }else
+            if (kw == SEARCH_BING.toLower())
+            {
+                keyword_provider = inactiveText();
+                setInactiveText(SEARCH_BING);
+            }else
+            if (kw == SEARCH_CUIL.toLower())
+            {
+                keyword_provider = inactiveText();
+                setInactiveText(SEARCH_CUIL);
+            }
+        }
+        if (!keyword_provider.isEmpty())
+        {
+            searchText = searchText.remove(0, kw.length()).trimmed();
+        }
+    }
 
     QStringList newList = m_stringListModel->stringList();
     if (newList.contains(searchText))
@@ -171,202 +171,202 @@ void ToolbarSearch::searchNow()
         m_autosaver->changeOccurred();
     }
 
-	QUrl url;
-	if (inactiveText() == SEARCH_GOOGLE)
-	{
-		url.setUrl(QLatin1String("http://www.google.com/search"));
-		url.addQueryItem(QLatin1String("q"), searchText);
-		url.addQueryItem(QLatin1String("ie"), QLatin1String("UTF-8"));
-		url.addQueryItem(QLatin1String("oe"), QLatin1String("UTF-8"));
-	}
-	else
-	if (inactiveText() == SEARCH_CUIL)
-	{
-		url.setUrl(QLatin1String("http://www.cuil.com/search"));
-		url.addQueryItem(QLatin1String("q"), searchText);
-	}
-	else
-	if (inactiveText() == SEARCH_YAHOO)
-	{
-		url.setUrl(QLatin1String("http://search.yahoo.com/search"));
-		url.addQueryItem(QLatin1String("p"), searchText);
-		url.addQueryItem(QLatin1String("ei"), QLatin1String("UTF-8"));
-	}
-	else
-	if (inactiveText() == SEARCH_BING)
-	{
-		url.setUrl(QLatin1String("http://www.bing.com/search"));
-		url.addQueryItem(QLatin1String("q"), searchText);
-	}
-	else
-	{
-		QSettings settings;
-		settings.beginGroup(QLatin1String("SearchProviders"));
-		QStringList providers = settings.allKeys();
-		foreach(QString prov, providers)
-		{
-			if (inactiveText() == prov)
-			{
-				QString search_url  = settings.value(prov).toString();
-				url.setUrl(search_url + searchText );
-				break;
-			}
-		}
-		settings.endGroup();
-	}
+    QUrl url;
+    if (inactiveText() == SEARCH_GOOGLE)
+    {
+        url.setUrl(QLatin1String("http://www.google.com/search"));
+        url.addQueryItem(QLatin1String("q"), searchText);
+        url.addQueryItem(QLatin1String("ie"), QLatin1String("UTF-8"));
+        url.addQueryItem(QLatin1String("oe"), QLatin1String("UTF-8"));
+    }
+    else
+    if (inactiveText() == SEARCH_CUIL)
+    {
+        url.setUrl(QLatin1String("http://www.cuil.com/search"));
+        url.addQueryItem(QLatin1String("q"), searchText);
+    }
+    else
+    if (inactiveText() == SEARCH_YAHOO)
+    {
+        url.setUrl(QLatin1String("http://search.yahoo.com/search"));
+        url.addQueryItem(QLatin1String("p"), searchText);
+        url.addQueryItem(QLatin1String("ei"), QLatin1String("UTF-8"));
+    }
+    else
+    if (inactiveText() == SEARCH_BING)
+    {
+        url.setUrl(QLatin1String("http://www.bing.com/search"));
+        url.addQueryItem(QLatin1String("q"), searchText);
+    }
+    else
+    {
+        QSettings settings;
+        settings.beginGroup(QLatin1String("SearchProviders"));
+        QStringList providers = settings.allKeys();
+        foreach(QString prov, providers)
+        {
+            if (inactiveText() == prov)
+            {
+                QString search_url  = settings.value(prov).toString();
+                url.setUrl(search_url + searchText );
+                break;
+            }
+        }
+        settings.endGroup();
+    }
 
-	url.addQueryItem(QLatin1String("client"), QLatin1String("QtWeb"));
+    url.addQueryItem(QLatin1String("client"), QLatin1String("QtWeb"));
 
-	if (!keyword_provider.isEmpty())
-	{
-		setInactiveText(keyword_provider);
-	}
+    if (!keyword_provider.isEmpty())
+    {
+        setInactiveText(keyword_provider);
+    }
 
     emit search(url);
 }
 
 void ToolbarSearch::checkGoogleSuggest(bool show_google)
 {
-	if (show_google)
-	{
-		if (!m_completer)
-			m_completer = new GSuggestCompletion( m_lineEdit );
-	}
-	else
-	{
-		delete m_completer;
-		m_completer = NULL;
-	}
+    if (show_google)
+    {
+        if (!m_completer)
+            m_completer = new GSuggestCompletion( m_lineEdit );
+    }
+    else
+    {
+        delete m_completer;
+        m_completer = NULL;
+    }
 }
 
 void ToolbarSearch::useGoogle()
 {
-	m_autosaver->changeOccurred();
-	setInactiveText(SEARCH_GOOGLE);
-	checkGoogleSuggest( true );
-	if (!lineEdit()->text().isEmpty())
-		searchNow();
+    m_autosaver->changeOccurred();
+    setInactiveText(SEARCH_GOOGLE);
+    checkGoogleSuggest( true );
+    if (!lineEdit()->text().isEmpty())
+        searchNow();
 }
 
 void ToolbarSearch::useBing()
 {
-	m_autosaver->changeOccurred();
+    m_autosaver->changeOccurred();
     setInactiveText(SEARCH_BING);
-	if (!lineEdit()->text().isEmpty())
-		searchNow();
+    if (!lineEdit()->text().isEmpty())
+        searchNow();
 }
 
 void ToolbarSearch::useYahoo()
 {
-	m_autosaver->changeOccurred();
+    m_autosaver->changeOccurred();
     setInactiveText(SEARCH_YAHOO);
-	checkGoogleSuggest( false );
-	if (!lineEdit()->text().isEmpty())
-		searchNow();
+    checkGoogleSuggest( false );
+    if (!lineEdit()->text().isEmpty())
+        searchNow();
 }
 
 void ToolbarSearch::useCuil()
 {
-	m_autosaver->changeOccurred();
+    m_autosaver->changeOccurred();
     setInactiveText(SEARCH_CUIL);
-	checkGoogleSuggest( false );
-	if (!lineEdit()->text().isEmpty())
-		searchNow();
+    checkGoogleSuggest( false );
+    if (!lineEdit()->text().isEmpty())
+        searchNow();
 }
 
 
 void ToolbarSearch::useSearch( )
 {
-	m_autosaver->changeOccurred();
+    m_autosaver->changeOccurred();
 
-	QAction *action = qobject_cast<QAction *>(sender());
-	if (!action)
-		return;
+    QAction *action = qobject_cast<QAction *>(sender());
+    if (!action)
+        return;
 
-	QString text = action->statusTip();
+    QString text = action->statusTip();
     setInactiveText(text);
 
-	checkGoogleSuggest( text == SEARCH_GOOGLE );
+    checkGoogleSuggest( text == SEARCH_GOOGLE );
 
-	if (!lineEdit()->text().isEmpty())
-		searchNow();
+    if (!lineEdit()->text().isEmpty())
+        searchNow();
 }
 
 void ToolbarSearch::addSearches()
 {
-	QMenu *m = menu();	
-	m->addSeparator();
+    QMenu *m = menu();  
+    m->addSeparator();
 
     QAction *recent = m->addAction(tr("Search Providers"));
     recent->setEnabled(false);
 
-	QSettings settings;
-	settings.beginGroup(QLatin1String("SearchProviders"));
-	QStringList providers = settings.allKeys();
-	bool bExists = false;
-	foreach(QString prov, providers)
-	{
-		QString search_url  = settings.value(prov).toString();
-		if (!search_url.isEmpty() )
-		{
-			QAction* cust = m->addAction(prov, this, SLOT(useSearch()));
-			QFont fc = cust->font();
-			fc.setBold( inactiveText() == prov );
-			cust->setFont( fc );
-			cust->setStatusTip( prov );
-			bExists = true;
-		}
-	}
+    QSettings settings;
+    settings.beginGroup(QLatin1String("SearchProviders"));
+    QStringList providers = settings.allKeys();
+    bool bExists = false;
+    foreach(QString prov, providers)
+    {
+        QString search_url  = settings.value(prov).toString();
+        if (!search_url.isEmpty() )
+        {
+            QAction* cust = m->addAction(prov, this, SLOT(useSearch()));
+            QFont fc = cust->font();
+            fc.setBold( inactiveText() == prov );
+            cust->setFont( fc );
+            cust->setStatusTip( prov );
+            bExists = true;
+        }
+    }
 
-	settings.endGroup();
+    settings.endGroup();
 
-	if (!bExists)
-	{
-		settings.beginGroup(QLatin1String("ExcludeSearchProviders"));
+    if (!bExists)
+    {
+        settings.beginGroup(QLatin1String("ExcludeSearchProviders"));
 
-		if (settings.value(SEARCH_GOOGLE).toString().isEmpty())
-		{
-			QAction* google = m->addAction(SEARCH_GOOGLE, this, SLOT(useGoogle()));
-			QFont fg = google->font();
-			fg.setBold( inactiveText() == SEARCH_GOOGLE);
-			google->setFont ( fg );
-		}
+        if (settings.value(SEARCH_GOOGLE).toString().isEmpty())
+        {
+            QAction* google = m->addAction(SEARCH_GOOGLE, this, SLOT(useGoogle()));
+            QFont fg = google->font();
+            fg.setBold( inactiveText() == SEARCH_GOOGLE);
+            google->setFont ( fg );
+        }
 
-		if (settings.value(SEARCH_YAHOO).toString().isEmpty())
-		{
-			QAction* yahoo = m->addAction(SEARCH_YAHOO, this, SLOT(useYahoo()));
-			QFont fy = yahoo->font();
-			fy.setBold( inactiveText() == SEARCH_YAHOO);
-			yahoo->setFont( fy );
-		}
+        if (settings.value(SEARCH_YAHOO).toString().isEmpty())
+        {
+            QAction* yahoo = m->addAction(SEARCH_YAHOO, this, SLOT(useYahoo()));
+            QFont fy = yahoo->font();
+            fy.setBold( inactiveText() == SEARCH_YAHOO);
+            yahoo->setFont( fy );
+        }
 
-		if (settings.value(SEARCH_BING).toString().isEmpty())
-		{
-			QAction* live = m->addAction(SEARCH_BING, this, SLOT(useBing()));
-			QFont fl = live->font();
-			fl.setBold( inactiveText() == SEARCH_BING );
-			live->setFont( fl );
-		}
+        if (settings.value(SEARCH_BING).toString().isEmpty())
+        {
+            QAction* live = m->addAction(SEARCH_BING, this, SLOT(useBing()));
+            QFont fl = live->font();
+            fl.setBold( inactiveText() == SEARCH_BING );
+            live->setFont( fl );
+        }
 
-		if (settings.value(SEARCH_CUIL).toString().isEmpty())
-		{
-			QAction* cuil = m->addAction(SEARCH_CUIL, this, SLOT(useCuil()));
-			QFont fc = cuil->font();
-			fc.setBold( inactiveText() == SEARCH_CUIL );
-			cuil->setFont( fc );
-		}
+        if (settings.value(SEARCH_CUIL).toString().isEmpty())
+        {
+            QAction* cuil = m->addAction(SEARCH_CUIL, this, SLOT(useCuil()));
+            QFont fc = cuil->font();
+            fc.setBold( inactiveText() == SEARCH_CUIL );
+            cuil->setFont( fc );
+        }
 
-		settings.endGroup();
-	}
+        settings.endGroup();
+    }
 
-	QAction* searches = m->addAction(tr("Add..."), this, SLOT(addSearch()));
+    QAction* searches = m->addAction(tr("Add..."), this, SLOT(addSearch()));
  }
 
 void ToolbarSearch::addSearch()
 {
     Searches *dialog = new Searches(this);
     dialog->exec();
-	delete dialog;
+    delete dialog;
 }
 
 
@@ -378,7 +378,7 @@ void ToolbarSearch::aboutToShowMenu()
     QStringList list = m_stringListModel->stringList();
     if (list.isEmpty()) {
         m->addAction(tr("No Recent Searches"));
-		addSearches();
+        addSearches();
         return;
     }
 

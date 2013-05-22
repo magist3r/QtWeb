@@ -29,38 +29,38 @@
 #include <QWebSettings>
 #include "networkaccessmanager.h"
 
-#define CLEAR_HISTORY	"clear_history"
-#define EMPTY_CACHE		"empty_cache"
-#define CLEAR_DOWNLOADS	"clear_downloads"
-#define CLEAR_COOKIES	"clear_cookies"
-#define CLEAR_ICONS		"clear_icons"
-#define CLEAR_PWDS		"clear_passwords"
-#define CLEAR_SEARCHES	"clear_searches"
-#define CLOSE_WINDOWS	"close_windows"
-#define CLEAR_SSL		"clear_approved_ssl"
-#define RESET_SETTINGS	"reset_settings_to_defaults"
+#define CLEAR_HISTORY   "clear_history"
+#define EMPTY_CACHE     "empty_cache"
+#define CLEAR_DOWNLOADS "clear_downloads"
+#define CLEAR_COOKIES   "clear_cookies"
+#define CLEAR_ICONS     "clear_icons"
+#define CLEAR_PWDS      "clear_passwords"
+#define CLEAR_SEARCHES  "clear_searches"
+#define CLOSE_WINDOWS   "close_windows"
+#define CLEAR_SSL       "clear_approved_ssl"
+#define RESET_SETTINGS  "reset_settings_to_defaults"
 
 ResetSettings::ResetSettings(ToolbarSearch* ts, QWidget *parent )
-	: QDialog(parent), m_toolbarSearch(ts)
+    : QDialog(parent), m_toolbarSearch(ts)
 {
-	setWindowFlags(Qt::Sheet);
-	setupUi(this);
-	connect(pushButtonOK, SIGNAL(clicked()), this, SLOT(accept()));
-	connect(pushButtonCancel, SIGNAL(clicked()), this, SLOT(reject()));
+    setWindowFlags(Qt::Sheet);
+    setupUi(this);
+    connect(pushButtonOK, SIGNAL(clicked()), this, SLOT(accept()));
+    connect(pushButtonCancel, SIGNAL(clicked()), this, SLOT(reject()));
 
-	QSettings settings;
+    QSettings settings;
     settings.beginGroup(QLatin1String("ResetSettings"));
 
-	chkClearHistory->setChecked( settings.value(CLEAR_HISTORY, true).toBool() );
-	chkEmptyCache->setChecked( settings.value(EMPTY_CACHE, true).toBool() );
-	chkClearDownloads->setChecked( settings.value(CLEAR_DOWNLOADS, true).toBool() );
-	chkClearCookies->setChecked( settings.value(CLEAR_COOKIES, true).toBool() );
-	chkClearIcons->setChecked( settings.value(CLEAR_ICONS, true).toBool() );
-	chkClearPasswords->setChecked( settings.value(CLEAR_PWDS, true).toBool() );
-	chkClearSearches->setChecked( settings.value(CLEAR_SEARCHES, true).toBool() );
-	chkClearSSL->setChecked( settings.value(CLEAR_SSL, true).toBool() );
-	chkCloseWindows->setChecked( settings.value(CLOSE_WINDOWS, true).toBool() );
-	chkResetSettings->setChecked( settings.value(RESET_SETTINGS, true).toBool() );
+    chkClearHistory->setChecked( settings.value(CLEAR_HISTORY, true).toBool() );
+    chkEmptyCache->setChecked( settings.value(EMPTY_CACHE, true).toBool() );
+    chkClearDownloads->setChecked( settings.value(CLEAR_DOWNLOADS, true).toBool() );
+    chkClearCookies->setChecked( settings.value(CLEAR_COOKIES, true).toBool() );
+    chkClearIcons->setChecked( settings.value(CLEAR_ICONS, true).toBool() );
+    chkClearPasswords->setChecked( settings.value(CLEAR_PWDS, true).toBool() );
+    chkClearSearches->setChecked( settings.value(CLEAR_SEARCHES, true).toBool() );
+    chkClearSSL->setChecked( settings.value(CLEAR_SSL, true).toBool() );
+    chkCloseWindows->setChecked( settings.value(CLOSE_WINDOWS, true).toBool() );
+    chkResetSettings->setChecked( settings.value(RESET_SETTINGS, true).toBool() );
 }
 
 ResetSettings::~ResetSettings()
@@ -71,72 +71,72 @@ ResetSettings::~ResetSettings()
 void ResetSettings::accept()
 {
 
-	if (chkClearHistory->isChecked())
-	{
-		BrowserApplication::historyClear();
-	}
+    if (chkClearHistory->isChecked())
+    {
+        BrowserApplication::historyClear();
+    }
 
-	if (chkEmptyCache->isChecked())
-	{
-		BrowserApplication::emptyCaches();
-	}
+    if (chkEmptyCache->isChecked())
+    {
+        BrowserApplication::emptyCaches();
+    }
 
-	if (chkClearDownloads->isChecked())
-	{
-		BrowserApplication::clearDownloads();
-	}
+    if (chkClearDownloads->isChecked())
+    {
+        BrowserApplication::clearDownloads();
+    }
 
-	if (chkClearCookies->isChecked())
-	{
-		BrowserApplication::clearCookies();
-	}
+    if (chkClearCookies->isChecked())
+    {
+        BrowserApplication::clearCookies();
+    }
 
-	if (chkClearIcons->isChecked())
-	{
-		BrowserApplication::clearIcons();
-	}
+    if (chkClearIcons->isChecked())
+    {
+        BrowserApplication::clearIcons();
+    }
 
-	if (chkClearPasswords->isChecked())
-	{
-		BrowserApplication::clearPasswords();
-	}
+    if (chkClearPasswords->isChecked())
+    {
+        BrowserApplication::clearPasswords();
+    }
 
-	if (chkClearSSL->isChecked())
-	{
-		BrowserApplication::clearSSL();
-	}
+    if (chkClearSSL->isChecked())
+    {
+        BrowserApplication::clearSSL();
+    }
 
-	if (chkClearSearches->isChecked())
-	{
-		BrowserApplication::clearSearches();
-	}
+    if (chkClearSearches->isChecked())
+    {
+        BrowserApplication::clearSearches();
+    }
 
-	if (chkCloseWindows->isChecked())
-	{
-		BrowserApplication::closeExtraWindows();
-	}
+    if (chkCloseWindows->isChecked())
+    {
+        BrowserApplication::closeExtraWindows();
+    }
 
-	if (chkResetSettings->isChecked())
-	{
+    if (chkResetSettings->isChecked())
+    {
 
-		BrowserApplication::resetSettings( true );
+        BrowserApplication::resetSettings( true );
 
-	}
+    }
 
-	{
-		QSettings settings;
-		settings.beginGroup(QLatin1String("ResetSettings"));
-		settings.setValue(CLEAR_HISTORY, chkClearHistory->isChecked());
-		settings.setValue(EMPTY_CACHE, chkEmptyCache->isChecked());
-		settings.setValue(CLEAR_DOWNLOADS, chkClearDownloads->isChecked());
-		settings.setValue(CLEAR_COOKIES, chkClearCookies->isChecked());
-		settings.setValue(CLEAR_ICONS, chkClearIcons->isChecked());
-		settings.setValue(CLEAR_PWDS, chkClearPasswords->isChecked());
-		settings.setValue(CLEAR_SEARCHES, chkClearSearches->isChecked());
-		settings.setValue(CLEAR_SSL, chkClearSSL->isChecked());
-		settings.setValue(CLOSE_WINDOWS, chkCloseWindows->isChecked());
-		settings.setValue(RESET_SETTINGS, chkResetSettings->isChecked());
-	}
+    {
+        QSettings settings;
+        settings.beginGroup(QLatin1String("ResetSettings"));
+        settings.setValue(CLEAR_HISTORY, chkClearHistory->isChecked());
+        settings.setValue(EMPTY_CACHE, chkEmptyCache->isChecked());
+        settings.setValue(CLEAR_DOWNLOADS, chkClearDownloads->isChecked());
+        settings.setValue(CLEAR_COOKIES, chkClearCookies->isChecked());
+        settings.setValue(CLEAR_ICONS, chkClearIcons->isChecked());
+        settings.setValue(CLEAR_PWDS, chkClearPasswords->isChecked());
+        settings.setValue(CLEAR_SEARCHES, chkClearSearches->isChecked());
+        settings.setValue(CLEAR_SSL, chkClearSSL->isChecked());
+        settings.setValue(CLOSE_WINDOWS, chkCloseWindows->isChecked());
+        settings.setValue(RESET_SETTINGS, chkResetSettings->isChecked());
+    }
 
     QDialog::accept();
 }

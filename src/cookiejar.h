@@ -107,7 +107,7 @@ public:
 public slots:
     void clear();
     void loadSettings();
-	void changed();
+    void changed();
 
 private slots:
     void save();

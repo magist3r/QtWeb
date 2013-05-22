@@ -77,7 +77,7 @@ TabBar::TabBar(QWidget *parent)
     , m_viewTabBarAction(0)
     , m_showTabBarWhenOneTab(true)
 {
-	setElideMode(Qt::ElideRight);
+    setElideMode(Qt::ElideRight);
     setContextMenuPolicy(Qt::CustomContextMenu);
     setAcceptDrops(true);
     setUsesScrollButtons(true);
@@ -143,7 +143,7 @@ void TabBar::updateViewToolBarAction()
     if (count() > 1)
         show = true;
     MenuCommands cmds;
-	m_viewTabBarAction->setText(!show ? cmds.TabShowTitle() : cmds.TabHideTitle() );
+    m_viewTabBarAction->setText(!show ? cmds.TabShowTitle() : cmds.TabHideTitle() );
 }
 
 void TabBar::viewTabBar()
@@ -169,55 +169,55 @@ void TabBar::contextMenuRequested(const QPoint &position)
 {
     QMenu menu;
 
-	MenuCommands cmds;
-	QAction *add = new QAction(cmds.NewTabTitle(), this);
+    MenuCommands cmds;
+    QAction *add = new QAction(cmds.NewTabTitle(), this);
     add->setShortcuts( cmds.NewTabShortcuts() );
     connect(add, SIGNAL(triggered()), this, SIGNAL(newTab()));
-	menu.addAction(add);
+    menu.addAction(add);
 
     int index = tabAt(position);
     if (-1 != index) 
-	{
+    {
         QAction *action = new QAction(cmds.CloneTabTitle(), this);
-		action->setShortcuts( cmds.CloneTabShortcuts() );
-		connect(action, SIGNAL(triggered()), this, SLOT(cloneTab()));
-		menu.addAction(action);
+        action->setShortcuts( cmds.CloneTabShortcuts() );
+        connect(action, SIGNAL(triggered()), this, SLOT(cloneTab()));
+        menu.addAction(action);
     
-		action->setData(index);
-
-        menu.addSeparator();
-
-		action = new QAction(cmds.CloseTabTitle(), this);
-		action->setShortcuts( cmds.CloseTabShortcuts() );
-		connect(action, SIGNAL(triggered()), this, SLOT(closeTab()));
-		menu.addAction(action);
-        action->setData(index);
-
-
-		action = new QAction(cmds.CloseOtherTitle(), this);
-		action->setShortcuts( cmds.CloseOtherShortcuts() );
-		connect(action, SIGNAL(triggered()), this, SLOT(closeOtherTabs()));
-		menu.addAction(action);
         action->setData(index);
 
         menu.addSeparator();
 
-		action = new QAction(cmds.ReloadTabTitle(), this);
-		action->setShortcuts( cmds.ReloadTabShortcuts() );
-		connect(action, SIGNAL(triggered()), this, SLOT(reloadTab()));
-		menu.addAction(action);
+        action = new QAction(cmds.CloseTabTitle(), this);
+        action->setShortcuts( cmds.CloseTabShortcuts() );
+        connect(action, SIGNAL(triggered()), this, SLOT(closeTab()));
+        menu.addAction(action);
+        action->setData(index);
+
+
+        action = new QAction(cmds.CloseOtherTitle(), this);
+        action->setShortcuts( cmds.CloseOtherShortcuts() );
+        connect(action, SIGNAL(triggered()), this, SLOT(closeOtherTabs()));
+        menu.addAction(action);
+        action->setData(index);
+
+        menu.addSeparator();
+
+        action = new QAction(cmds.ReloadTabTitle(), this);
+        action->setShortcuts( cmds.ReloadTabShortcuts() );
+        connect(action, SIGNAL(triggered()), this, SLOT(reloadTab()));
+        menu.addAction(action);
 
         action->setData(index);
     } else {
         menu.addSeparator();
     }
 
-	QAction* action = new QAction(cmds.ReloadAllTitle(), this);
-	action->setShortcuts( cmds.ReloadAllShortcuts() );
-	connect(action, SIGNAL(triggered()), this, SIGNAL(reloadAllTabs()));
-	menu.addAction(action);
+    QAction* action = new QAction(cmds.ReloadAllTitle(), this);
+    action->setShortcuts( cmds.ReloadAllShortcuts() );
+    connect(action, SIGNAL(triggered()), this, SIGNAL(reloadAllTabs()));
+    menu.addAction(action);
 
-	menu.exec(QCursor::pos());
+    menu.exec(QCursor::pos());
 }
 
 void TabBar::cloneTab()
@@ -269,13 +269,13 @@ void TabBar::mouseReleaseEvent(QMouseEvent *event)
     if (event->button() == Qt::MidButton) {
         int index = tabAt(event->pos());
         if (index != -1) {
-			{
-				if (count() == 1)
-				{
-					emit newTab();
-				}
-				emit closeTab(index);
-			}
+            {
+                if (count() == 1)
+                {
+                    emit newTab();
+                }
+                emit closeTab(index);
+            }
         } else {
             QUrl url(QApplication::clipboard()->text(QClipboard::Selection));
             if (!url.isEmpty() && url.isValid() && !url.scheme().isEmpty())

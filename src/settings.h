@@ -59,43 +59,43 @@ private slots:
     void saveToSettings();
 
     void setHomeToCurrentPage();
-	void restoreHomeToDefault();
+    void restoreHomeToDefault();
     void showCookies();
     void showExceptions();
     void showPasswords();
-	void showSearchProviders();
-	void editShortcuts();
+    void showSearchProviders();
+    void editShortcuts();
 
-	void chooseExtViewer();
-	void chooseStylePath();
+    void chooseExtViewer();
+    void chooseStylePath();
     void chooseFont();
     void chooseFixedFont();
-	void setAppStyle(int);
-	void useUserAgent(int);
-	void warnLangChange(int);
-	void setAutoProxy(int);
-	void setProxyEnabled(bool);
+    void setAppStyle(int);
+    void useUserAgent(int);
+    void warnLangChange(int);
+    void setAutoProxy(int);
+    void setProxyEnabled(bool);
 
-	void checkAddressBarButtons();
+    void checkAddressBarButtons();
 
-	void addBlockAd();
-	void editBlockAd();
-	void removeBlockAd();
-	void removeBlockAds();
-	void addBlockAdEx();
-	void editBlockAdEx();
-	void removeBlockAdEx();
-	void blockMostAds();
-	void blockMostCnts();
+    void addBlockAd();
+    void editBlockAd();
+    void removeBlockAd();
+    void removeBlockAds();
+    void addBlockAdEx();
+    void editBlockAdEx();
+    void removeBlockAdEx();
+    void blockMostAds();
+    void blockMostCnts();
 
 protected:
-	void addBlockItems(const QLatin1String&, QListWidget* );
+    void addBlockItems(const QLatin1String&, QListWidget* );
 
 private:
     QFont standardFont;
     QFont fixedFont;
-	QString m_last_style;
-	bool  fontChanged;
+    QString m_last_style;
+    bool  fontChanged;
 };
 
 #endif // SETTINGS_H

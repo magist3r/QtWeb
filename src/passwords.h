@@ -44,29 +44,29 @@ public:
     bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex());
 
 private:
-	QSettings	m_data;
+    QSettings   m_data;
 
 };
 
 class MasterPassword : public QDialog, public Ui_MasterDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	MasterPassword(QWidget *parent, const QString& master);
+    MasterPassword(QWidget *parent, const QString& master);
 
 private:
-	QString m_master;
+    QString m_master;
 
 };
 
 class Passwords : public QDialog, public Ui_PasswordsDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	Passwords(QWidget *parent);
-	~Passwords();
+    Passwords(QWidget *parent);
+    ~Passwords();
 
 private slots:
     void showPasswords();

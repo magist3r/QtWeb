@@ -89,7 +89,7 @@ QString WebPage::m_userAgent;
 
 void WebPage::setUserAgent(QString agent) 
 {
-	m_userAgent = agent;
+    m_userAgent = agent;
 }
 
 void WebPage::setDefaultAgent(  )
@@ -97,7 +97,7 @@ void WebPage::setDefaultAgent(  )
     QString ver;
 #ifdef Q_WS_WIN
     switch(QSysInfo::WindowsVersion) 
-	{
+    {
         case QSysInfo::WV_32s:
             ver = "Windows 3.1";
             break;
@@ -137,67 +137,67 @@ void WebPage::setDefaultAgent(  )
         case QSysInfo::WV_CE_6:
             ver = "Windows CE 6.x";
             break;
-		default:
-			ver = "Windows NT based";
+        default:
+            ver = "Windows NT based";
     }
 #else
 
-	#ifdef Q_WS_MAC
-		switch(QSysInfo::MacintoshVersion) 
-		{
-			case QSysInfo::MV_10_3:
-				ver = "Intel MacOS X 10.3";
-				break;
-			case QSysInfo::MV_10_4:
-				ver = "Intel MacOS X 10.4";
-				break;
-			case QSysInfo::MV_10_5:
-				ver = "Intel MacOS X 10.5";
-				break;
-			case QSysInfo::MV_10_6:
-				ver = "Intel MacOS X 10.6";
-				break;
-			default:
-				ver = "MacOS X";
-		}
-	#else
-		ver = "Linux";
-	#endif
+    #ifdef Q_WS_MAC
+        switch(QSysInfo::MacintoshVersion) 
+        {
+            case QSysInfo::MV_10_3:
+                ver = "Intel MacOS X 10.3";
+                break;
+            case QSysInfo::MV_10_4:
+                ver = "Intel MacOS X 10.4";
+                break;
+            case QSysInfo::MV_10_5:
+                ver = "Intel MacOS X 10.5";
+                break;
+            case QSysInfo::MV_10_6:
+                ver = "Intel MacOS X 10.6";
+                break;
+            default:
+                ver = "MacOS X";
+        }
+    #else
+        ver = "Linux";
+    #endif
 #endif
-	// language
+    // language
     QString name = QLocale::system().name();
     name[2] = QLatin1Char('-');
 
-	QSettings settings;
+    QSettings settings;
     settings.beginGroup(QLatin1String("websettings"));
-	bool bUseCustomAgent = settings.value(QLatin1String("customUserAgent"), false).toBool();
-	if (bUseCustomAgent)
-	{
-		m_userAgent = settings.value(QLatin1String("UserAgent"), "").toString();
-		if (m_userAgent == "Internet Explorer")
-			m_userAgent = "Mozilla/4.0 (compatible; MSIE 8.0; %W;  Trident/4.0)";
-		else if (m_userAgent == "Firefox")
-			m_userAgent = "Mozilla/5.0 (Windows; U; %W; %L; rv:1.9.0.5) Gecko/2008120121 Firefox/3.0.5";
-		else if (m_userAgent == "Opera")
-			m_userAgent = "Opera/9.63 (%W; U; en) Presto/2.1.1";
-		else if (m_userAgent == "Safari")
+    bool bUseCustomAgent = settings.value(QLatin1String("customUserAgent"), false).toBool();
+    if (bUseCustomAgent)
+    {
+        m_userAgent = settings.value(QLatin1String("UserAgent"), "").toString();
+        if (m_userAgent == "Internet Explorer")
+            m_userAgent = "Mozilla/4.0 (compatible; MSIE 8.0; %W;  Trident/4.0)";
+        else if (m_userAgent == "Firefox")
+            m_userAgent = "Mozilla/5.0 (Windows; U; %W; %L; rv:1.9.0.5) Gecko/2008120121 Firefox/3.0.5";
+        else if (m_userAgent == "Opera")
+            m_userAgent = "Opera/9.63 (%W; U; en) Presto/2.1.1";
+        else if (m_userAgent == "Safari")
             m_userAgent = "Mozilla/5.0 (Windows; U; %W; %L) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Safari/528.17";
-		else if (m_userAgent == "Chrome")
-			m_userAgent = "Mozilla/5.0 (Windows; U; %W; %L) AppleWebKit/525.13 (KHTML, like Gecko) Chrome/0.A.B.C Safari/525.13";
+        else if (m_userAgent == "Chrome")
+            m_userAgent = "Mozilla/5.0 (Windows; U; %W; %L) AppleWebKit/525.13 (KHTML, like Gecko) Chrome/0.A.B.C Safari/525.13";
 
-		m_userAgent = m_userAgent.replace("%W", ver);
-		m_userAgent = m_userAgent.replace("%L", name);
-		return;
-	}
+        m_userAgent = m_userAgent.replace("%W", ver);
+        m_userAgent = m_userAgent.replace("%L", name);
+        return;
+    }
 
 #ifdef Q_WS_MAC
     QString ua = QLatin1String("Mozilla/5.0 (Macintosh; %1; %2; ");
 #else
-	#ifdef	Q_WS_X11
-		QString ua = QLatin1String("Mozilla/5.0 (X11; %1; %2; ");
-	#else
-		QString ua = QLatin1String("Mozilla/5.0 (Windows; %1; %2; ");
-	#endif
+    #ifdef  Q_WS_X11
+        QString ua = QLatin1String("Mozilla/5.0 (X11; %1; %2; ");
+    #else
+        QString ua = QLatin1String("Mozilla/5.0 (Windows; %1; %2; ");
+    #endif
 #endif
 
     QChar securityStrength(QLatin1Char('N'));
@@ -206,8 +206,8 @@ void WebPage::setDefaultAgent(  )
     ua = ua.arg(securityStrength);
 
     ua = QString(ua).arg(ver);
-	
-	// Language
+    
+    // Language
     ua.append(name);
     ua.append(QLatin1String(") "));
 
@@ -221,7 +221,7 @@ void WebPage::setDefaultAgent(  )
         QString appVer = QCoreApplication::applicationVersion();
         if (!appVer.isEmpty())
             ua.append(QLatin1Char('/') + appVer);
-		ua.append(QLatin1String(" http://www.QtWeb.net"));
+        ua.append(QLatin1String(" http://www.QtWeb.net"));
     } 
 
     m_userAgent = ua;
@@ -229,12 +229,12 @@ void WebPage::setDefaultAgent(  )
 
 const QString& WebPage::getUserAgent()
 {
-	return m_userAgent;
+    return m_userAgent;
 }
 
 QString WebPage::userAgentForUrl(const QUrl& url) const
 {
-	return getUserAgent();
+    return getUserAgent();
 }
 
 
@@ -242,110 +242,110 @@ extern bool ShellOpenApp(QString app, QString cmd);
 
 bool WebPage::acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &request, NavigationType type)
 {
-	if (!request.url().isEmpty())
-	{
-	    QString scheme = request.url().scheme();
-		QString url = request.url().toString().toLower();
-		if ( scheme == "mms" || scheme == QLatin1String("mailto") ||
-				url.indexOf(".wmv") == url.length() - 4 || url.indexOf(".wma") == url.length() - 4)
-		{
-			if (QDesktopServices::openUrl(request.url()))
-				return false;
-		}
-		
-		/* AC: v .3.3.45 - PDF PlugIn is handled properly now in Qt 4.6.1++
-		if(	url.indexOf(".pdf") == url.length() - 4 )
-		{
-			if (BrowserApplication::downloadManager())
-				BrowserApplication::downloadManager()->download(request.url(), false);
-			return false;
-		}*/
+    if (!request.url().isEmpty())
+    {
+        QString scheme = request.url().scheme();
+        QString url = request.url().toString().toLower();
+        if ( scheme == "mms" || scheme == QLatin1String("mailto") ||
+                url.indexOf(".wmv") == url.length() - 4 || url.indexOf(".wma") == url.length() - 4)
+        {
+            if (QDesktopServices::openUrl(request.url()))
+                return false;
+        }
+        
+        /* AC: v .3.3.45 - PDF PlugIn is handled properly now in Qt 4.6.1++
+        if( url.indexOf(".pdf") == url.length() - 4 )
+        {
+            if (BrowserApplication::downloadManager())
+                BrowserApplication::downloadManager()->download(request.url(), false);
+            return false;
+        }*/
 
-	}
+    }
 
-	if (frame && (type == NavigationTypeFormSubmitted || type == NavigationTypeFormResubmitted))
-	{
-		QSettings settings;
-		settings.beginGroup(QLatin1String("websettings"));
-		if ( settings.value(QLatin1String("savePasswords"), false).toBool())
-		{
-			QUrl u = request.url();
-			if (!request.rawHeader("Referer").isEmpty())
-				u = QUrl(request.rawHeader("Referer"));
+    if (frame && (type == NavigationTypeFormSubmitted || type == NavigationTypeFormResubmitted))
+    {
+        QSettings settings;
+        settings.beginGroup(QLatin1String("websettings"));
+        if ( settings.value(QLatin1String("savePasswords"), false).toBool())
+        {
+            QUrl u = request.url();
+            if (!request.rawHeader("Referer").isEmpty())
+                u = QUrl(request.rawHeader("Referer"));
 
-			BrowserApplication::autoCompleter()->setFormHtml( u, frame->toHtml() );
-		}
-	}
+            BrowserApplication::autoCompleter()->setFormHtml( u, frame->toHtml() );
+        }
+    }
 
     // ctrl open in new tab
     // ctrl-shift open in new tab and select
     // ctrl-alt open in new window
     if (type == QWebPage::NavigationTypeLinkClicked && (m_keyboardModifiers & Qt::ControlModifier || m_pressedButtons == Qt::MidButton)) 
-	{
-			QSettings settings;
-			settings.beginGroup(QLatin1String("general"));
-			int openLinksIn = settings.value(QLatin1String("openLinksIn"), 0).toInt();
+    {
+            QSettings settings;
+            settings.beginGroup(QLatin1String("general"));
+            int openLinksIn = settings.value(QLatin1String("openLinksIn"), 0).toInt();
 
-			bool newWindow = (m_keyboardModifiers & Qt::AltModifier);
-			WebView* webView;
-			if (newWindow || (openLinksIn == 1)) 
-			{
-				BrowserApplication::instance()->newMainWindow();
-				BrowserMainWindow *newMainWindow = BrowserApplication::instance()->mainWindow();
-				webView = newMainWindow->currentTab();
-				newMainWindow->raise();
-				newMainWindow->activateWindow();
-				webView->setFocus();
-			} 
-			else 
-			{
-				bool selectNewTab = (m_keyboardModifiers & Qt::ShiftModifier);
-				webView = mainWindow()->tabWidget()->newTab(selectNewTab);
-			}
-			webView->load(request);
-			m_keyboardModifiers = Qt::NoModifier;
-			m_pressedButtons = Qt::NoButton;
-			DefineHostIcon(request.url());
-			return false;
+            bool newWindow = (m_keyboardModifiers & Qt::AltModifier);
+            WebView* webView;
+            if (newWindow || (openLinksIn == 1)) 
+            {
+                BrowserApplication::instance()->newMainWindow();
+                BrowserMainWindow *newMainWindow = BrowserApplication::instance()->mainWindow();
+                webView = newMainWindow->currentTab();
+                newMainWindow->raise();
+                newMainWindow->activateWindow();
+                webView->setFocus();
+            } 
+            else 
+            {
+                bool selectNewTab = (m_keyboardModifiers & Qt::ShiftModifier);
+                webView = mainWindow()->tabWidget()->newTab(selectNewTab);
+            }
+            webView->load(request);
+            m_keyboardModifiers = Qt::NoModifier;
+            m_pressedButtons = Qt::NoButton;
+            DefineHostIcon(request.url());
+            return false;
     }
 
-	if (frame == NULL && type == QWebPage::NavigationTypeLinkClicked) // Check for open links in tabs
-	{
-		QSettings settings;
-		settings.beginGroup(QLatin1String("general"));
-		int openLinksIn = settings.value(QLatin1String("openLinksIn"), 0).toInt();
-		if (openLinksIn == 0 && !(m_keyboardModifiers & Qt::AltModifier))
-		{
-			WebView* webView = mainWindow()->tabWidget()->newTab(true);
-			webView->load(request);
-			//DefineHostIcon(request.url());
-			return false;
-		}
-	}
+    if (frame == NULL && type == QWebPage::NavigationTypeLinkClicked) // Check for open links in tabs
+    {
+        QSettings settings;
+        settings.beginGroup(QLatin1String("general"));
+        int openLinksIn = settings.value(QLatin1String("openLinksIn"), 0).toInt();
+        if (openLinksIn == 0 && !(m_keyboardModifiers & Qt::AltModifier))
+        {
+            WebView* webView = mainWindow()->tabWidget()->newTab(true);
+            webView->load(request);
+            //DefineHostIcon(request.url());
+            return false;
+        }
+    }
 
     if (frame == mainFrame()) 
-	{
-		if ( !request.url().isEmpty() )
-		{
-			if (request.url().scheme() != "ftp") 
-			{
-				m_loadingUrl = request.url();
-				//emit loadingUrl(m_loadingUrl); // ??? to avoid unnecessary LineURL change
-				DefineHostIcon(request.url());
-				return true;
-			}
-			else
-			{
-				m_loadingUrl = request.url();
-				WebView* view = (WebView* )parent();
-				if (!view->isLoading())
-				{	
-					view->loadUrl( request.url() );
-					return false;
-				}
-				return true;
-			}
-		}
+    {
+        if ( !request.url().isEmpty() )
+        {
+            if (request.url().scheme() != "ftp") 
+            {
+                m_loadingUrl = request.url();
+                //emit loadingUrl(m_loadingUrl); // ??? to avoid unnecessary LineURL change
+                DefineHostIcon(request.url());
+                return true;
+            }
+            else
+            {
+                m_loadingUrl = request.url();
+                WebView* view = (WebView* )parent();
+                if (!view->isLoading())
+                {   
+                    view->loadUrl( request.url() );
+                    return false;
+                }
+                return true;
+            }
+        }
     }
 
     return QWebPage::acceptNavigationRequest(frame, request, type);
@@ -353,7 +353,7 @@ bool WebPage::acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &r
 
 void WebPage::DefineHostIcon(const QUrl& url)
 {
-	BrowserApplication::instance()->CheckIcon(url);
+    BrowserApplication::instance()->CheckIcon(url);
 }
 
 QWebPage *WebPage::createWindow(QWebPage::WebWindowType type)
@@ -364,7 +364,7 @@ QWebPage *WebPage::createWindow(QWebPage::WebWindowType type)
         m_openAction = WebPage::OpenNewTab;
 
     if (m_openAction == WebPage::OpenNewTab )
-	{
+    {
         m_openAction = WebPage::OpenDefault;
         return mainWindow()->tabWidget()->newTab()->page();
     }
@@ -387,15 +387,15 @@ QObject *WebPage::createPlugin(const QString &classId, const QUrl &url, const QS
 void WebPage::handleUnsupportedContent(QNetworkReply *reply)
 {
     if (reply->error() == QNetworkReply::NoError) 
-	{
-		QVariant content = reply->header(QNetworkRequest::ContentTypeHeader);
-		QString c = content.toString();
-		
-		if ( content.isValid() && !BrowserApplication::handleMIME( c, reply->url() ) )
-		{
-			BrowserApplication::downloadManager()->handleUnsupportedContent(reply);
+    {
+        QVariant content = reply->header(QNetworkRequest::ContentTypeHeader);
+        QString c = content.toString();
+        
+        if ( content.isValid() && !BrowserApplication::handleMIME( c, reply->url() ) )
+        {
+            BrowserApplication::downloadManager()->handleUnsupportedContent(reply);
 
-		}
+        }
         return;
     }
 

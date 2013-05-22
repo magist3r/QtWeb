@@ -57,7 +57,7 @@ public:
     AboutDialog(QWidget *parent = 0);
 
 protected slots:
-	void credits();
+    void credits();
 
 };
 

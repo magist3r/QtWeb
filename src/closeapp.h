@@ -24,18 +24,18 @@
 
 class CloseApp : public QDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	CloseApp(QWidget *parent = 0);
-	~CloseApp();
+    CloseApp(QWidget *parent = 0);
+    ~CloseApp();
 
 private:
-	Ui::CloseAppClass ui;
+    Ui::CloseAppClass ui;
 
 private slots:
-	void saveAll();
-	void closeAll();
+    void saveAll();
+    void closeAll();
 };
 
 #endif // CLOSEAPP_H

@@ -68,7 +68,7 @@ signals:
 public:
     TabBar(QWidget *parent = 0);
 
-	bool showTabBarWhenOneTab() const;
+    bool showTabBarWhenOneTab() const;
     void setShowTabBarWhenOneTab(bool enabled);
     QAction *viewTabBarAction() const;
 

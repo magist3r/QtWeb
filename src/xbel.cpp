@@ -68,7 +68,7 @@ bool BookmarkNode::operator==(const BookmarkNode &other)
         || expanded != other.expanded
         || m_type != other.m_type
         || m_children.count() != other.m_children.count()
-		|| tags != other.tags)
+        || tags != other.tags)
         return false;
 
     for (int i = 0; i < m_children.count(); ++i)
@@ -218,22 +218,22 @@ void XbelReader::readInfo(BookmarkNode *parent)
 {
     Q_ASSERT(isStartElement() && name() == QLatin1String("info"));
     while (!atEnd()) 
-	{
+    {
         readNext();
         if (isEndElement())
             break;
 
         if (isStartElement()) {
             if (name() == QLatin1String("metadata"))
-			{
-				parent->tags = attributes().value(QLatin1String("ShortcutURL")).toString();
-				readElementText();
-			}
+            {
+                parent->tags = attributes().value(QLatin1String("ShortcutURL")).toString();
+                readElementText();
+            }
             else
                 skipUnknownElement();
         }
     }
-	//parent->tags  = readElementText();
+    //parent->tags  = readElementText();
 }
 
 void XbelReader::readSeparator(BookmarkNode *parent)
@@ -337,15 +337,15 @@ void XbelWriter::writeItem(const BookmarkNode *parent)
         if (!parent->desc.isEmpty())
             writeAttribute(QLatin1String("desc"), parent->desc);
         if (!parent->tags.isEmpty())
-		{
-			writeStartElement(QLatin1String("info"));
-			writeStartElement(QLatin1String("metadata"));
+        {
+            writeStartElement(QLatin1String("info"));
+            writeStartElement(QLatin1String("metadata"));
             writeAttribute(QLatin1String("owner"), QLatin1String("Mozilla"));
             writeAttribute(QLatin1String("ShortcutURL"), parent->tags);
-			writeEndElement();
-			writeEndElement();
-		}
-		writeEndElement();
+            writeEndElement();
+            writeEndElement();
+        }
+        writeEndElement();
         break;
     case BookmarkNode::Separator:
         writeEmptyElement(QLatin1String("separator"));

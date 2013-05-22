@@ -69,7 +69,7 @@ public:
     QString url;
     QString title;
     QString desc;
-	QString tags;
+    QString tags;
     bool expanded;
 
 private:

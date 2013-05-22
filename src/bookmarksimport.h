@@ -25,12 +25,12 @@ class BookmarksImport
 {
 
 public:
-	static BookmarkNode *importFromIE();
-	static BookmarkNode *importFromHtml( QString path );
+    static BookmarkNode *importFromIE();
+    static BookmarkNode *importFromHtml( QString path );
 
-	static QString mozillaPath();
-	static QString ieFavoritesPath();
+    static QString mozillaPath();
+    static QString ieFavoritesPath();
 
 protected:
-	static void ImportInternetExplorerFavorites(QString path, BookmarkNode* root);
+    static void ImportInternetExplorerFavorites(QString path, BookmarkNode* root);
 };

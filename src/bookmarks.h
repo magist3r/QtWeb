@@ -59,16 +59,16 @@ public:
     BookmarkNode *menu();
     BookmarkNode *toolbar();
     BookmarkNode *find_folder(BookmarkNode *start_node, const QString& title);
-	QStringList find_tag_urls(BookmarkNode *start_node, const QString& tag);
+    QStringList find_tag_urls(BookmarkNode *start_node, const QString& tag);
 
     BookmarksModel *bookmarksModel();
     QUndoStack *undoRedoStack() { return &m_commands; };
 
 public slots:
     void importBookmarks();
-	void importFromIE();
-	void importFromMozilla();
-	void importFromHTML();
+    void importFromIE();
+    void importFromMozilla();
+    void importFromHTML();
     void exportBookmarks();
 
 private slots:
@@ -116,9 +116,9 @@ public:
 };
 
 enum ChangeBookmarkType{
-	changedURL,
-	changedTitle,
-	changedTags
+    changedURL,
+    changedTitle,
+    changedTags
 };
 
 class ChangeBookmarkCommand : public QUndoCommand
@@ -180,7 +180,7 @@ public:
 
     BookmarkNode *node(const QModelIndex &index) const;
     QModelIndex index(BookmarkNode *node) const;
-	void sort ( int column, Qt::SortOrder order = Qt::AscendingOrder ) {;} 
+    void sort ( int column, Qt::SortOrder order = Qt::AscendingOrder ) {;} 
 
 private:
 
@@ -245,7 +245,7 @@ private slots:
 
 private:
     QString m_url;
-	QString m_default_folder;
+    QString m_default_folder;
     BookmarksManager *m_bookmarksManager;
     AddBookmarkProxyModel *m_proxyModel;
 };
@@ -304,7 +304,7 @@ private slots:
     void build();
     void deleteBookmark(const QUrl &url, const QString &title);
     void renameBookmark(const QUrl &url, const QString &title, const QString &new_title);
-	void addFolder(const QString &title, const QString &new_folder);
+    void addFolder(const QString &title, const QString &new_folder);
 
 private:
     BookmarksModel *m_bookmarksModel;
@@ -325,12 +325,12 @@ signals:
     void addFolder(const QString &title, const QString &new_folder);
 
 public slots:
-	void contextMenuRequested(const QPoint &);
-	void deleteBookmark();
-	void openBookmark();
-	void openBookmarkNewTab();
-	void renameBookmark();
-	void addFolder();
+    void contextMenuRequested(const QPoint &);
+    void deleteBookmark();
+    void openBookmark();
+    void openBookmarkNewTab();
+    void renameBookmark();
+    void addFolder();
 
 public:
     BookmarkToolButton(QUrl url, QWidget *parent = 0);
@@ -338,12 +338,12 @@ public:
 
 protected:
     void mousePressEvent(QMouseEvent *event);
-	void mouseMoveEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
 
 private:
     QUrl m_url;
-	QPoint dragStartPosition;
+    QPoint dragStartPosition;
 
 };
 

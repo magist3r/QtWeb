@@ -26,14 +26,14 @@ class ToolbarSearch;
 
 class ResetSettings : public QDialog, public Ui_ResetSettings
 {
-	Q_OBJECT
+    Q_OBJECT
 
 private:
-	ToolbarSearch* m_toolbarSearch;
+    ToolbarSearch* m_toolbarSearch;
 
 public:
-	ResetSettings(ToolbarSearch*, QWidget *parent = 0);
-	~ResetSettings();
+    ResetSettings(ToolbarSearch*, QWidget *parent = 0);
+    ~ResetSettings();
 
 public slots:
     void accept();

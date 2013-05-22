@@ -64,13 +64,13 @@ public:
     void loadFtpUrl(const QUrl &url);
     QUrl url() const;
 
-	void slotInspectElement();
+    void slotInspectElement();
 
     QString lastStatusBarText() const;
     inline int progress() const { return m_progress; }
-	bool sslErrors() { return m_ssl_errors_detected; }
-	void setSslErrors() { m_ssl_errors_detected = true; }
-	bool isLoading() {return m_is_loading; }
+    bool sslErrors() { return m_ssl_errors_detected; }
+    void setSslErrors() { m_ssl_errors_detected = true; }
+    bool isLoading() {return m_is_loading; }
 
 protected:
     void mousePressEvent(QMouseEvent *event);
@@ -78,7 +78,7 @@ protected:
     void mouseReleaseEvent(QMouseEvent *event);
     void contextMenuEvent(QContextMenuEvent *event);
     void wheelEvent(QWheelEvent *event);
-	void applyEncoding();
+    void applyEncoding();
 
 private slots:
     void loadStartedCustom();
@@ -90,40 +90,40 @@ private slots:
     void openLinkInNewWin();
     void openImageInNewTab();
     void openImageInNewWin();
-	void copyMailtoAddress();
+    void copyMailtoAddress();
     void clickedUrl(const QUrl &url);
     void adBlock();
 
 private:
     QString m_statusBarText;
-    QUrl	m_initialUrl;
-    int		m_progress;
-	bool	m_is_loading;
-	QWebHitTestResult m_hitResult;
-	QPoint  m_gestureStartPos;
-	bool	m_gestureStarted;
-	QUrl	m_gestureUrl;
-	QDateTime m_gestureTime;
+    QUrl    m_initialUrl;
+    int     m_progress;
+    bool    m_is_loading;
+    QWebHitTestResult m_hitResult;
+    QPoint  m_gestureStartPos;
+    bool    m_gestureStarted;
+    QUrl    m_gestureUrl;
+    QDateTime m_gestureTime;
 
     WebPage *m_page;
-	bool	m_font_resizing;
-	bool	m_encoding_in_progress;
-	QString m_current_encoding;
-	QUrl	m_current_encoding_url;
-	bool	m_ssl_errors_detected;
+    bool    m_font_resizing;
+    bool    m_encoding_in_progress;
+    QString m_current_encoding;
+    QUrl    m_current_encoding_url;
+    bool    m_ssl_errors_detected;
 
 //////////////////////////////////////////////////// AC: FTP implementation
-	QFtp*  m_ftp;
+    QFtp*  m_ftp;
     QFile* m_ftpFile;
-	QString m_ftpHtml;
+    QString m_ftpHtml;
 
-	QProgressDialog			*m_ftpProgressDialog;
-    QHash<QString, bool>	m_ftpIsDirectory;
-    QString					m_ftpCurrentPath;
+    QProgressDialog         *m_ftpProgressDialog;
+    QHash<QString, bool>    m_ftpIsDirectory;
+    QString                 m_ftpCurrentPath;
 
 private:
-	void ftpCheckDisconnect();
-	void ftpDownloadFile(const QUrl &url, QString filename );
+    void ftpCheckDisconnect();
+    void ftpDownloadFile(const QUrl &url, QString filename );
 
 private slots:
     void ftpCancelDownload();

@@ -71,7 +71,7 @@ public slots:
     void useYahoo();
     void useCuil();
 
-	void addSearch();
+    void addSearch();
     void useSearch();
 
 private slots:
@@ -81,8 +81,8 @@ private slots:
 
 private:
     void load();
-	void addSearches();
-	void checkGoogleSuggest(bool google);
+    void addSearches();
+    void checkGoogleSuggest(bool google);
 
     AutoSaver *m_autosaver;
     int m_maxSavedSearches;

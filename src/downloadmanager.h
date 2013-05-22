@@ -60,19 +60,19 @@ public:
     DownloadItem(QNetworkReply *reply = 0, bool requestFileName = false, QWidget *parent = 0);
     bool downloading() const;
     bool downloadedSuccessfully() const;
-	bool initSuccess() {return m_success_init; }
-	void setSizeDate(qint64 sz, QDateTime m); 
-	void setOutputTitle();
+    bool initSuccess() {return m_success_init; }
+    void setSizeDate(qint64 sz, QDateTime m); 
+    void setOutputTitle();
 
     QUrl m_url;
 
     QFile m_output;
     QNetworkReply *m_reply;
-	bool   m_must_be_deleted;
-	bool   m_to_delete;
+    bool   m_must_be_deleted;
+    bool   m_to_delete;
 
 protected:
-	void mouseDoubleClickEvent ( QMouseEvent * event );
+    void mouseDoubleClickEvent ( QMouseEvent * event );
 
 public slots:
     void open();
@@ -93,14 +93,14 @@ private:
     void init();
     void updateInfoLabel();
     QString dataString(int size) const;
-	bool checkAddTorrent();
+    bool checkAddTorrent();
     QString saveFileName(const QString &directory) const;
 
     bool   m_requestFileName;
     qint64 m_bytesReceived;
     QTime  m_downloadTime;
-	bool   m_success_init;
-	bool   m_finished;
+    bool   m_success_init;
+    bool   m_finished;
 };
 
 class AutoSaver;
@@ -128,22 +128,22 @@ public:
     ~DownloadManager();
     int activeDownloads() const;
     void load();
-	void addItem(const QUrl& url, QString filename, bool done);
+    void addItem(const QUrl& url, QString filename, bool done);
 
     RemovePolicy removePolicy() const;
     void setRemovePolicy(RemovePolicy policy);
 
 public slots:
-	void openItem(const QModelIndex& index);
+    void openItem(const QModelIndex& index);
     void download(const QNetworkRequest &request, bool requestFileName = true);
     inline void download(const QUrl &url, bool requestFileName = false)
         { download(QNetworkRequest(url), requestFileName); }
     void handleUnsupportedContent(QNetworkReply *reply, bool requestFileName = false);
-	void cleanup_list();
+    void cleanup_list();
     void cleanup_full();
-	void open_downloads();
+    void open_downloads();
 
-	private slots:
+    private slots:
     void save() const;
     void updateRow();
 

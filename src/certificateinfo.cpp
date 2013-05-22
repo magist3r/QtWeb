@@ -33,15 +33,15 @@ CertificateInfo::CertificateInfo(QString host, QWidget *parent)
 
     connect(form->certificationPathView, SIGNAL(currentRowChanged(int)),
             this, SLOT(updateCertificateInfo(int)));
-	
-	for (int i = 0; i < 5; i++)
-		form->certificationPathView->addItem( "");
-	form->certificationPathView->addItem( tr("Loading certificate info for ") + host + " ...");
+    
+    for (int i = 0; i < 5; i++)
+        form->certificationPathView->addItem( "");
+    form->certificationPathView->addItem( tr("Loading certificate info for ") + host + " ...");
 
     m_socket = new QSslSocket(this);
 
     connect(m_socket, SIGNAL(encrypted()), this, SLOT(socketEncrypted()));
-	connect(m_socket, SIGNAL(sslErrors(QList<QSslError>)),this, SLOT(sslErrors(QList<QSslError>)));
+    connect(m_socket, SIGNAL(sslErrors(QList<QSslError>)),this, SLOT(sslErrors(QList<QSslError>)));
 
     m_socket->connectToHostEncrypted(m_host, SECURE_SSL_PORT);
 
@@ -58,9 +58,9 @@ void CertificateInfo::socketEncrypted()
     QString cipher = QString("%1, %2 (%3/%4)").arg(ciph.authenticationMethod())
                      .arg(ciph.name()).arg(ciph.usedBits()).arg(ciph.supportedBits());;
 
-	form->lblSecured->setText( tr("Encryption: ") + cipher );
+    form->lblSecured->setText( tr("Encryption: ") + cipher );
 
-	setCertificateChain(m_socket->peerCertificateChain());
+    setCertificateChain(m_socket->peerCertificateChain());
 }
 
 void CertificateInfo::sslErrors(const QList<QSslError> &)
@@ -90,11 +90,11 @@ void CertificateInfo::updateCertificateInfo(int index)
     if (index >= 0 && index < chain.size()) {
         const QSslCertificate &cert = chain.at(index);
         QStringList lines;
-		lines << tr("Issued to:   %1").arg(cert.subjectInfo(QSslCertificate::Organization))
-			  << tr("Issued by:  %1").arg(cert.issuerInfo(QSslCertificate::Organization))
-			  << tr("Valid from:  %1 to %2").arg(cert.effectiveDate().date().toString("MMM dd, yyyy")).arg(cert.expiryDate().date().toString("MMM dd, yyyy"))
-			  << tr("")
-			  << tr("Organization: %1").arg(cert.subjectInfo(QSslCertificate::Organization))
+        lines << tr("Issued to:   %1").arg(cert.subjectInfo(QSslCertificate::Organization))
+              << tr("Issued by:  %1").arg(cert.issuerInfo(QSslCertificate::Organization))
+              << tr("Valid from:  %1 to %2").arg(cert.effectiveDate().date().toString("MMM dd, yyyy")).arg(cert.expiryDate().date().toString("MMM dd, yyyy"))
+              << tr("")
+              << tr("Organization: %1").arg(cert.subjectInfo(QSslCertificate::Organization))
               << tr("Subunit: %1").arg(cert.subjectInfo(QSslCertificate::OrganizationalUnitName))
               << tr("Country: %1").arg(cert.subjectInfo(QSslCertificate::CountryName))
               << tr("Locality: %1").arg(cert.subjectInfo(QSslCertificate::LocalityName))

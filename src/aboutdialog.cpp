@@ -34,19 +34,19 @@ AboutDialog::AboutDialog(QWidget *parent)
     name->setText(qApp->applicationName() + " " + QApplication::applicationVersion());
     connect(creditsButton, SIGNAL(clicked()), this, SLOT(credits()));
 
-	author->setText( WebPage::getUserAgent() );
+    author->setText( WebPage::getUserAgent() );
 
-	int dwBuild = BrowserApplication::getApplicationBuild();
-	if (dwBuild > 0)
-	{
-		QString ver = name->text() + QString(" <font size=-2>(build %1)</font>").arg(dwBuild,3,10,QChar('0'));
-		name->setText(ver);
-	}
+    int dwBuild = BrowserApplication::getApplicationBuild();
+    if (dwBuild > 0)
+    {
+        QString ver = name->text() + QString(" <font size=-2>(build %1)</font>").arg(dwBuild,3,10,QChar('0'));
+        name->setText(ver);
+    }
 }
 
 
 void AboutDialog::credits()
 {
-	QMessageBox::information(this, tr("Credits..."), QString("<b>Nokia Qt Team<br>Apple WebKit Team<br>OpenSSL Project Team</b><br>" \
+    QMessageBox::information(this, tr("Credits..."), QString("<b>Nokia Qt Team<br>Apple WebKit Team<br>OpenSSL Project Team</b><br>" \
         "Alex Harder<br>Tony Yu<br>Alex Chaloupov<br>Yury Zimin<br>Olga Volkova<br>") + QChar(0x00C5) +  "ke Engelbrektson<br>Otsubo Kanako<br>Istvan Somlai<br>Hessam Mohamadi<br>Sergei Lopatin");
 }

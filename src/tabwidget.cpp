@@ -75,18 +75,18 @@ TabWidget::TabWidget(QWidget *parent)
     , m_previousTabAction(0)
     , m_recentlyClosedTabsMenu(0)
     , m_lineEdits(0)
-	, m_prevSelectedTab(-1)
-	, m_prevSelectedTabMark(-1)
+    , m_prevSelectedTab(-1)
+    , m_prevSelectedTabMark(-1)
     , m_tabBar(new TabBar(this))
 {
-	setElideMode(Qt::ElideRight);
-	
+    setElideMode(Qt::ElideRight);
+    
     //new QShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_C), this, SLOT(openLastTab()));
 
     connect(m_tabBar, SIGNAL(loadUrl(const QUrl&)),
             this, SLOT(loadUrlNewTab(const QUrl&)));
 
-	connect(m_tabBar, SIGNAL(newTab()), this, SLOT(newEmptyTab()));
+    connect(m_tabBar, SIGNAL(newTab()), this, SLOT(newEmptyTab()));
     connect(m_tabBar, SIGNAL(closeTab(int)), this, SLOT(closeTab(int)));
     connect(m_tabBar, SIGNAL(cloneTab(int)), this, SLOT(cloneTab(int)));
     connect(m_tabBar, SIGNAL(closeOtherTabs(int)), this, SLOT(closeOtherTabs(int)));
@@ -97,36 +97,36 @@ TabWidget::TabWidget(QWidget *parent)
 
     setDocumentMode(true);
 
-	MenuCommands cmds;
+    MenuCommands cmds;
 
-	// Actions
+    // Actions
     QSettings settings;
     settings.beginGroup(QLatin1String("general"));
-	bool hide_icons = settings.value(QLatin1String("hideMenuIcons"), false).toBool();
-    settings.endGroup();	
+    bool hide_icons = settings.value(QLatin1String("hideMenuIcons"), false).toBool();
+    settings.endGroup();    
 
-	// New Tab
+    // New Tab
     m_newTabAction = new QAction(cmds.NewTabTitle(), this);
-	m_newTabAction->setIcon(QIcon(QLatin1String(":addtab.png")));
-	m_newTabAction->setIconVisibleInMenu(!hide_icons);
+    m_newTabAction->setIcon(QIcon(QLatin1String(":addtab.png")));
+    m_newTabAction->setIconVisibleInMenu(!hide_icons);
     m_newTabAction->setShortcuts( cmds.NewTabShortcuts() );
-	connect(m_newTabAction, SIGNAL(triggered()), this, SLOT(newEmptyTab()));
-	this->addAction(m_newTabAction);
+    connect(m_newTabAction, SIGNAL(triggered()), this, SLOT(newEmptyTab()));
+    this->addAction(m_newTabAction);
 
-	// Close Tab
+    // Close Tab
     m_closeTabAction = new QAction(cmds.CloseTabTitle(), this);
-	m_closeTabAction->setIcon(style()->standardIcon(QStyle::SP_DialogCancelButton));
+    m_closeTabAction->setIcon(style()->standardIcon(QStyle::SP_DialogCancelButton));
     m_closeTabAction->setShortcuts(cmds.CloseTabShortcuts());
     m_closeTabAction->setIconVisibleInMenu(!hide_icons);
     connect(m_closeTabAction, SIGNAL(triggered()), this, SLOT(closeTab()));
-	this->addAction(m_closeTabAction);
+    this->addAction(m_closeTabAction);
 
-	// Show Next Tab
+    // Show Next Tab
     m_nextTabAction = new QAction(cmds.NextTabTitle(), this);
     m_nextTabAction->setShortcuts(cmds.NextTabShortcuts());
     connect(m_nextTabAction, SIGNAL(triggered()), this, SLOT(nextTab()));
 
-	// Show Prev Tab
+    // Show Prev Tab
     m_previousTabAction = new QAction(cmds.PrevTabTitle(), this);
     m_previousTabAction->setShortcuts(cmds.PrevTabShortcuts());
     connect(m_previousTabAction, SIGNAL(triggered()), this, SLOT(previousTab()));
@@ -135,7 +135,7 @@ TabWidget::TabWidget(QWidget *parent)
     connect(m_recentlyClosedTabsMenu, SIGNAL(aboutToShow()), this, SLOT(aboutToShowRecentTabsMenu()));
     connect(m_recentlyClosedTabsMenu, SIGNAL(triggered(QAction *)),this, SLOT(aboutToShowRecentTriggeredAction(QAction *)));
 
-	m_recentlyClosedTabsAction = new QAction(cmds.LastTabsTitle(), this);
+    m_recentlyClosedTabsAction = new QAction(cmds.LastTabsTitle(), this);
     m_recentlyClosedTabsAction->setMenu(m_recentlyClosedTabsMenu);
     m_recentlyClosedTabsAction->setEnabled(false);
 
@@ -143,14 +143,14 @@ TabWidget::TabWidget(QWidget *parent)
     connect(m_tabBar, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
     m_tabBar->setSelectionBehaviorOnRemove(QTabBar::SelectPreviousTab);
 
-	// corner buttons
+    // corner buttons
     QToolButton *addTabButton = new QToolButton(this);
     addTabButton->setDefaultAction(m_newTabAction);
     addTabButton->setAutoRaise(true);
     addTabButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
     setCornerWidget(addTabButton, Qt::TopLeftCorner);
 
-	connect(this, SIGNAL(currentChanged(int)), this, SLOT(currentChanged(int)));
+    connect(this, SIGNAL(currentChanged(int)), this, SLOT(currentChanged(int)));
 
     m_lineEdits = new QStackedWidget(this);
 }
@@ -225,9 +225,9 @@ void TabWidget::currentChanged(int index)
     WebView *webView = this->webView(index);
     if (!webView)
         return;
-	
-	m_prevSelectedTab = m_prevSelectedTabMark;
-	m_prevSelectedTabMark = currentIndex();
+    
+    m_prevSelectedTab = m_prevSelectedTabMark;
+    m_prevSelectedTabMark = currentIndex();
 
     Q_ASSERT(m_lineEdits->count() == count());
 
@@ -256,7 +256,7 @@ void TabWidget::currentChanged(int index)
     m_lineEdits->setCurrentIndex(index);
     emit loadProgress(webView->progress());
     emit showStatusBarMessage(webView->lastStatusBarText());
-	webView->setFocus();
+    webView->setFocus();
 }
 
 QAction *TabWidget::newTabAction() const
@@ -315,8 +315,8 @@ WebView *TabWidget::webView(int index) const
     } else {
         // optimization to delay creating the first webview
         if (count() == 1) 
-		{
-			/*TabWidget *that = const_cast<TabWidget*>(this);
+        {
+            /*TabWidget *that = const_cast<TabWidget*>(this);
             that->setUpdatesEnabled(false);
             that->newTab();
             that->closeTab(0);
@@ -353,41 +353,41 @@ int TabWidget::webViewIndex(WebView *webView) const
 
 int TabWidget::addNewTab(WebView *view, bool empty)
 {
-	int index = addTab(view, tr("about:blank"));
-	if (index == 0)
-		return index;
+    int index = addTab(view, tr("about:blank"));
+    if (index == 0)
+        return index;
 
-	QSettings settings;
+    QSettings settings;
     settings.beginGroup(QLatin1String("MainWindow"));
-	int newTabAction = settings.value(QLatin1String("newTabAction"), 0).toInt();
+    int newTabAction = settings.value(QLatin1String("newTabAction"), 0).toInt();
 
-	if (newTabAction == 2 || newTabAction == 1 || !empty)
-	{
-		return index;
-	}
+    if (newTabAction == 2 || newTabAction == 1 || !empty)
+    {
+        return index;
+    }
 
-	QFile file(QLatin1String(":/Welcome.html"));
-	bool isOpened = file.open(QIODevice::ReadOnly | QIODevice::Text);
-	Q_ASSERT(isOpened);
-	QString html = QString(QLatin1String(file.readAll()));
+    QFile file(QLatin1String(":/Welcome.html"));
+    bool isOpened = file.open(QIODevice::ReadOnly | QIODevice::Text);
+    Q_ASSERT(isOpened);
+    QString html = QString(QLatin1String(file.readAll()));
 
-	QPixmap pix= style()->standardIcon(QStyle::SP_MessageBoxInformation).pixmap(32,32);
+    QPixmap pix= style()->standardIcon(QStyle::SP_MessageBoxInformation).pixmap(32,32);
 
     QBuffer imageBuffer;
     imageBuffer.open(QBuffer::ReadWrite);
     if (pix.save(&imageBuffer, "PNG")) 
-	{
+    {
         html.replace(QLatin1String("LOGO_BINARY_DATA_HERE"),
                      QString(QLatin1String(imageBuffer.buffer().toBase64())));
     }
-	view->setHtml( html );
+    view->setHtml( html );
  
-	return  index;
+    return  index;
 }
 
 WebView *TabWidget::newEmptyTab()
 {
-	return newTab(true, true);
+    return newTab(true, true);
 }
 
 
@@ -402,11 +402,11 @@ WebView *TabWidget::newTab(bool makeCurrent, bool empty)
     QAbstractItemView *popup = lineEditCompleter->popup();
     QListView *listView = qobject_cast<QListView*>(popup);
     if (listView)
-	{
+    {
         listView->setUniformItemSizes(true);
-		listView->setSpacing(2);
-		listView->setMinimumHeight(240);//800);//(listView->height() < 200 ? 200 : (listView->height() > 800? 800 : listView->height()) );
-	}
+        listView->setSpacing(2);
+        listView->setMinimumHeight(240);//800);//(listView->height() < 200 ? 200 : (listView->height() > 800? 800 : listView->height()) );
+    }
     lineEdit->setCompleter(lineEditCompleter);
     connect(lineEdit, SIGNAL(returnPressed()), this, SLOT(lineEditReturnPressed()));
     m_lineEdits->addWidget(urlLineEdit);
@@ -456,9 +456,9 @@ WebView *TabWidget::newTab(bool makeCurrent, bool empty)
     connect(webView->page(), SIGNAL(toolBarVisibilityChangeRequested(bool)),
             this, SIGNAL(toolBarVisibilityChangeRequested(bool)));
 
-	addNewTab(webView, empty);
+    addNewTab(webView, empty);
 
-	if (makeCurrent)
+    if (makeCurrent)
         setCurrentWidget(webView);
 
     // webview actions
@@ -471,20 +471,20 @@ WebView *TabWidget::newTab(bool makeCurrent, bool empty)
         currentChanged(currentIndex());
     emit tabsChanged();
 
-	// move focus to address bar to type a new site (if new tab is current)
-	if (makeCurrent && empty) {
-		currentLineEdit()->selectAll();
-		currentLineEdit()->setFocus();
-	}
+    // move focus to address bar to type a new site (if new tab is current)
+    if (makeCurrent && empty) {
+        currentLineEdit()->selectAll();
+        currentLineEdit()->setFocus();
+    }
 
-	QSettings settings;
+    QSettings settings;
     settings.beginGroup(QLatin1String("MainWindow"));
-	int newTabAction = settings.value(QLatin1String("newTabAction"), 0).toInt();
-	if (newTabAction == 1 && empty)
-	{
-	    QString home = settings.value(QLatin1String("home"), QLatin1String("http://www.qtweb.net/")).toString();
-	    loadUrlInCurrentTab(home);
-	}
+    int newTabAction = settings.value(QLatin1String("newTabAction"), 0).toInt();
+    if (newTabAction == 1 && empty)
+    {
+        QString home = settings.value(QLatin1String("home"), QLatin1String("http://www.qtweb.net/")).toString();
+        loadUrlInCurrentTab(home);
+    }
 
     return webView;
 }
@@ -494,7 +494,7 @@ void TabWidget::reloadAllTabs()
     for (int i = 0; i < count(); ++i) {
         QWidget *tabWidget = widget(i);
         if (WebView *tab = qobject_cast<WebView*>(tabWidget)) 
-		{
+        {
             tab->reload();
         }
     }
@@ -524,15 +524,15 @@ void TabWidget::windowCloseRequested()
 
 void TabWidget::prevSelectedTab()
 {
-	if (m_prevSelectedTab == -1)
-		return;
+    if (m_prevSelectedTab == -1)
+        return;
 
-	if (m_prevSelectedTab >= 0 && m_prevSelectedTab < count())
-	{
-		int prev = currentIndex();
-		setCurrentIndex(m_prevSelectedTab);
-		m_prevSelectedTab = prev;
-	}
+    if (m_prevSelectedTab >= 0 && m_prevSelectedTab < count())
+    {
+        int prev = currentIndex();
+        setCurrentIndex(m_prevSelectedTab);
+        m_prevSelectedTab = prev;
+    }
 }
 
 void TabWidget::closeOtherTabs(int index)
@@ -552,8 +552,8 @@ void TabWidget::cloneTab(int index)
         index = currentIndex();
     if (index < 0 || index >= count())
         return;
-	if (webView(index)->url().isEmpty())
-		return;
+    if (webView(index)->url().isEmpty())
+        return;
 
     WebView *tab = newTab(false);
     tab->setUrl(webView(index)->url());
@@ -635,26 +635,26 @@ void TabWidget::webViewIconChanged()
     WebView *webView = qobject_cast<WebView*>(sender());
     int index = webViewIndex(webView);
     if (-1 != index) 
-	{
+    {
         QIcon icon =  BrowserApplication::instance()->icon(webView->url());
-		if (!icon.isNull())
-		{
-			QLabel *label = animationLabel(index, false);
-			QMovie *movie = label->movie();
-			delete movie;
-			label->setMovie(0);
-			label->setPixmap(icon.pixmap(16, 16));
-			setElideMode(Qt::ElideRight);
-		}
+        if (!icon.isNull())
+        {
+            QLabel *label = animationLabel(index, false);
+            QMovie *movie = label->movie();
+            delete movie;
+            label->setMovie(0);
+            label->setPixmap(icon.pixmap(16, 16));
+            setElideMode(Qt::ElideRight);
+        }
     }
 }
 
 void TabWidget::webViewLoadFinished(bool ok)
 {
-	WebView *webView = qobject_cast<WebView*>(sender());
+    WebView *webView = qobject_cast<WebView*>(sender());
     int index = webViewIndex(webView);
     if (-1 != index) 
-	{
+    {
         QLabel *label = animationLabel(index, true);
         if (label->movie())
             label->movie()->stop();
@@ -672,13 +672,13 @@ void TabWidget::webViewTitleChanged(const QString &title)
             tabTitle = webView->url().toString();
         tabTitle.replace(QLatin1Char('&'), QLatin1String("&&"));
         setTabText(index, tabTitle);
-		setTabToolTip(index, tabTitle);
+        setTabToolTip(index, tabTitle);
     }
 
-	if (currentIndex() == index)
+    if (currentIndex() == index)
         emit setCurrentTitle(tabTitle);
 
-	BrowserApplication::historyManager()->updateHistoryItem(webView->url(), tabTitle);
+    BrowserApplication::historyManager()->updateHistoryItem(webView->url(), tabTitle);
 }
 
 void TabWidget::webViewUrlChanged(const QUrl &url)
@@ -686,8 +686,8 @@ void TabWidget::webViewUrlChanged(const QUrl &url)
     WebView *webView = qobject_cast<WebView*>(sender());
     int index = webViewIndex(webView);
     if (-1 != index) 
-	{
-		m_tabBar->setTabData(index, url);
+    {
+        m_tabBar->setTabData(index, url);
     }
     emit tabsChanged();
 }

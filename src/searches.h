@@ -27,16 +27,16 @@ QT_BEGIN_NAMESPACE
 class QSortFilterProxyModel;
 QT_END_NAMESPACE
 
-#define SEARCH_GOOGLE	QString("Google")
-#define SEARCH_YAHOO	QString("Yahoo")
-#define SEARCH_BING		QString("Bing")
-#define SEARCH_CUIL		QString("Cuil")
-#define DEFAULT_PROVIDER	SEARCH_GOOGLE
+#define SEARCH_GOOGLE   QString("Google")
+#define SEARCH_YAHOO    QString("Yahoo")
+#define SEARCH_BING     QString("Bing")
+#define SEARCH_CUIL     QString("Cuil")
+#define DEFAULT_PROVIDER    SEARCH_GOOGLE
 
-#define QUERY_GOOGLE	"http://www.google.com/search?q="
-#define QUERY_YAHOO		"http://search.yahoo.com/search?p="
-#define QUERY_BING		"http://www.bing.com/search?q="
-#define QUERY_CUIL		"http://www.cuil.com/search?q="
+#define QUERY_GOOGLE    "http://www.google.com/search?q="
+#define QUERY_YAHOO     "http://search.yahoo.com/search?p="
+#define QUERY_BING      "http://www.bing.com/search?q="
+#define QUERY_CUIL      "http://www.cuil.com/search?q="
 
 
 class SearchesModel : public QAbstractTableModel
@@ -52,32 +52,32 @@ public:
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
     bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex());
 
-	void addSearch(QString name, QString value);
-	void removeSearch(QString name);
+    void addSearch(QString name, QString value);
+    void removeSearch(QString name);
 
 private:
-	QSettings	m_data;
-	QSettings	m_exclude;
+    QSettings   m_data;
+    QSettings   m_exclude;
 };
 
 class Searches : public QDialog, public Ui_SearchesDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	Searches(QWidget *parent);
-	~Searches();
+    Searches(QWidget *parent);
+    ~Searches();
 
 private slots:
     void addSearch();
     void addEbay();
     void addAsk();
 
-	bool showSearchDialog(QString& name, QString& value);
+    bool showSearchDialog(QString& name, QString& value);
 
 private:
     QSortFilterProxyModel *m_proxyModel;
-	SearchesModel* m_model;
+    SearchesModel* m_model;
 };
 
 #endif // SEARCHES_H

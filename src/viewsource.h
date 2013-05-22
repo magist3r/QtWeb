@@ -15,7 +15,7 @@ public:
     enum Construct {
         Entity,
         Tag,
-		Attributes,
+        Attributes,
         Comment,
         LastConstruct = Comment
     };
@@ -38,7 +38,7 @@ protected:
  
 private:
     QTextCharFormat m_formats[LastConstruct + 1];
-	
+    
 };
 
 
@@ -58,7 +58,7 @@ private:
 
     QTextEdit *editor;
     HtmlHighlighter *highlighter;
-	QString	source;
+    QString source;
 };
 
 #endif // VIEWSOURCE_H

@@ -55,7 +55,7 @@ class UrlIconLabel : public QLabel
 
 public:
     UrlIconLabel(QWidget *parent);
-	void checkToolTip();
+    void checkToolTip();
 
     WebView *m_webView;
 
@@ -85,8 +85,8 @@ protected:
 private slots:
     void webViewUrlChanged(const QUrl &url);
     void webViewIconChanged();
-	void loadUrl(QString);
-	void editingURL(const QString&);
+    void loadUrl(QString);
+    void editingURL(const QString&);
 
 private:
     QLinearGradient generateGradient(const QColor &color) const;

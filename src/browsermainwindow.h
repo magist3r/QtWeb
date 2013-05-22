@@ -75,21 +75,21 @@ public:
     WebView *currentTab() const;
     QByteArray saveState(bool withTabs = true) const;
     bool restoreState(const QByteArray &state);
-	void emptyCache();
-	void setLoadIcon();
+    void emptyCache();
+    void setLoadIcon();
     void checkToolBarButtons();
 
 public slots:
     void loadPage(const QString &url);
     void slotHome();
-	void setDumpFile(const QString &, bool quit);
-	void checkDumpAction(QWebPage *);
-	void checkQuitAction();
+    void setDumpFile(const QString &, bool quit);
+    void checkDumpAction(QWebPage *);
+    void checkQuitAction();
     void find(const QString &text, bool forward);
 
 protected:
     void closeEvent(QCloseEvent *event);
-	void setLastSizing(int value);
+    void setLastSizing(int value);
 
 private slots:
     void save();
@@ -111,13 +111,13 @@ private slots:
     void slotEditFind();
     void slotEditFindNext();
     void slotEditFindPrevious();
-	void slotEmptyCache();
+    void slotEmptyCache();
     void slotShowBookmarksDialog();
     void slotAddBookmark();
     void slotViewTextBigger();
     void slotViewTextNormal();
     void slotViewTextSmaller();
-	void slotZoomTextOnly(bool);
+    void slotZoomTextOnly(bool);
     void slotViewToolbar();
     void slotViewMenubar();
     void slotViewBookmarksBar();
@@ -125,51 +125,51 @@ private slots:
     void slotViewPageSource();
     void slotViewFullScreen(bool enable);
 
-	void slotStyleChange();
-	void slotNextStyle();
-	void slotResetQtWeb();
-	void slotFullCleanUpOnQuit();
-	void slotToggleProxy();
-	void slotToggleImages();
+    void slotStyleChange();
+    void slotNextStyle();
+    void slotResetQtWeb();
+    void slotFullCleanUpOnQuit();
+    void slotToggleProxy();
+    void slotToggleImages();
 
-	void slotDisableJavaScript();
-	void slotDisableImages();
-	void slotDisableCookies();
-	void slotDisablePlugIns();
-	void slotDisableUserAgent();
-	void slotEnableProxy();
-	void slotDisablePopUps();
+    void slotDisableJavaScript();
+    void slotDisableImages();
+    void slotDisableCookies();
+    void slotDisablePlugIns();
+    void slotDisableUserAgent();
+    void slotEnableProxy();
+    void slotDisablePopUps();
 
-	void slotWebSearch();
+    void slotWebSearch();
     void slotToggleInspector(bool enable);
     void slotAboutApplication();
-	void slotCheckUpdates();
-	void slotHelp();
-	void slotHelpOnline();
+    void slotCheckUpdates();
+    void slotHelp();
+    void slotHelpOnline();
 
     void slotDownloadManager();
     void slotTorrents();
     void slotSelectLineEdit();
 
-	void slotAboutToShowStyles();
-	void slotAboutToShowBackMenu();
+    void slotAboutToShowStyles();
+    void slotAboutToShowBackMenu();
     void slotAboutToShowForwardMenu();
     void slotAboutToShowWindowMenu();
-	void slotAboutToShowEncodingMenu();
-	void slotOpenActionUrl(QAction *action);
+    void slotAboutToShowEncodingMenu();
+    void slotOpenActionUrl(QAction *action);
     void slotShowWindow();
     void slotSwapFocus();
-	void slotAboutToShowPrivacyMenu();
-	void slotAboutToShowToolsMenu();
-	void slotAboutToShowCompatibility();
-	void slotEncodingChange();
-	void slotVirtualKeyboard();
-	void slotChangeTextSize();
-	void slotInspectElement();
-	void slotCompatChange();
-	void slotNextUserAgent();
-	
-	void slotLoadPage();
+    void slotAboutToShowPrivacyMenu();
+    void slotAboutToShowToolsMenu();
+    void slotAboutToShowCompatibility();
+    void slotEncodingChange();
+    void slotVirtualKeyboard();
+    void slotChangeTextSize();
+    void slotInspectElement();
+    void slotCompatChange();
+    void slotNextUserAgent();
+    
+    void slotLoadPage();
 
     void printRequested(QWebFrame *frame);
     void geometryChangeRequested(const QRect &geometry);
@@ -182,46 +182,46 @@ private:
     void setupMenu();
     void setupToolBar();
     void updateStatusbarActionText(bool visible);
-	QAction* menuAddEncoding(QString name, QString encoding);
+    QAction* menuAddEncoding(QString name, QString encoding);
 
-	QStringList compatibleUserAgents();
-	void setCompatibilityAgent(QString agent);
-	QString getAgentIcon(QString agent );
-	QString currentListedAgent();
+    QStringList compatibleUserAgents();
+    void setCompatibilityAgent(QString agent);
+    QString getAgentIcon(QString agent );
+    QString currentListedAgent();
 
 public:
-	bool showMenuIcons() {return m_showMenuIcons;}
-	void loadSettings();
-	void setCurrentAgentIcon();
+    bool showMenuIcons() {return m_showMenuIcons;}
+    void loadSettings();
+    void setCurrentAgentIcon();
 
     FindWidget *findWidget;
-	ToolbarSearch *m_toolbarSearch;
-	QString m_currentEncoding;
-	bool	m_showMenuIcons;
+    ToolbarSearch *m_toolbarSearch;
+    QString m_currentEncoding;
+    bool    m_showMenuIcons;
 
 private:
     QToolBar *m_navigationBar;
-	QToolBar *m_buttonsBar;
+    QToolBar *m_buttonsBar;
     BookmarksToolBar *m_bookmarksToolbar;
     ChaseWidget *m_chaseWidget;
     TabWidget *m_tabWidget;
     AutoSaver *m_autoSaver;
-	bool	m_positionRestored;
-	QString  m_dumpFile;
-	bool	 m_dumpActionQuit;
-	QSplitter *m_navSplit;
+    bool    m_positionRestored;
+    QString  m_dumpFile;
+    bool     m_dumpActionQuit;
+    QSplitter *m_navSplit;
 
     QAction *m_historyBack;
-    QMenu	*m_historyBackMenu;
+    QMenu   *m_historyBackMenu;
     QAction *m_historyForward;
-    QMenu	*m_historyForwardMenu;
-    QMenu	*m_windowMenu;
+    QMenu   *m_historyForwardMenu;
+    QMenu   *m_windowMenu;
     QAction *m_styles;
-	QMenu	*m_stylesMenu;
-	QMenu	*m_encodingMenu;
-	QMenu	*m_sizesMenu;
-	QMenu	*m_compMenu;
-	//QMenu	*m_compatMenu;
+    QMenu   *m_stylesMenu;
+    QMenu   *m_encodingMenu;
+    QMenu   *m_sizesMenu;
+    QMenu   *m_compMenu;
+    //QMenu *m_compatMenu;
 
     QAction *m_stop;
     QAction *m_reload;
@@ -231,7 +231,7 @@ private:
     QAction *m_viewToolBar;
     QAction *m_viewBookmarkBar;
     QAction *m_viewStatusBar;
-	QAction *m_viewZoomTextOnly;
+    QAction *m_viewZoomTextOnly;
     QAction *m_restoreLastSession;
     QAction *m_restoreLastTab;
     QAction *m_addBookmark;
@@ -239,44 +239,44 @@ private:
     QAction *m_privateBrowsingMenu;
     QAction *m_fullCleanUpOnQuitMenu;
     QAction *m_emptyCache;
-	QAction *m_disableJavaScript;
-	QAction *m_disableImages;
-	QAction *m_disableCookies;
-	QAction *m_disablePlugIns;
-	QAction *m_disableUserAgent;
-	QAction *m_enableProxy;
-	QAction *m_disablePopUps;
+    QAction *m_disableJavaScript;
+    QAction *m_disableImages;
+    QAction *m_disableCookies;
+    QAction *m_disablePlugIns;
+    QAction *m_disableUserAgent;
+    QAction *m_enableProxy;
+    QAction *m_disablePopUps;
 
     QAction *m_goBackAction;
     QAction *m_goForwardAction;
     QAction *m_addBookmarkAction;
-	QAction *m_homeAction;
-	QAction *m_prefsAction;
-	QAction *m_imagesAction;
-	QAction *m_proxyAction;
-	QAction *m_restoreTabAction;
-	QAction *m_resetAction;
-	QAction *m_enableInspector; 
-	QAction *m_inspectElement; 
+    QAction *m_homeAction;
+    QAction *m_prefsAction;
+    QAction *m_imagesAction;
+    QAction *m_proxyAction;
+    QAction *m_restoreTabAction;
+    QAction *m_resetAction;
+    QAction *m_enableInspector; 
+    QAction *m_inspectElement; 
 
-	QAction *m_inspectAction; 
-	QAction *m_keyboardAction; 
-	QAction *m_textSizeAction; 
-	QAction *m_bookmarksAction; 
+    QAction *m_inspectAction; 
+    QAction *m_keyboardAction; 
+    QAction *m_textSizeAction; 
+    QAction *m_bookmarksAction; 
 
-	QAction	*m_compatAction;
-	QAction *m_compIE; 
-	QAction *m_compMozilla; 
-	QAction *m_compOpera; 
-	QAction *m_compSafari; 
-	QAction *m_compQtWeb; 
-	QAction *m_compChrome; 
-	QAction *m_compCustom;
+    QAction *m_compatAction;
+    QAction *m_compIE; 
+    QAction *m_compMozilla; 
+    QAction *m_compOpera; 
+    QAction *m_compSafari; 
+    QAction *m_compQtWeb; 
+    QAction *m_compChrome; 
+    QAction *m_compCustom;
 
 
-	QAction *m_textSizeLarger; 
-	QAction *m_textSizeNormal; 
-	QAction *m_textSizeSmaller; 
+    QAction *m_textSizeLarger; 
+    QAction *m_textSizeNormal; 
+    QAction *m_textSizeSmaller; 
 
     QIcon m_reloadIcon;
     QIcon m_stopIcon;
@@ -285,7 +285,7 @@ private:
     QIcon m_privacyIcon;
     QIcon m_privacyIconOn;
 
-	QString	m_title;
+    QString m_title;
 };
 
 #endif // BROWSERMAINWINDOW_H

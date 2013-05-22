@@ -260,13 +260,13 @@ void TorrentWindow::loadSettings()
 
     settings.endGroup();
 
-	settings.beginGroup("Torrents");
+    settings.beginGroup("Torrents");
     lastDirectory = settings.value("LastDirectory").toString();
     if (lastDirectory.isEmpty())
-		if (!downloadDirectory.isEmpty())
-			lastDirectory = downloadDirectory;
-		else
-			lastDirectory = QDir::currentPath();
+        if (!downloadDirectory.isEmpty())
+            lastDirectory = downloadDirectory;
+        else
+            lastDirectory = QDir::currentPath();
     int up = settings.value("UploadLimit").toInt();
     int down = settings.value("DownloadLimit").toInt();
     uploadLimitSlider->setValue(up ? up : 170);
@@ -316,9 +316,9 @@ bool TorrentWindow::addTorrent()
     QString fileName = QFileDialog::getOpenFileName(this, tr("Choose a torrent file"),
                                                     lastDirectory,
                                                     tr("Torrents (*.torrent);;"
-													" All files (*.*)"));
+                                                    " All files (*.*)"));
 
-	return addTorrent(fileName);
+    return addTorrent(fileName);
 }
 
 void TorrentWindow::removeTorrent()
@@ -444,7 +444,7 @@ void TorrentWindow::saveSettings()
 
     // Prepare and reset the settings
     QSettings settings;
-	settings.beginGroup("Torrents");
+    settings.beginGroup("Torrents");
     settings.remove("");
 
     settings.setValue("LastDirectory", lastDirectory);
@@ -648,7 +648,7 @@ void TorrentWindow::acceptFileDrop(const QString &fileName)
 
 void TorrentWindow::closeEvent(QCloseEvent *)
 {
-	;
+    ;
 }
 
 TorrentView::TorrentView(QWidget *parent)

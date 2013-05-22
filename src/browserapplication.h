@@ -73,7 +73,7 @@ public:
     ~BrowserApplication();
     static BrowserApplication *instance();
     static int getApplicationBuild();
-	void definePortableRunMode();
+    void definePortableRunMode();
     void loadSettings();
     void closeMainWindows();
     void closeTabs();
@@ -83,8 +83,8 @@ public:
     QList<BrowserMainWindow*> mainWindows();
     QIcon icon(const QUrl &url) const;
 
-	void CheckIcon(const QUrl &url);
-	void CheckSetTranslator();
+    void CheckIcon(const QUrl &url);
+    void CheckSetTranslator();
 
     void saveSession();
     bool canRestoreSession() const;
@@ -92,31 +92,31 @@ public:
     static HistoryManager *historyManager();
     static CookieJar *cookieJar();
     static DownloadManager *downloadManager();
-	static TorrentWindow *torrents();
+    static TorrentWindow *torrents();
     static NetworkAccessManager *networkAccessManager();
     static BookmarksManager *bookmarksManager();
-	static bool	resetOnQuit() { return s_resetOnQuit; }
-	static void	setResetOnQuit( bool reset) {s_resetOnQuit = reset; }
+    static bool resetOnQuit() { return s_resetOnQuit; }
+    static void setResetOnQuit( bool reset) {s_resetOnQuit = reset; }
     static AutoComplete *autoCompleter();
-	static bool startResizeOnMouseweelClick() { return s_startResizeOnMouseweelClick; }
+    static bool startResizeOnMouseweelClick() { return s_startResizeOnMouseweelClick; }
 
-	static bool handleMIME(QString content, const QUrl& url);
+    static bool handleMIME(QString content, const QUrl& url);
 
 public:
-	static void historyClear();
-	static void emptyCaches();
-	static void clearDownloads();
-	static void clearCookies();
-	static void clearIcons();
-	static void clearPasswords();
-	static void clearSearches();
-	static void clearSSL();
-	static void closeExtraWindows();
-	static void resetSettings( bool reload);
-	static QString dataLocation();
-	static QString downloadsLocation(bool create_dir);
-	static bool existDownloadManager() {return s_downloadManager != NULL;}
-	static QString exeLocation() {return s_exeLocation;}
+    static void historyClear();
+    static void emptyCaches();
+    static void clearDownloads();
+    static void clearCookies();
+    static void clearIcons();
+    static void clearPasswords();
+    static void clearSearches();
+    static void clearSSL();
+    static void closeExtraWindows();
+    static void resetSettings( bool reload);
+    static QString dataLocation();
+    static QString downloadsLocation(bool create_dir);
+    static bool existDownloadManager() {return s_downloadManager != NULL;}
+    static QString exeLocation() {return s_exeLocation;}
 public slots:
     BrowserMainWindow *newMainWindow();
     void restoreLastSession();
@@ -125,25 +125,25 @@ private slots:
     void postLaunch();
     void openUrl(const QUrl &url);
     void newLocalSocketConnection();
-	void iconDownloadFinished(QNetworkReply*);
+    void iconDownloadFinished(QNetworkReply*);
 
 private:
     void clean();
     void installTranslator(const QString &name);
-	static QIcon getHostIcon(const QString &host);
-	static void setHostIcon(const QString &host, const QIcon& icon);
+    static QIcon getHostIcon(const QString &host);
+    static void setHostIcon(const QString &host, const QIcon& icon);
 
-	static QMap<QString, QIcon> s_hostIcons;
+    static QMap<QString, QIcon> s_hostIcons;
     static HistoryManager *s_historyManager;
     static DownloadManager *s_downloadManager;
     static TorrentWindow *s_torrents;
     static NetworkAccessManager *s_networkAccessManager;
     static BookmarksManager *s_bookmarksManager;
-	static bool s_resetOnQuit;
-	static bool s_startResizeOnMouseweelClick;
-	static AutoComplete *s_autoCompleter;
-	static bool s_portableRunMode;
-	static QString s_exeLocation;
+    static bool s_resetOnQuit;
+    static bool s_startResizeOnMouseweelClick;
+    static AutoComplete *s_autoCompleter;
+    static bool s_portableRunMode;
+    static QString s_exeLocation;
 
     QList<QPointer<BrowserMainWindow> > m_mainWindows;
     QLocalServer *m_localServer;

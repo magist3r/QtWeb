@@ -28,22 +28,22 @@ class QWebFrame;
 
 class AutoComplete : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	AutoComplete(QObject *parent);
+    AutoComplete(QObject *parent);
 
-	void setFormHtml(QUrl url, QString data  );
-	void setFormData(QUrl url, QString data  );
+    void setFormHtml(QUrl url, QString data  );
+    void setFormData(QUrl url, QString data  );
 
-	bool evaluate(QUrl url);
-	bool complete( QWebFrame * frame);
+    bool evaluate(QUrl url);
+    bool complete( QWebFrame * frame);
 
 private:
-	QMap<QString, QString>	m_forms;
-	QMap<QString, QString>	m_forms_data;
+    QMap<QString, QString>  m_forms;
+    QMap<QString, QString>  m_forms_data;
 
-	QString formUrl(QUrl url);
+    QString formUrl(QUrl url);
 };
 
 #endif // AUTOCOMPLETE_H

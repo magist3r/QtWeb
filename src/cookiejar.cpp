@@ -256,7 +256,7 @@ bool CookieJar::setCookiesFromUrl(const QList<QNetworkCookie> &cookieList, const
     // pass exceptions
     bool acceptInitially = (m_acceptCookies != AcceptNever);
 
-	if ((acceptInitially && !eBlock)
+    if ((acceptInitially && !eBlock)
         || (!acceptInitially && (eAllow || eAllowSession))) {
         // pass url domain == cookie domain
         QDateTime soon = QDateTime::currentDateTime();
@@ -473,8 +473,8 @@ bool CookieModel::removeRows(int row, int count, const QModelIndex &parent)
         lst.removeAt(i);
     }
     m_cookieJar->setAllCookies(lst);
-	m_cookieJar->changed();
-	
+    m_cookieJar->changed();
+    
     endRemoveRows();
     return true;
 }

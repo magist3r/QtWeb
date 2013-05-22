@@ -47,7 +47,7 @@
 #include "googlesuggest.h"
 
 #ifdef Q_WS_WIN
-	#include "windows.h"
+    #include "windows.h"
 #endif
 
 
@@ -63,7 +63,7 @@ GSuggestCompletion::GSuggestCompletion(QLineEdit *parent): QObject(parent), edit
     popup->setSelectionBehavior(QTreeWidget::SelectRows);
     popup->setFrameStyle(QFrame::Box | QFrame::Plain);
     popup->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	//popup->setMaximumWidth( parent->width() );
+    //popup->setMaximumWidth( parent->width() );
 
     popup->header()->hide();
     popup->installEventFilter(this);
@@ -87,8 +87,8 @@ GSuggestCompletion::GSuggestCompletion(QLineEdit *parent): QObject(parent), edit
     QSettings settings;
     settings.beginGroup(QLatin1String("proxy"));
     if (settings.value(QLatin1String("enabled"), false).toBool()) 
-	{
-		QNetworkProxy pxy;
+    {
+        QNetworkProxy pxy;
         if (settings.value(QLatin1String("type"), 0).toInt() == 0)
             pxy = QNetworkProxy::Socks5Proxy;
         else
@@ -97,42 +97,42 @@ GSuggestCompletion::GSuggestCompletion(QLineEdit *parent): QObject(parent), edit
         pxy.setPort(settings.value(QLatin1String("port"), 1080).toInt());
         pxy.setUser(settings.value(QLatin1String("userName")).toString());
         pxy.setPassword(settings.value(QLatin1String("password")).toString());
-	    networkManager.setProxy(pxy);
+        networkManager.setProxy(pxy);
     }
-	else
+    else
     if (settings.value(QLatin1String("autoProxy"), false).toBool()) 
-	{
+    {
 
 #ifdef Q_WS_WIN
-		QNetworkProxy pxy;
-		HKEY hKey;
-		wchar_t key[256];
-		wcscpy(key, L"Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings\\");
-		if (ERROR_SUCCESS == RegOpenKeyExW(HKEY_CURRENT_USER, key, 0, KEY_READ, &hKey))
-		{
-			DWORD dwEnabled = FALSE; DWORD dwBufSize = sizeof(dwEnabled);
-			if (RegQueryValueExW(hKey, L"ProxyEnable", NULL, NULL, (LPBYTE)&dwEnabled, &dwBufSize ) == ERROR_SUCCESS
-				&& dwEnabled)
-			{
-				memset(key,0,sizeof(key)); dwBufSize = sizeof(key) / sizeof(TCHAR);
-				if (RegQueryValueExW(hKey, L"ProxyServer", NULL, NULL, (LPBYTE)&key, &dwBufSize ) == ERROR_SUCCESS)
-				{
-					pxy = QNetworkProxy::HttpProxy;
-					QStringList lst = QString::fromWCharArray(key).split(':');
-					if (lst.size() > 0)
-					{
-						pxy.setHostName(lst.at(0));
-						pxy.setPort( lst.size() > 1 ? lst.at(1).toInt() : 1080 );
-						networkManager.setProxy(pxy);
-					}
-				}
-			}
-			RegCloseKey(hKey);
-		}
+        QNetworkProxy pxy;
+        HKEY hKey;
+        wchar_t key[256];
+        wcscpy(key, L"Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings\\");
+        if (ERROR_SUCCESS == RegOpenKeyExW(HKEY_CURRENT_USER, key, 0, KEY_READ, &hKey))
+        {
+            DWORD dwEnabled = FALSE; DWORD dwBufSize = sizeof(dwEnabled);
+            if (RegQueryValueExW(hKey, L"ProxyEnable", NULL, NULL, (LPBYTE)&dwEnabled, &dwBufSize ) == ERROR_SUCCESS
+                && dwEnabled)
+            {
+                memset(key,0,sizeof(key)); dwBufSize = sizeof(key) / sizeof(TCHAR);
+                if (RegQueryValueExW(hKey, L"ProxyServer", NULL, NULL, (LPBYTE)&key, &dwBufSize ) == ERROR_SUCCESS)
+                {
+                    pxy = QNetworkProxy::HttpProxy;
+                    QStringList lst = QString::fromWCharArray(key).split(':');
+                    if (lst.size() > 0)
+                    {
+                        pxy.setHostName(lst.at(0));
+                        pxy.setPort( lst.size() > 1 ? lst.at(1).toInt() : 1080 );
+                        networkManager.setProxy(pxy);
+                    }
+                }
+            }
+            RegCloseKey(hKey);
+        }
 #endif
-	}
+    }
 
-	settings.endGroup();
+    settings.endGroup();
 }
 
 GSuggestCompletion::~GSuggestCompletion()
@@ -245,9 +245,9 @@ void GSuggestCompletion::autoSuggest()
 {
 
     QString str = editor->text();
-	// Skip local searches by now !!!
-	if (str.toAscii() != str)
-		return;
+    // Skip local searches by now !!!
+    if (str.toAscii() != str)
+        return;
 
     QString url = QString(GSUGGEST_URL).arg(str);
     networkManager.get(QNetworkRequest(QString(url)));

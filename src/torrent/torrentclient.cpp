@@ -1446,7 +1446,7 @@ void TorrentClient::addToPeerList(const QList<TorrentPeer> &peerList)
             // Skip our own server.
             continue;
         }
-		
+        
         bool known = false;
         foreach (TorrentPeer *knownPeer, d->peers) {
             if (knownPeer->port == peer.port

@@ -101,71 +101,71 @@ void ClearButton::textChanged(const QString &text)
 }
 
 LineEdit::LineEdit(QWidget *parent, bool fix_url) :
-	QLineEdit( parent)
-	, m_fix_url(fix_url)
+    QLineEdit( parent)
+    , m_fix_url(fix_url)
 {
-	m_selectOnMouse = false;
+    m_selectOnMouse = false;
 }
 
 void LineEdit::focusInEvent(QFocusEvent *event)
 {
-	if (event->reason() == Qt::MouseFocusReason)
-		m_selectOnMouse = true;
+    if (event->reason() == Qt::MouseFocusReason)
+        m_selectOnMouse = true;
 
-	QLineEdit::focusInEvent(event);
+    QLineEdit::focusInEvent(event);
 }
 
 void LineEdit::mousePressEvent(QMouseEvent *event)
 {
-	QLineEdit::mousePressEvent(event);
-	if (event->button() == Qt::LeftButton && m_selectOnMouse) {
-		selectAll();
-		m_selectOnMouse = false;
-	}
+    QLineEdit::mousePressEvent(event);
+    if (event->button() == Qt::LeftButton && m_selectOnMouse) {
+        selectAll();
+        m_selectOnMouse = false;
+    }
 }
 
 void LineEdit::keyPressEvent ( QKeyEvent * event )
 {
-	if ( event->key() == Qt::Key_Return && m_fix_url)
-	{
-		if (event->modifiers() & Qt::ControlModifier)
-		{
-			QString t = text().trimmed();
-			if (t.length() > 0)
-			{
-				if (t.toLower().indexOf("http://") != 0)
-				{
-					t = "http://" + t;
-				}
-				if (t.toLower().indexOf("www.") != 7)
-				{
-					t.insert(7, "www.");
-				}
-				
-				int ind = t.indexOf('.', 12);
-				if ( ind == -1)
-				{
-					t += ".com/";
-				}
-				else
-					if (ind == t.length() - 1)
-						t += "com/";
+    if ( event->key() == Qt::Key_Return && m_fix_url)
+    {
+        if (event->modifiers() & Qt::ControlModifier)
+        {
+            QString t = text().trimmed();
+            if (t.length() > 0)
+            {
+                if (t.toLower().indexOf("http://") != 0)
+                {
+                    t = "http://" + t;
+                }
+                if (t.toLower().indexOf("www.") != 7)
+                {
+                    t.insert(7, "www.");
+                }
+                
+                int ind = t.indexOf('.', 12);
+                if ( ind == -1)
+                {
+                    t += ".com/";
+                }
+                else
+                    if (ind == t.length() - 1)
+                        t += "com/";
 
-				setText( t );
-			}
-		}
-	}
+                setText( t );
+            }
+        }
+    }
 
-	// ALT+ENTER - open link in a new tab
-	if (event->key() == Qt::Key_Return && (event->modifiers() & Qt::AltModifier))
-	{
-		BrowserMainWindow *mainWindow = BrowserApplication::instance()->mainWindow();
-		mainWindow->tabWidget()->loadUrlNewTab(  BrowserMainWindow::guessUrlFromString( text() ) );
-		clear();
-		return;
-	}
+    // ALT+ENTER - open link in a new tab
+    if (event->key() == Qt::Key_Return && (event->modifiers() & Qt::AltModifier))
+    {
+        BrowserMainWindow *mainWindow = BrowserApplication::instance()->mainWindow();
+        mainWindow->tabWidget()->loadUrlNewTab(  BrowserMainWindow::guessUrlFromString( text() ) );
+        clear();
+        return;
+    }
 
-	QLineEdit::keyPressEvent(event);
+    QLineEdit::keyPressEvent(event);
 }
 
 
@@ -196,22 +196,22 @@ ExLineEdit::ExLineEdit(QWidget *parent, bool fix_url)
 
     // clearButton
     m_clearButton = new ClearButton(this);
-	connect(m_lineEdit, SIGNAL(textChanged(const QString&)),
+    connect(m_lineEdit, SIGNAL(textChanged(const QString&)),
             m_clearButton, SLOT(textChanged(const QString&)));
 
-	connect(m_clearButton, SIGNAL(clicked()),
+    connect(m_clearButton, SIGNAL(clicked()),
             this, SLOT(cleared()));
 }
 
 void ExLineEdit::cleared()
 {
-	m_lineEdit->clear();
-	if (m_lineEdit && m_lineEdit->completer())
-	{
-		m_lineEdit->completer()->setCompletionPrefix( "http://" ); 
-		m_lineEdit->completer()->complete();
-	}
-	m_lineEdit->clear();
+    m_lineEdit->clear();
+    if (m_lineEdit && m_lineEdit->completer())
+    {
+        m_lineEdit->completer()->setCompletionPrefix( "http://" ); 
+        m_lineEdit->completer()->complete();
+    }
+    m_lineEdit->clear();
 }
 
 void ExLineEdit::setLeftWidget(QWidget *widget)
@@ -290,7 +290,7 @@ void ExLineEdit::focusOutEvent(QFocusEvent *event)
         connect(m_lineEdit->completer(), SIGNAL(activated(QString)),
                          m_lineEdit, SLOT(setText(QString)));
 
-		connect(m_lineEdit->completer(), SIGNAL(activated(QString)),
+        connect(m_lineEdit->completer(), SIGNAL(activated(QString)),
                          this, SLOT(isCompleted(QString)));
 
         connect(m_lineEdit->completer(), SIGNAL(highlighted(QString)),
@@ -301,7 +301,7 @@ void ExLineEdit::focusOutEvent(QFocusEvent *event)
 
 void ExLineEdit::isCompleted(QString q)
 {
-	emit completed(q);
+    emit completed(q);
 }
 
 void ExLineEdit::keyPressEvent(QKeyEvent *event)

@@ -47,12 +47,12 @@ void HtmlHighlighter::highlightBlock(const QString &text)
     int len = text.length();
     int start = 0;
     int pos = 0;
-	int space = -1;
+    int space = -1;
 
-	while (pos < len) 
-	{
+    while (pos < len) 
+    {
         switch (state) 
-		{
+        {
         case NormalState:
         default:
             while (pos < len) {
@@ -76,7 +76,7 @@ void HtmlHighlighter::highlightBlock(const QString &text)
                 }
             }
             break;
-		case InComment:
+        case InComment:
             start = pos;
             while (pos < len) {
                 if (text.mid(pos, 3) == "-->") {
@@ -90,52 +90,52 @@ void HtmlHighlighter::highlightBlock(const QString &text)
             setFormat(start, pos - start,
                       m_formats[Comment]);
             break;
-		case InTag:
+        case InTag:
             QChar quote = QChar::Null;
             start = pos;
-			space = -1;
+            space = -1;
             while (pos < len) {
                 QChar ch = text.at(pos);
                 if (quote.isNull()) 
-				{
+                {
                     if (ch == '\'' || ch == '"') 
-					{
+                    {
                         quote = ch;
                     }
-					else
-					if (ch.isSpace() && space == -1) 
-					{
-						space = pos;
-					}
-					else 
-						if (ch == '>') 
-						{
-							++pos;
-							state = NormalState;
-							break;
-						}
+                    else
+                    if (ch.isSpace() && space == -1) 
+                    {
+                        space = pos;
+                    }
+                    else 
+                        if (ch == '>') 
+                        {
+                            ++pos;
+                            state = NormalState;
+                            break;
+                        }
                 } 
-				else 
-					if (ch.isSpace() && space == -1) 
-					{
-						space = pos;
-					}
-					else
-					if (ch == quote) 
-					{
-						quote = QChar::Null;
-					}
+                else 
+                    if (ch.isSpace() && space == -1) 
+                    {
+                        space = pos;
+                    }
+                    else
+                    if (ch == quote) 
+                    {
+                        quote = QChar::Null;
+                    }
                 ++pos;
             }
-			if (space == -1)
-			{
-				setFormat(start, pos - start, m_formats[Tag]);
-			}
-			else
-			{
-				setFormat(start, pos - start, m_formats[Tag]);
-				setFormat(space, pos - space - 1, m_formats[Attributes]);
-			}
+            if (space == -1)
+            {
+                setFormat(start, pos - start, m_formats[Tag]);
+            }
+            else
+            {
+                setFormat(start, pos - start, m_formats[Tag]);
+                setFormat(space, pos - space - 1, m_formats[Attributes]);
+            }
         }
     }
 
@@ -159,12 +159,12 @@ void ViewSourceWindow::saveFile()
             tr("File Save As"), "Source.html", "Html Files (*.html *.htm)");
 
     if (!fileName.isEmpty()) 
-	{
+    {
         QFile file(fileName);
         if (file.open(QFile::WriteOnly | QFile::Text))
-		{
-			file.write(editor->toPlainText().toUtf8());
-		}
+        {
+            file.write(editor->toPlainText().toUtf8());
+        }
     }
 }
 
@@ -180,15 +180,15 @@ void ViewSourceWindow::setupEditor()
 
     highlighter = new HtmlHighlighter(editor->document());
 
-	QTextCodec* codec = QTextCodec::codecForHtml(source.toUtf8(), QTextCodec::codecForName( "utf-8" ));
-	if (codec)
-	{
-		editor->setPlainText(codec->toUnicode(source.toUtf8()));
-	}
-	else
-	{
-		editor->setPlainText(source.toUtf8());
-	}
+    QTextCodec* codec = QTextCodec::codecForHtml(source.toUtf8(), QTextCodec::codecForName( "utf-8" ));
+    if (codec)
+    {
+        editor->setPlainText(codec->toUnicode(source.toUtf8()));
+    }
+    else
+    {
+        editor->setPlainText(source.toUtf8());
+    }
 }
 
 void ViewSourceWindow::setupFileMenu()
@@ -198,6 +198,6 @@ void ViewSourceWindow::setupFileMenu()
 
     fileMenu->addAction(tr("&Save As..."), this, SLOT(saveFile()), QKeySequence::SaveAs);
                         
-    fileMenu->addAction(tr("&Close"), this, SLOT(close()),	QKeySequence::Close);
+    fileMenu->addAction(tr("&Close"), this, SLOT(close()),  QKeySequence::Close);
 }
 

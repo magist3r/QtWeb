@@ -69,46 +69,46 @@ UrlIconLabel::UrlIconLabel(QWidget *parent)
     setMinimumWidth(16);
     setMinimumHeight(16);
 
-	checkToolTip();
+    checkToolTip();
 }
 
 void UrlIconLabel::checkToolTip()
 {
-	if (m_webView && !m_webView->url().isEmpty() && m_webView->url().scheme() == "https")
-	{
-		setToolTip("<p style='white-space:pre'>" + tr("Secure connection to <b>") + m_webView->url().host() + 
-			tr("</b> is encrypted via SSL <p>Click the lock icon for the certificate and encryption details.")); 
-	}
+    if (m_webView && !m_webView->url().isEmpty() && m_webView->url().scheme() == "https")
+    {
+        setToolTip("<p style='white-space:pre'>" + tr("Secure connection to <b>") + m_webView->url().host() + 
+            tr("</b> is encrypted via SSL <p>Click the lock icon for the certificate and encryption details.")); 
+    }
 }
 
 void UrlIconLabel::mousePressEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton)
-	{
-		m_dragStartPos = event->pos();
+    {
+        m_dragStartPos = event->pos();
 
-		if (m_webView && !m_webView->url().isEmpty() && m_webView->url().scheme() == "https")
-		{
-			CertificateInfo *info = new CertificateInfo(m_webView->url().host(), this);
-			info->exec();
-			info->deleteLater();
-			return;
-		}
-		
-		UrlLineEdit* lineEdit = (UrlLineEdit*)parent();
-		if (lineEdit && lineEdit->lineEdit()->completer()) 
-		{
-			lineEdit->lineEdit()->completer()->complete();
-		}		
-	}
+        if (m_webView && !m_webView->url().isEmpty() && m_webView->url().scheme() == "https")
+        {
+            CertificateInfo *info = new CertificateInfo(m_webView->url().host(), this);
+            info->exec();
+            info->deleteLater();
+            return;
+        }
+        
+        UrlLineEdit* lineEdit = (UrlLineEdit*)parent();
+        if (lineEdit && lineEdit->lineEdit()->completer()) 
+        {
+            lineEdit->lineEdit()->completer()->complete();
+        }       
+    }
     QLabel::mousePressEvent(event);
 }
 
 void UrlIconLabel::mouseReleaseEvent(QMouseEvent *event)
 {
-	if (event->button() == Qt::LeftButton)
-	{
-	}
+    if (event->button() == Qt::LeftButton)
+    {
+    }
 
     QLabel::mouseReleaseEvent(event);
 }
@@ -140,7 +140,7 @@ UrlLineEdit::UrlLineEdit(QWidget *parent)
     setLeftWidget(m_iconLabel);
     m_defaultBaseColor = palette().color(QPalette::Base);
 
-	connect(m_lineEdit, SIGNAL(textEdited(const QString&)),
+    connect(m_lineEdit, SIGNAL(textEdited(const QString&)),
             this, SLOT(editingURL(const QString&)));
 
     webViewIconChanged();
@@ -148,7 +148,7 @@ UrlLineEdit::UrlLineEdit(QWidget *parent)
 
 void UrlLineEdit::editingURL(const QString& )
 {
-	BrowserApplication::instance()->mainWindow()->setLoadIcon();
+    BrowserApplication::instance()->mainWindow()->setLoadIcon();
 }
 
 void UrlLineEdit::setWebView(WebView *webView)
@@ -165,20 +165,20 @@ void UrlLineEdit::setWebView(WebView *webView)
     connect(webView, SIGNAL(loadProgress(int)),
         this, SLOT(update()));
 
-	// AC: to avoid blue non-completed
-	connect(webView, SIGNAL(loadFinished(bool)),
+    // AC: to avoid blue non-completed
+    connect(webView, SIGNAL(loadFinished(bool)),
         this, SLOT(update()));
 
-	connect(this, SIGNAL(completed(QString)), this, SLOT(loadUrl(QString)));
+    connect(this, SIGNAL(completed(QString)), this, SLOT(loadUrl(QString)));
 }
 
 void UrlLineEdit::loadUrl(QString url)
 {
-	if (m_webView && m_webView == BrowserApplication::instance()->mainWindow()->currentTab())
-	{
-		QUrl u = BrowserMainWindow::guessUrlFromString(url);
-		m_webView->loadUrl( u.toString() );
-	}
+    if (m_webView && m_webView == BrowserApplication::instance()->mainWindow()->currentTab())
+    {
+        QUrl u = BrowserMainWindow::guessUrlFromString(url);
+        m_webView->loadUrl( u.toString() );
+    }
 }
 
 void UrlLineEdit::webViewUrlChanged(const QUrl &url)
@@ -191,16 +191,16 @@ void UrlLineEdit::webViewUrlChanged(const QUrl &url)
 
 void UrlLineEdit::webViewIconChanged()
 {
-	if (m_webView)
-	{
-		QIcon icon = BrowserApplication::instance()->icon(m_webView->url()); 
-		if (!icon.isNull())
-		{
-			QPixmap pixmap(icon.pixmap(16, 16));
-			m_iconLabel->setPixmap(pixmap);
-			m_iconLabel->checkToolTip();
-		}
-	}
+    if (m_webView)
+    {
+        QIcon icon = BrowserApplication::instance()->icon(m_webView->url()); 
+        if (!icon.isNull())
+        {
+            QPixmap pixmap(icon.pixmap(16, 16));
+            m_iconLabel->setPixmap(pixmap);
+            m_iconLabel->checkToolTip();
+        }
+    }
 }
 
 QLinearGradient UrlLineEdit::generateGradient(const QColor &color) const
@@ -226,17 +226,17 @@ void UrlLineEdit::paintEvent(QPaintEvent *event)
 {
     QPalette p = palette();
     if (m_webView && m_webView->url().scheme() == QLatin1String("https")) 
-	{
-		if (m_webView->sslErrors())
-		{
-			// Light Red
-			p.setBrush(QPalette::Base, generateGradient(QColor(250, 171, 191)));
-		}
-		else
-		{
-			// Light Green
-			p.setBrush(QPalette::Base, generateGradient(QColor(0x90, 0xEE, 0x90)));
-		}
+    {
+        if (m_webView->sslErrors())
+        {
+            // Light Red
+            p.setBrush(QPalette::Base, generateGradient(QColor(250, 171, 191)));
+        }
+        else
+        {
+            // Light Green
+            p.setBrush(QPalette::Base, generateGradient(QColor(0x90, 0xEE, 0x90)));
+        }
     } else {
         p.setBrush(QPalette::Base, m_defaultBaseColor);
     }
@@ -247,7 +247,7 @@ void UrlLineEdit::paintEvent(QPaintEvent *event)
     QStyleOptionFrameV2 panel;
     initStyleOption(&panel);
     QRect backgroundRect = style()->subElementRect(QStyle::SE_LineEditContents, &panel, this);
-	backgroundRect.setWidth(backgroundRect.width() - m_clearButton->width());
+    backgroundRect.setWidth(backgroundRect.width() - m_clearButton->width());
     if (m_webView && !hasFocus()) {
         int progress = m_webView->progress();
         QColor loadingColor = QColor(116, 192, 250);

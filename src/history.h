@@ -128,7 +128,7 @@ private:
     QTimer m_expiredTimer;
     QList<HistoryItem> m_history;
     QString m_lastSavedUrl;
-	bool	m_historyCleaned;
+    bool    m_historyCleaned;
 
     HistoryModel *m_historyModel;
     HistoryFilterModel *m_historyFilterModel;

@@ -25,21 +25,21 @@
 
 
 Shortcuts::Shortcuts(QWidget *parent)
-	: QDialog(parent)
+    : QDialog(parent)
 {
     setupUi(this);
     setWindowFlags(Qt::Sheet);
-	connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
-	//ShortcutsTable->verticalHeader()->hide();
-	ShortcutsTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+    connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+    //ShortcutsTable->verticalHeader()->hide();
+    ShortcutsTable->setSelectionBehavior(QAbstractItemView::SelectRows);
     ShortcutsTable->setAlternatingRowColors(true);
     ShortcutsTable->setTextElideMode(Qt::ElideMiddle);
     ShortcutsTable->setShowGrid(false);
     ShortcutsTable->setSortingEnabled(false);
     //ShortcutsTable->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::SelectedClicked);
-	
-	ShortcutsTable->setRowCount( m_data.GetCommandsCount() );
-	ShortcutsTable->setColumnCount(2);
+    
+    ShortcutsTable->setRowCount( m_data.GetCommandsCount() );
+    ShortcutsTable->setColumnCount(2);
 
     QFont f = font();
     f.setPointSize(10);
@@ -68,15 +68,15 @@ Shortcuts::Shortcuts(QWidget *parent)
                                 | QAbstractItemView::SelectedClicked);
     ShortcutsTable->setSelectionBehavior(QAbstractItemView::SelectRows);
 
-	QStringList headerLabels;
+    QStringList headerLabels;
     headerLabels << tr("Menu Command") << tr("Assigned Shortcut(s)");
     ShortcutsTable->setHorizontalHeaderLabels(headerLabels);
 
-	for (int i = 0; i < m_data.GetCommandsCount(); i++)
-	{
-		ShortcutsTable->setItem(i, 0, new QTableWidgetItem(m_data.GetTitle(i)));
-		ShortcutsTable->setItem(i, 1, new QTableWidgetItem(m_data.GetShortcutsString(i)));
-	}
+    for (int i = 0; i < m_data.GetCommandsCount(); i++)
+    {
+        ShortcutsTable->setItem(i, 0, new QTableWidgetItem(m_data.GetTitle(i)));
+        ShortcutsTable->setItem(i, 1, new QTableWidgetItem(m_data.GetShortcutsString(i)));
+    }
 }
 
 Shortcuts::~Shortcuts()
@@ -85,35 +85,35 @@ Shortcuts::~Shortcuts()
 
 bool Shortcuts::save()
 {
-	for (int i = 0; i < m_data.GetCommandsCount(); i++)
-	{
-		QTableWidgetItem* menu = ShortcutsTable->item(i, 0);
-		if ( m_data.GetTitle(i) != menu->text().trimmed())
-		{	
-			m_data.SetTitle(i, menu->text().trimmed());
-		}
+    for (int i = 0; i < m_data.GetCommandsCount(); i++)
+    {
+        QTableWidgetItem* menu = ShortcutsTable->item(i, 0);
+        if ( m_data.GetTitle(i) != menu->text().trimmed())
+        {   
+            m_data.SetTitle(i, menu->text().trimmed());
+        }
 
-		QTableWidgetItem* shorts = ShortcutsTable->item(i, 1);
-		if ( m_data.GetShortcutsString(i) != shorts->text().trimmed())
-		{
-			if (!m_data.SetShortcuts(i, shorts->text().trimmed()))
-			{
-		        QMessageBox::warning(0, tr("Invalid shortcut assigned"),
-					tr("Error assigning shortcut(s) for the menu command: %1.\n\nPlease check the shortcut(s): %2"
+        QTableWidgetItem* shorts = ShortcutsTable->item(i, 1);
+        if ( m_data.GetShortcutsString(i) != shorts->text().trimmed())
+        {
+            if (!m_data.SetShortcuts(i, shorts->text().trimmed()))
+            {
+                QMessageBox::warning(0, tr("Invalid shortcut assigned"),
+                    tr("Error assigning shortcut(s) for the menu command: %1.\n\nPlease check the shortcut(s): %2"
                ).arg(menu->text()).arg(shorts->text().trimmed()));
-				return false;
-			}
-		}
+                return false;
+            }
+        }
 
-	}
+    }
 
-	return true;
+    return true;
 }
 
 void Shortcuts::accept()
 {
     if (save())
-	    QDialog::accept();
+        QDialog::accept();
 }
 
 void Shortcuts::reject()

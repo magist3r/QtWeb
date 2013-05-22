@@ -30,18 +30,18 @@ QT_END_NAMESPACE
 
 class Shortcuts : public QDialog, public Ui_ShortcutsDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	Shortcuts(QWidget *parent);
-	~Shortcuts();
-	void accept();
+    Shortcuts(QWidget *parent);
+    ~Shortcuts();
+    void accept();
     void reject();
 
 private:
-	bool save();
+    bool save();
 
-	MenuCommands	m_data;
+    MenuCommands    m_data;
 };
 
 #endif // SHORTCUTS_H
