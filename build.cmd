@@ -1,15 +1,15 @@
 call env.cmd
 
 cd src\qt\
-..\..\bin\patch.exe -p0 -N < ..\qt-patches\0001-configure.patch
-..\..\bin\patch.exe -p0 -N < ..\qt-patches\0002-webkit-pro.patch
-..\..\bin\patch.exe -p0 -N < ..\qt-patches\0003-qtwebkit-pro.patch
-..\..\bin\patch.exe -p0 -N < ..\qt-patches\0004-qstyles-qrc.patch
-..\..\bin\patch.exe -p0 -N < ..\qt-patches\0005-qwidget-cpp.patch
-..\..\bin\patch.exe -p0 -N < ..\qt-patches\0006-webkit-disable-npapi.patch
-..\..\bin\patch.exe -p0 -N < ..\qt-patches\0011-windows-mkspec.patch
-..\..\bin\patch.exe -p0 -N < ..\qt-patches\0012-windows-webcore-pro.patch
-..\..\bin\patch.exe -p0 -N < ..\qt-patches\0013-windows-dotnet-style.patch
+..\..\bin\patch.exe -p0 -N < ..\..\qt-patches\0001-configure.patch
+..\..\bin\patch.exe -p0 -N < ..\..\qt-patches\0002-webkit-pro.patch
+..\..\bin\patch.exe -p0 -N < ..\..\qt-patches\0003-qtwebkit-pro.patch
+..\..\bin\patch.exe -p0 -N < ..\..\qt-patches\0004-qstyles-qrc.patch
+..\..\bin\patch.exe -p0 -N < ..\..\qt-patches\0005-qwidget-cpp.patch
+..\..\bin\patch.exe -p0 -N < ..\..\qt-patches\0006-webkit-disable-npapi.patch
+..\..\bin\patch.exe -p0 -N < ..\..\qt-patches\0011-windows-mkspec.patch
+..\..\bin\patch.exe -p0 -N < ..\..\qt-patches\0012-windows-webcore-pro.patch
+..\..\bin\patch.exe -p0 -N < ..\..\qt-patches\0013-windows-dotnet-style.patch
 
 set OPTIONS=
 set OPTIONS=%OPTIONS% -opensource
@@ -48,13 +48,12 @@ set OPTIONS=%OPTIONS% -mp
 set OPTIONS=%OPTIONS% -no-accessibility
 
 configure -prefix %cd% %OPTIONS% && nmake
-..\..\bin\patch.exe -p0 -R < ..\qt-patches\0001-configure.patch
-..\..\bin\patch.exe -p0 -R < ..\qt-patches\0002-webkit-pro.patch
-..\..\bin\patch.exe -p0 -R < ..\qt-patches\0003-qtwebkit-pro.patch
-..\..\bin\patch.exe -p0 -R < ..\qt-patches\0004-qstyles-qrc.patch
-..\..\bin\patch.exe -p0 -R < ..\qt-patches\0005-qwidget-cpp.patch
-..\..\bin\patch.exe -p0 -R < ..\qt-patches\0006-webkit-disable-npapi.patch
-..\..\bin\patch.exe -p0 -R < ..\qt-patches\0012-windows-webcore-pro.patch
-..\..\bin\patch.exe -p0 -R < ..\qt-patches\0013-windows-dotnet-style.patch
-rmdir /S build && mkdir build && cd build
-..\src\qt\bin\qmake.exe -config release ..\QtWeb.pro && nmake
+..\..\bin\patch.exe -p0 -R < ..\..\qt-patches\0001-configure.patch
+..\..\bin\patch.exe -p0 -R < ..\..\qt-patches\0002-webkit-pro.patch
+..\..\bin\patch.exe -p0 -R < ..\..\qt-patches\0003-qtwebkit-pro.patch
+..\..\bin\patch.exe -p0 -R < ..\..\qt-patches\0004-qstyles-qrc.patch
+..\..\bin\patch.exe -p0 -R < ..\..\qt-patches\0005-qwidget-cpp.patch
+..\..\bin\patch.exe -p0 -R < ..\..\qt-patches\0006-webkit-disable-npapi.patch
+..\..\bin\patch.exe -p0 -R < ..\..\qt-patches\0012-windows-webcore-pro.patch
+..\..\bin\patch.exe -p0 -R < ..\..\qt-patches\0013-windows-dotnet-style.patch
+src\qt\bin\qmake.exe -config release && nmake clean && nmake
