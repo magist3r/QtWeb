@@ -160,7 +160,7 @@ void LineEdit::keyPressEvent ( QKeyEvent * event )
     if (event->key() == Qt::Key_Return && (event->modifiers() & Qt::AltModifier))
     {
         BrowserMainWindow *mainWindow = BrowserApplication::instance()->mainWindow();
-        mainWindow->tabWidget()->loadUrlNewTab(  BrowserMainWindow::guessUrlFromString( text() ) );
+        mainWindow->tabWidget()->loadUrlNewTab(QUrl::fromUserInput(text()));
         clear();
         return;
     }

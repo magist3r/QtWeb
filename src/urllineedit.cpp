@@ -175,10 +175,7 @@ void UrlLineEdit::setWebView(WebView *webView)
 void UrlLineEdit::loadUrl(QString url)
 {
     if (m_webView && m_webView == BrowserApplication::instance()->mainWindow()->currentTab())
-    {
-        QUrl u = BrowserMainWindow::guessUrlFromString(url);
-        m_webView->loadUrl( u.toString() );
-    }
+        m_webView->loadUrl(QUrl::fromUserInput(url));
 }
 
 void UrlLineEdit::webViewUrlChanged(const QUrl &url)
