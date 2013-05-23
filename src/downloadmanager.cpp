@@ -207,7 +207,7 @@ QString DownloadItem::saveFileName(const QString &directory) const
     // Move this function into QNetworkReply to also get file name sent from the server
     QString path;
     if (m_reply->hasRawHeader("Content-Disposition")) {
-        QString value = QLatin1String(m_reply->rawHeader("Content-Disposition"));
+        QString value = QString::fromUtf8(m_reply->rawHeader("Content-Disposition"));
         int pos = value.indexOf(QLatin1String("filename="));
         if (pos != -1) {
             QString name = value.mid(pos + 9);
