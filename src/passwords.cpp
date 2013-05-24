@@ -204,16 +204,16 @@ QVariant PasswordsModel::data(const QModelIndex &index, int role) const
                     }
                 case 1:
                     {
-                        QString user_control = m_data.value(host + "/form_username_control" ).toString();
-                        QString username = m_data.value(host + "/" + user_control ).toString();
-                        return QString(QByteArray::fromPercentEncoding( username.toUtf8() ));
+                        QString user_control = m_data.value(host + "/form_username_control").toString();
+                        QByteArray username = m_data.value(host + "/" + user_control).toByteArray();
+                        return QUrl::fromPercentEncoding(username);
                     }
                 case 2:
                     {
                         if (s_show_passwords)
                         {
-                            QString pwd_control = m_data.value(host + "/form_password_control" ).toString();
-                            QString pwd = DecryptPassword(m_data.value(host + "/" + pwd_control ).toString());
+                            QString pwd_control = m_data.value(host + "/form_password_control").toString();
+                            QString pwd = DecryptPassword(QUrl::fromPercentEncoding(m_data.value(host + "/" + pwd_control).toByteArray()));
                             return pwd; //QString(QByteArray::fromPercentEncoding( pwd.toUtf8() ));
                         }
                         else

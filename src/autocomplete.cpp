@@ -30,7 +30,7 @@
 
 QString EncryptPassword(QString str)
 {
-        QByteArray xor1(QString("X!2$6*9(SKiasb+!v<.qF58_qwe~QsRTYvdeTYb").toUtf8());
+    QByteArray xor1(QString("X!2$6*9(SKiasb+!v<.qF58_qwe~QsRTYvdeTYb").toUtf8());
     QString HEX("0123456789ABCDEF");
     wchar_t arr[256];
     memset(arr,0,sizeof(arr));
@@ -57,7 +57,7 @@ QString EncryptPassword(QString str)
 
 QString DecryptPassword(QString str)
 {
-        QByteArray xor1 (QString("X!2$6*9(SKiasb+!v<.qF58_qwe~QsRTYvdeTYb").toUtf8());
+    QByteArray xor1 (QString("X!2$6*9(SKiasb+!v<.qF58_qwe~QsRTYvdeTYb").toUtf8());
     wchar_t arr[256];
     memset(arr,0,sizeof(arr));
 
@@ -193,13 +193,13 @@ bool AutoComplete::evaluate(QUrl form_url)
                                 pwd_name = name;
                                 pwd_found = true;
                             }
-                            if (!name_found && (type == "text" || type.isNull()))
+                            if (!name_found && (type == "text" || type == "email" || type.isNull()))
                             {
                                 name_found = true;
                                 user_name = name;
                             }
 
-                            if (!(type == "text" || type == "password" || type.isNull()))
+                            if (!(type == "text" || type == "password" || type == "email" || type.isNull()))
                             {
                                 exclude_map[name] = type;
                             }
@@ -288,7 +288,7 @@ bool AutoComplete::complete( QWebFrame * frame)
     QString pwd_ctl;
     foreach(QString key, settings.childKeys())
     {
-        keys[key] = settings.value(key).toString();
+        keys[key] = QUrl::fromPercentEncoding(settings.value(key).toByteArray());
         if (key == "form_password_control")
             pwd_ctl = keys[key];
     }
@@ -324,8 +324,7 @@ bool AutoComplete::complete( QWebFrame * frame)
         if (!form_index.isEmpty() && key != "form_index_number" && key != "form_password_control" 
             && key != "form_first_control" && key != "form_username_control" )
         {
-            QByteArray arr = QByteArray::fromPercentEncoding( keys[key].toUtf8() );
-            QString val( arr );
+            QString val = keys[key];
             if (key.toLower() == pwd_ctl)
                 val = DecryptPassword(val);
 
