@@ -243,14 +243,8 @@ void GSuggestCompletion::preventSuggest()
 
 void GSuggestCompletion::autoSuggest()
 {
-
-    QString str = editor->text();
-    // Skip local searches by now !!!
-    if (str.toAscii() != str)
-        return;
-
-    QString url = QString(GSUGGEST_URL).arg(str);
-    networkManager.get(QNetworkRequest(QString(url)));
+    QString url = QString(GSUGGEST_URL).arg(editor->text());
+    networkManager.get(QNetworkRequest(QUrl::fromUserInput(url)));
 }
 
 void GSuggestCompletion::handleNetworkData(QNetworkReply *networkReply)
@@ -260,7 +254,7 @@ void GSuggestCompletion::handleNetworkData(QNetworkReply *networkReply)
         QStringList choices;
         QStringList hits;
 
-        QString response(networkReply->readAll());
+        QString response(QString::fromUtf8(networkReply->readAll()));
         QXmlStreamReader xml(response);
         while (!xml.atEnd()) {
             xml.readNext();
