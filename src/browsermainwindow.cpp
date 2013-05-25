@@ -2142,7 +2142,7 @@ void BrowserMainWindow::loadPage(const QString &page)
     }
 
     QUrl url = QUrl::fromUserInput(page);
-    m_tabWidget->currentLineEdit()->setText(url.toString());
+    m_tabWidget->currentLineEdit()->setText(url.toString().replace(" ", "%20"));
     m_tabWidget->loadUrlInCurrentTab(url);
 }
 

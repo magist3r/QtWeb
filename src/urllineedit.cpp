@@ -180,7 +180,7 @@ void UrlLineEdit::loadUrl(QString url)
 
 void UrlLineEdit::webViewUrlChanged(const QUrl &url)
 {
-    m_lineEdit->setText( url.toString() );
+    m_lineEdit->setText(url.toString().replace(" ","%20"));
     m_lineEdit->setCursorPosition(0);
     QIcon icon = BrowserApplication::instance()->icon(m_webView->url());
     m_iconLabel->setPixmap( icon.pixmap(16,16) );
