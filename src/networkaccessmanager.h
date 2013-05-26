@@ -51,13 +51,12 @@ class NetworkAccessManager : public QNetworkAccessManager
     Q_OBJECT
 
 public:
-    NetworkAccessManager(QObject *parent = 0, bool is_proxi = false);
+    NetworkAccessManager(QObject *parent = 0);
     ~NetworkAccessManager();
     void blockAd(QString ad);
 
 protected:
     QNetworkReply * createRequest ( Operation op, const QNetworkRequest & req, QIODevice * outgoingData = 0 );
-    bool isProxy() {return m_isProxy; }
     bool useProxy() {return m_useProxy; }
     bool isUrlProxyException(const QUrl&);
 
@@ -73,9 +72,7 @@ private slots:
  
 private:
     QByteArray m_data;
-    NetworkAccessManager* m_proxyManager;
     bool m_useProxy;
-    bool m_isProxy;
     QStringList* m_proxyExceptions;
     QStringList*  m_adBlock;
     QStringList*  m_adBlockEx;

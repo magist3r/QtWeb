@@ -83,10 +83,8 @@ QString GetDiskCacheLocation()
     return location;
 }
 
-NetworkAccessManager::NetworkAccessManager(QObject *parent, bool is_proxi)
+NetworkAccessManager::NetworkAccessManager(QObject *parent)
     : QNetworkAccessManager(parent)
-    , m_proxyManager(0)
-    , m_isProxy(is_proxi)
     , m_useProxy(false)
     , m_proxyExceptions(0)
     , m_adBlockEx(0)
@@ -115,16 +113,11 @@ NetworkAccessManager::NetworkAccessManager(QObject *parent, bool is_proxi)
 
             diskCache->setCacheDirectory(location);
             setCache(diskCache);
-            if(m_proxyManager)
-                m_proxyManager->setCache(diskCache);
         }
     }
 }
 NetworkAccessManager::~NetworkAccessManager()
 {
-    if (m_proxyManager)
-        delete m_proxyManager;
-
     if (m_proxyExceptions)
         delete m_proxyExceptions;
 
@@ -137,14 +130,6 @@ NetworkAccessManager::~NetworkAccessManager()
 
 void NetworkAccessManager::loadSettings()
 {
-    if (isProxy())
-        return;
-
-    if (m_proxyManager)
-    {
-        delete m_proxyManager;
-        m_proxyManager = 0;
-    }
     if (m_proxyExceptions)
     {
         delete m_proxyExceptions;
@@ -175,9 +160,7 @@ void NetworkAccessManager::loadSettings()
                 *m_proxyExceptions << s.trimmed();
         }
         m_useProxy = true;
-        m_proxyManager =  new NetworkAccessManager(0, true);
-        m_proxyManager->setCookieJar(new CookieJar);
-        m_proxyManager->setProxy(pxy);
+        setProxy(pxy);
     }
     else
     if (settings.value(QLatin1String("autoProxy"), false).toBool()) 
@@ -205,9 +188,7 @@ void NetworkAccessManager::loadSettings()
                         pxy.setPort( lst.size() > 1 ? lst.at(1).toInt() : 1080 );
 
                         m_useProxy = true;
-                        m_proxyManager =  new NetworkAccessManager(0, true);
-                        m_proxyManager->setCookieJar(new CookieJar);
-                        m_proxyManager->setProxy(pxy);
+                        setProxy(pxy);
                     }
                 }
                 memset(key,0,sizeof(key));
@@ -356,9 +337,6 @@ void NetworkAccessManager::sslErrors(QNetworkReply *reply, const QList<QSslError
 
 QNetworkReply * NetworkAccessManager::createRequest ( Operation op, const QNetworkRequest & req, QIODevice * outgoingData )
 {
-    if (m_useProxy && m_proxyManager && !isUrlProxyException(req.url()))
-        return m_proxyManager->createRequest(op, req, outgoingData);
-
     if ( m_adBlock)
     {
         bool isInWhiteList = false;
