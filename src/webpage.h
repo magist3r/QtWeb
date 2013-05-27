@@ -82,6 +82,8 @@ protected:
     bool acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &request, NavigationType type);
     QWebPage *createWindow(QWebPage::WebWindowType type);
     void DefineHostIcon(const QUrl& host);
+    bool extension(Extension extension, const ExtensionOption *option, ExtensionReturn *output);
+    bool supportsExtension(Extension extension) const;
 
 #if !defined(QT_NO_UITOOLS)
     QObject *createPlugin(const QString &classId, const QUrl &url, const QStringList &paramNames, const QStringList &paramValues);

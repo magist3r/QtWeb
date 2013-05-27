@@ -71,7 +71,6 @@ WebPage::WebPage(QObject *parent)
     setNetworkAccessManager(BrowserApplication::networkAccessManager());
     connect(this, SIGNAL(unsupportedContent(QNetworkReply *)),
             this, SLOT(handleUnsupportedContent(QNetworkReply *)));
-
 }
 
 BrowserMainWindow *WebPage::mainWindow()
@@ -356,6 +355,43 @@ void WebPage::DefineHostIcon(const QUrl& url)
     BrowserApplication::instance()->CheckIcon(url);
 }
 
+bool WebPage::extension(QWebPage::Extension extension, const QWebPage::ExtensionOption *option, QWebPage::ExtensionReturn *output)
+{
+    if (extension == QWebPage::ErrorPageExtension) {
+        const QWebPage::ErrorPageExtensionOption* info = static_cast<const QWebPage::ErrorPageExtensionOption*>(option);
+        QWebPage::ErrorPageExtensionReturn* errorPage = static_cast<QWebPage::ErrorPageExtensionReturn*>(output);
+
+        QFile file(QLatin1String(":/notfound.html"));
+        file.open(QIODevice::ReadOnly);
+        QString title = tr("Loading error: %1").arg(info->url.toString());
+        QString html = QString(QLatin1String(file.readAll()))
+                            .arg(title)
+                            .arg(info->errorString)
+                            .arg(info->url.toString());
+
+        QBuffer imageBuffer;
+        imageBuffer.open(QBuffer::ReadWrite);
+        QIcon icon = view()->style()->standardIcon(QStyle::SP_MessageBoxWarning, 0, view());
+        QPixmap pixmap = icon.pixmap(QSize(32,32));
+        if (pixmap.save(&imageBuffer, "PNG")) {
+            html.replace(QLatin1String("IMAGE_BINARY_DATA_HERE"),
+                         QString(QLatin1String(imageBuffer.buffer().toBase64())));
+        }
+        file.close();
+        errorPage->content = html.toUtf8();
+        return true;
+    }
+    return QWebPage::extension(extension, option, output);
+}
+
+bool WebPage::supportsExtension(QWebPage::Extension extension) const
+{
+    if (extension == QWebPage::ErrorPageExtension)
+        return true;
+
+    return QWebPage::supportsExtension(extension);
+}
+
 QWebPage *WebPage::createWindow(QWebPage::WebWindowType type)
 {
     Q_UNUSED(type);
@@ -397,40 +433,6 @@ void WebPage::handleUnsupportedContent(QNetworkReply *reply)
 
         }
         return;
-    }
-
-    QFile file(QLatin1String(":/notfound.html"));
-    bool isOpened = file.open(QIODevice::ReadOnly);
-    Q_ASSERT(isOpened);
-    QString title = tr("Loading error: %1").arg(reply->url().toString());
-    QString html = QString(QLatin1String(file.readAll()))
-                        .arg(title)
-                        .arg(reply->errorString())
-                        .arg(reply->url().toString());
-
-    QBuffer imageBuffer;
-    imageBuffer.open(QBuffer::ReadWrite);
-    QIcon icon = view()->style()->standardIcon(QStyle::SP_MessageBoxWarning, 0, view());
-    QPixmap pixmap = icon.pixmap(QSize(32,32));
-    if (pixmap.save(&imageBuffer, "PNG")) {
-        html.replace(QLatin1String("IMAGE_BINARY_DATA_HERE"),
-                     QString(QLatin1String(imageBuffer.buffer().toBase64())));
-    }
-
-    QList<QWebFrame*> frames;
-    frames.append(mainFrame());
-    while (!frames.isEmpty()) {
-        QWebFrame *frame = frames.takeFirst();
-        if (frame->url() == reply->url()) {
-            frame->setHtml(html, reply->url());
-            return;
-        }
-        QList<QWebFrame *> children = frame->childFrames();
-        foreach(QWebFrame *frame, children)
-            frames.append(frame);
-    }
-    if (m_loadingUrl == reply->url()) {
-        mainFrame()->setHtml(html, reply->url());
     }
 }
 
