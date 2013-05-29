@@ -110,7 +110,7 @@ private slots:
     void slotEditFind();
     void slotEditFindNext();
     void slotEditFindPrevious();
-    void slotEmptyCache();
+    void slotEmptyDiskCache();
     void slotShowBookmarksDialog();
     void slotAddBookmark();
     void slotViewTextBigger();
@@ -237,7 +237,7 @@ private:
     QAction *m_privateBrowsing;
     QAction *m_privateBrowsingMenu;
     QAction *m_fullCleanUpOnQuitMenu;
-    QAction *m_emptyCache;
+    QAction *m_emptyDiskCache;
     QAction *m_disableJavaScript;
     QAction *m_disableImages;
     QAction *m_disableCookies;

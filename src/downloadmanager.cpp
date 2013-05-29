@@ -715,13 +715,11 @@ QString dirDownloads(bool create_dir)
         location = DefaultDownloadPath(create_dir);
     else
     {
-        int slash = location.indexOf(QDir::separator());
-        if ( slash == -1 || slash > 2) // Relative path entered as a destination
-            location = BrowserApplication::exeLocation() + location;
+        if (QDir::isRelativePath(location))
+            location = QCoreApplication::applicationDirPath() + "/" + location;
 
-        if (create_dir)
-        {
-            QDir dir( location );
+        if (create_dir) {
+            QDir dir(location);
             if (!dir.exists())
                 dir.mkpath(location);
         }

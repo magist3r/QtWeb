@@ -102,7 +102,7 @@ BrowserMainWindow::BrowserMainWindow(QWidget *parent, Qt::WindowFlags flags)
     , m_stylesMenu(0)
     , m_encodingMenu(0)
     , m_styles(0)
-    , m_emptyCache(0)
+    , m_emptyDiskCache(0)
     , m_viewZoomTextOnly(0)
     , m_positionRestored(0)
     , m_goBackAction(0)
@@ -882,12 +882,12 @@ void BrowserMainWindow::setupMenu()
     privacyMenu->addSeparator();
 
     // Empty Cache ...
-    m_emptyCache = new QAction( cmds.EmptyTitle(), this);
-    m_emptyCache->setShortcuts(cmds.EmptyShortcuts());
-    connect(m_emptyCache, SIGNAL(triggered()), this, SLOT(slotEmptyCache()));
-    privacyMenu->addAction(m_emptyCache);
-    this->addAction(m_emptyCache);
-    m_emptyCache->setEnabled( BrowserApplication::networkAccessManager() && BrowserApplication::networkAccessManager()->cache() );
+    m_emptyDiskCache = new QAction( cmds.EmptyTitle(), this);
+    m_emptyDiskCache->setShortcuts(cmds.EmptyShortcuts());
+    connect(m_emptyDiskCache, SIGNAL(triggered()), this, SLOT(slotEmptyDiskCache()));
+    privacyMenu->addAction(m_emptyDiskCache);
+    this->addAction(m_emptyDiskCache);
+    m_emptyDiskCache->setEnabled( BrowserApplication::networkAccessManager() && BrowserApplication::networkAccessManager()->cache() );
 
     // Reset QtWeb...
     QAction* reset = new QAction(cmds.ResetTitle(), this);
@@ -1666,28 +1666,7 @@ void BrowserMainWindow::slotUpdateWindowTitle(const QString &title)
         setWindowTitle(QString("%1 - QtWeb").arg(title));
 }
 
-void BrowserMainWindow::emptyCache()
-{
-    // REading previous cache state
-    int pages = QWebSettings::maximumPagesInCache();
-
-    int cacheMinDeadCapacity = 2 * 1024 * 1024;
-    int cacheMaxDead = 6 * 1024 * 1024;
-    int totalCapacity = 8 * 1024 * 1024;
-
-    // Disabling cache
-    QWebSettings::setMaximumPagesInCache ( 0 )  ;
-    QWebSettings::setObjectCacheCapacities( 0, 0, 0);   
-
-    QThread::currentThread()->wait(500);
-
-    // Restoring Cache
-    QWebSettings::setObjectCacheCapacities ( cacheMinDeadCapacity, cacheMaxDead, totalCapacity );
-    QWebSettings::setMaximumPagesInCache ( pages )  ;
-
-}
-
-void BrowserMainWindow::slotEmptyCache()
+void BrowserMainWindow::slotEmptyDiskCache()
 {
     QString text = tr("<b>Are you sure you want to empty the cache?</b><br><br>"
         "QtWeb saves the contents of web pages you open in a cache so that it's faster to visit them again.");
@@ -1697,7 +1676,7 @@ void BrowserMainWindow::slotEmptyCache()
     if (button == QMessageBox::Cancel) 
         return;
 
-    emptyCache();
+    BrowserApplication::emptyDiskCache();
 }
 
 
@@ -2417,7 +2396,7 @@ void BrowserMainWindow::slotEncodingChange()
 void BrowserMainWindow::slotAboutToShowPrivacyMenu()
 {
     bool cache = BrowserApplication::networkAccessManager() && BrowserApplication::networkAccessManager()->cache();
-    m_emptyCache->setEnabled( cache );
+    m_emptyDiskCache->setEnabled( cache );
 
     m_fullCleanUpOnQuitMenu->setChecked(BrowserApplication::resetOnQuit());
 

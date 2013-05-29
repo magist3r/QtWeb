@@ -89,7 +89,6 @@ QMap<QString, QIcon> BrowserApplication::s_hostIcons;
 bool BrowserApplication::s_resetOnQuit = false;
 AutoComplete* BrowserApplication::s_autoCompleter = 0;
 bool BrowserApplication::s_portableRunMode = false;
-QString BrowserApplication::s_exeLocation;
 bool BrowserApplication::s_startResizeOnMouseweelClick = true;
 QReadWriteLock lockIcons;
 
@@ -108,14 +107,6 @@ BrowserApplication::BrowserApplication(int &argc, char **argv)
     QCoreApplication::setApplicationVersion(QLatin1String("3.8.4"));
     QString serverName = QCoreApplication::applicationName();
     
-    // Define the base location - Should be ended with a slash!
-    s_exeLocation = QCoreApplication::arguments()[0];
-    int i = s_exeLocation.lastIndexOf( QDir::separator() );
-    if (i == -1)
-        s_exeLocation = "";
-    else
-        s_exeLocation = s_exeLocation.left(i+1);
-
     definePortableRunMode();
 
     QLocalSocket socket;
@@ -205,30 +196,36 @@ void BrowserApplication::CheckSetTranslator()
     installTranslator(QLatin1String(":/tr/qt_") + language + ".qm"); 
 }
 
-void RecurseDelete(QDir d)
+bool removeDir(const QString &dirName)
 {
-    QStringList list = d.entryList();
-    for (int i = 0; i < list.size(); ++i) 
-    {
-         if (list.at(i) == "." || list.at(i) == "..")
-            continue;
+    bool result;
+    QDir dir(dirName);
 
-         QString fileInfo = d. absolutePath() +  "/" + list.at(i);
-         RecurseDelete( fileInfo );
-         d.rmdir( fileInfo );
-         d.remove(fileInfo);
-     }
+    if (dir.exists()) {
+        Q_FOREACH(QFileInfo info, dir.entryInfoList(QDir::NoDotAndDotDot | QDir::System | QDir::Hidden  | QDir::AllDirs | QDir::Files, QDir::DirsFirst)) {
+            if (info.isDir()) {
+                result = removeDir(info.absoluteFilePath());
+            }
+            else {
+                result = QFile::remove(info.absoluteFilePath());
+            }
+
+            if (!result) {
+                return result;
+            }
+        }
+        result = dir.rmdir(dirName);
+    }
+    return result;
 }
-
-#define QTWEB_SETTINGS  (s_exeLocation + "QtWebSettings")
 
 void BrowserApplication::definePortableRunMode()
 {
-    s_portableRunMode = !QFile::exists(s_exeLocation + "unins000.exe");
+    s_portableRunMode = !QFile::exists(QCoreApplication::applicationDirPath() + "/unins000.exe");
     if (s_portableRunMode)
     {
         QSettings::setDefaultFormat(QSettings::IniFormat);
-                QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, QTWEB_SETTINGS);
+        QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, QCoreApplication::applicationDirPath() + "/QtWebSettings");
         bool is_writable = true;
         {
             QSettings settings;
@@ -251,23 +248,12 @@ void BrowserApplication::definePortableRunMode()
                 res = temp_dir.cd(settings.organizationName());
                 res = QFile::copy(  settings.fileName(), temp_dir.absolutePath() + QDir::separator() + settings.applicationName() + ".ini" );
                 // Change path to settings to the temp storage
-                                QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, QDir::temp().tempPath());
+                QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, QDir::temp().tempPath());
             }
 
         }
     }
 }
-
-void RemoveEmptyDir(const QString& path)
-{
-    QDir d(path);
-    QString name = d.dirName();
-    d.cdUp();
-    d.rmdir(name);
-
-}
-
-extern QString GetDiskCacheLocation();
 
 BrowserApplication::~BrowserApplication()
 {
@@ -279,72 +265,15 @@ BrowserApplication::~BrowserApplication()
     if (resetOnQuit())
     {
         BrowserApplication::clearDownloads();
-        BrowserApplication::emptyCaches();
-    }
-
-    if (s_downloadManager)
-        delete s_downloadManager;
-
-    if (s_torrents)
-    {   
-        delete s_torrents;
-    }
-
-    qDeleteAll(m_mainWindows);
-
-    if (resetOnQuit())
-    {
+        BrowserApplication::emptyDiskCache();
         BrowserApplication::clearCookies();
-    }
-
-    if (s_networkAccessManager)
-        delete s_networkAccessManager;
-
-    if (s_bookmarksManager)
-        delete s_bookmarksManager;
-
-    if (resetOnQuit())
-    {
         BrowserApplication::historyClear();
         BrowserApplication::clearIcons();
         BrowserApplication::clearPasswords();
         BrowserApplication::resetSettings( false );
 
-        QString base = BrowserApplication::dataLocation();
-        QFile::remove(  base + "/bookmarks.xbel" );
-        QFile::remove( base  + "/cookies" );
-        QFile::remove( base  + "/history" );
-
-        // TO DO: !!! Check on Windows cleanup ???
-        RecurseDelete( QDir(base  + "/cache") );
-                RemoveEmptyDir( QString(base  + "/cache") );
-
-        RecurseDelete( QDir(GetDiskCacheLocation()) );
-
-        RecurseDelete( QDir(base) );
-                RemoveEmptyDir( base );
-
-        {
-            QSettings settings;
-            settings.clear();
-            QString settingsFileName = settings.fileName();
-            QFile::remove(settingsFileName);
-            int index = settingsFileName.indexOf(organizationName());
-            if (index >=0)
-            {
-                settingsFileName = settingsFileName.left(index + organizationName().length());
-                                RemoveEmptyDir( settingsFileName );
-            }
-        }
-        RecurseDelete( QDir( QTWEB_SETTINGS ) );
-                RemoveEmptyDir( QString(QTWEB_SETTINGS) );
-
-        int index = base.indexOf(organizationName());
-        if (index >=0)
-        {
-            base = base.left(index + organizationName().length());
-                        RemoveEmptyDir( base );
-        }
+        removeDir(BrowserApplication::dataLocation());
+        removeDir(QCoreApplication::applicationDirPath() + "/QtWebSettings");
 
 #ifdef Q_WS_WIN
         HKEY hKey;
@@ -359,6 +288,22 @@ BrowserApplication::~BrowserApplication()
 #endif
 
     }
+
+    if (s_downloadManager)
+        delete s_downloadManager;
+
+    if (s_torrents)
+    {
+        delete s_torrents;
+    }
+
+    qDeleteAll(m_mainWindows);
+
+    if (s_networkAccessManager)
+        delete s_networkAccessManager;
+
+    if (s_bookmarksManager)
+        delete s_bookmarksManager;
 }
 
 
@@ -1045,13 +990,8 @@ void BrowserApplication::historyClear()
 
 #include <qnetworkdiskcache.h>
 
-void BrowserApplication::emptyCaches()
+void BrowserApplication::emptyDiskCache()
 {
-    foreach (BrowserMainWindow* win, instance()->mainWindows())
-    {
-        win->emptyCache();
-    }
-
     if (BrowserApplication::networkAccessManager() && BrowserApplication::networkAccessManager()->cache())
     {
         BrowserApplication::networkAccessManager()->cache()->clear();
@@ -1069,7 +1009,7 @@ void BrowserApplication::clearDownloads()
 
     QString downloadDirectory = dirDownloads(false);
 
-        RemoveEmptyDir( downloadDirectory );
+    removeDir(downloadDirectory);
 }
 
 void BrowserApplication::clearCookies()
@@ -1138,12 +1078,12 @@ QString BrowserApplication::dataLocation()
 {
     if (s_portableRunMode)
     {
-        QDir dir( s_exeLocation );
-        if (! dir.exists( "QtWebCache" ))
-            if ( !dir.mkdir( "QtWebCache" ) )
+        QDir dir(QCoreApplication::applicationDirPath());
+        if (!dir.exists("QtWebCache"))
+            if (!dir.mkdir("QtWebCache"))
                 return "";
 
-        return s_exeLocation + "QtWebCache";
+        return QCoreApplication::applicationDirPath()+ "/QtWebCache";
     }
     else
         return QDesktopServices::storageLocation(QDesktopServices::DataLocation);
@@ -1154,23 +1094,19 @@ QString BrowserApplication::downloadsLocation(bool create_dir)
     QString base;
 
     if (s_portableRunMode)
-        base = s_exeLocation;
+        base = QCoreApplication::applicationDirPath();
     else
-    {
         base = QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation) ;
-        if (base.at(base.length() - 1) != QDir::separator() )
-            base += QDir::separator();
-    }
 
     QString downs(tr("Downloads"));
 
     if (create_dir)
     {
-        QDir dir( base );
-        if (! dir.exists( downs ))
-            if ( !dir.mkdir( downs ) )
+        QDir dir(base);
+        if (!dir.exists(downs))
+            if (!dir.mkdir(downs))
                 return "";
     }
 
-    return base + downs;
+    return base + "/" + downs;
 }

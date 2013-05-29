@@ -78,7 +78,7 @@ void ResetSettings::accept()
 
     if (chkEmptyCache->isChecked())
     {
-        BrowserApplication::emptyCaches();
+        BrowserApplication::emptyDiskCache();
     }
 
     if (chkClearDownloads->isChecked())

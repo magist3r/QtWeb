@@ -63,25 +63,13 @@
 #include <QBuffer>
 #include <QStringList>
 #include <QRegExp>
+#include <QDir>
 
 #include <qnetworkdiskcache.h>
 
 #ifdef Q_WS_WIN
     #include <windows.h>
 #endif
-
-QString GetDiskCacheLocation()
-{
-    QSettings settings;
-    settings.beginGroup(QLatin1String("websettings"));
-
-    QString location = settings.value(QLatin1String("DiskCacheLocation"), "").toString();
-
-    if (location.isEmpty())
-        location = BrowserApplication::dataLocation() + QLatin1String("/cache");
-
-    return location;
-}
 
 NetworkAccessManager::NetworkAccessManager(QObject *parent)
     : QNetworkAccessManager(parent)
@@ -101,20 +89,7 @@ NetworkAccessManager::NetworkAccessManager(QObject *parent)
 
     loadSettings();
 
-    QSettings settings;
-    settings.beginGroup(QLatin1String("websettings"));
-    if (settings.value(QLatin1String("enableDiskCache"), false).toBool())
-    {
-        QNetworkDiskCache *diskCache = new QNetworkDiskCache(this);
-        if (diskCache)
-        {
-            
-            QString location = GetDiskCacheLocation();
 
-            diskCache->setCacheDirectory(location);
-            setCache(diskCache);
-        }
-    }
 }
 NetworkAccessManager::~NetworkAccessManager()
 {
@@ -235,8 +210,31 @@ void NetworkAccessManager::loadSettings()
     {
         m_adBlockEx = new QStringList(settings.allKeys());
     }
+
     settings.endGroup();
 
+    settings.beginGroup(QLatin1String("websettings"));
+    if (settings.value(QLatin1String("enableDiskCache"), false).toBool() && !cache())
+    {
+        QNetworkDiskCache *diskCache = new QNetworkDiskCache(this);
+        if (diskCache) {
+            QString location = settings.value(QLatin1String("DiskCacheLocation"), "").toString();
+
+            if (location.isEmpty())
+                location = BrowserApplication::dataLocation() + QLatin1String("/cache");
+
+            diskCache->setCacheDirectory(location);
+            setCache(diskCache);
+        }
+    }
+
+    if (!settings.value(QLatin1String("enableDiskCache"), false).toBool() && cache())
+    {
+        cache()->clear();
+        QNetworkDiskCache *tmpCache = new QNetworkDiskCache(this);
+        tmpCache->setCacheDirectory(QDir::tempPath() + "/QtWeb_cache");
+        setCache(tmpCache);
+    }
 }
 
 void NetworkAccessManager::authenticationRequired(QNetworkReply *reply, QAuthenticator *auth)

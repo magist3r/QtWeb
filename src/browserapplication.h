@@ -104,7 +104,7 @@ public:
 
 public:
     static void historyClear();
-    static void emptyCaches();
+    static void emptyDiskCache();
     static void clearDownloads();
     static void clearCookies();
     static void clearIcons();
@@ -116,7 +116,6 @@ public:
     static QString dataLocation();
     static QString downloadsLocation(bool create_dir);
     static bool existDownloadManager() {return s_downloadManager != NULL;}
-    static QString exeLocation() {return s_exeLocation;}
 public slots:
     BrowserMainWindow *newMainWindow();
     void restoreLastSession();
@@ -143,7 +142,6 @@ private:
     static bool s_startResizeOnMouseweelClick;
     static AutoComplete *s_autoCompleter;
     static bool s_portableRunMode;
-    static QString s_exeLocation;
 
     QList<QPointer<BrowserMainWindow> > m_mainWindows;
     QLocalServer *m_localServer;
