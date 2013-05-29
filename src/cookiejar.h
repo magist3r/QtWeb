@@ -103,7 +103,7 @@ public:
     void setAllowForSessionCookies(const QStringList &list);
 
 public slots:
-    void clear();
+    void clear(bool reset = false);
     void loadSettings();
     void changed();
 

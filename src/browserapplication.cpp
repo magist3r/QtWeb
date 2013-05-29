@@ -1013,7 +1013,7 @@ void BrowserApplication::clearDownloads()
 
 void BrowserApplication::clearCookies()
 {
-    BrowserApplication::cookieJar()->clear();
+    BrowserApplication::cookieJar()->clear(true);
 }
 
 void BrowserApplication::clearIcons()

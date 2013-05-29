@@ -115,9 +115,14 @@ CookieJar::~CookieJar()
     save();
 }
 
-void CookieJar::clear()
+void CookieJar::clear(bool reset)
 {
     setAllCookies(QList<QNetworkCookie>());
+    if (reset) {
+        m_exceptions_allow.clear();
+        m_exceptions_allowForSession.clear();
+        m_exceptions_block.clear();
+    }
     save();
     emit cookiesChanged();
 }
@@ -183,11 +188,17 @@ void CookieJar::save()
         if (cookies.at(i).isSessionCookie())
             cookies.removeAt(i);
     }
-    cookieSettings.setValue(QLatin1String("cookies"), qVariantFromValue<QList<QNetworkCookie> >(cookies));
-    cookieSettings.beginGroup(QLatin1String("Exceptions"));
-    cookieSettings.setValue(QLatin1String("block"), m_exceptions_block);
-    cookieSettings.setValue(QLatin1String("allow"), m_exceptions_allow);
-    cookieSettings.setValue(QLatin1String("allowForSession"), m_exceptions_allowForSession);
+
+    if (!cookies.isEmpty())
+        cookieSettings.setValue(QLatin1String("cookies"), qVariantFromValue<QList<QNetworkCookie> >(cookies));
+
+    if (!m_exceptions_block.isEmpty() || !m_exceptions_allow.isEmpty() || !m_exceptions_allowForSession.isEmpty()) {
+        cookieSettings.beginGroup(QLatin1String("Exceptions"));
+        if (!m_exceptions_block.isEmpty()) cookieSettings.setValue(QLatin1String("block"), m_exceptions_block);
+        if (!m_exceptions_allow.isEmpty()) cookieSettings.setValue(QLatin1String("allow"), m_exceptions_allow);
+        if (!m_exceptions_allowForSession.isEmpty()) cookieSettings.setValue(QLatin1String("allowForSession"), m_exceptions_allowForSession);
+        cookieSettings.endGroup();
+    }
 
     // save cookie settings
     QSettings settings;
@@ -197,6 +208,7 @@ void CookieJar::save()
 
     QMetaEnum keepPolicyEnum = staticMetaObject.enumerator(staticMetaObject.indexOfEnumerator("KeepPolicy"));
     settings.setValue(QLatin1String("keepCookiesUntil"), QLatin1String(keepPolicyEnum.valueToKey(m_keepCookies)));
+    settings.endGroup();
 }
 
 void CookieJar::purgeOldCookies()
