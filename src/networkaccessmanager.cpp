@@ -231,9 +231,7 @@ void NetworkAccessManager::loadSettings()
     if (!settings.value(QLatin1String("enableDiskCache"), false).toBool() && cache())
     {
         cache()->clear();
-        QNetworkDiskCache *tmpCache = new QNetworkDiskCache(this);
-        tmpCache->setCacheDirectory(QDir::tempPath() + "/QtWeb_cache");
-        setCache(tmpCache);
+        setCache(0);
     }
 }
 
