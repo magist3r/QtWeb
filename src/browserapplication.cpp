@@ -1053,7 +1053,7 @@ void BrowserApplication::resetSettings( bool reload)
 
     // Save AutoComplete
     settings.beginGroup(QLatin1String("AutoComplete"));
-    QStringList keys = settings.allKeys ();
+    QStringList keys = settings.allKeys();
     QMap<QString, QVariant> values;
     foreach(QString key, keys)
         values[key] = settings.value(key);
@@ -1063,10 +1063,12 @@ void BrowserApplication::resetSettings( bool reload)
     settings.clear();
 
     // Restore Auto-Complete
-    settings.beginGroup(QLatin1String("AutoComplete"));
-    foreach(QString key, values.keys())
-    {
-        settings.setValue(key, values[key]);
+    if (!keys.isEmpty()) {
+        settings.beginGroup(QLatin1String("AutoComplete"));
+        foreach(QString key, values.keys())
+        {
+           settings.setValue(key, values[key]);
+        }
     }
 
     if (reload)

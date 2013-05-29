@@ -112,7 +112,8 @@ CookieJar::~CookieJar()
 {
     if (m_keepCookies == KeepUntilExit)
         clear();
-    save();
+    if (!BrowserApplication::resetOnQuit())
+        save();
 }
 
 void CookieJar::clear(bool reset)

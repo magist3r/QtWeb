@@ -498,7 +498,9 @@ DownloadManager::DownloadManager(QWidget *parent)
 
 DownloadManager::~DownloadManager()
 {
-    save();
+    if (!BrowserApplication::resetOnQuit())
+        save();
+
     if (m_iconProvider)
         delete m_iconProvider;
 }
