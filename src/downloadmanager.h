@@ -103,7 +103,6 @@ private:
     bool   m_finished;
 };
 
-class AutoSaver;
 class DownloadModel;
 QT_BEGIN_NAMESPACE
 class QFileIconProvider;
@@ -151,7 +150,6 @@ private:
     void addItem(DownloadItem *item);
     void updateItemCount();
 
-    AutoSaver *m_autoSaver;
     DownloadModel *m_model;
     QNetworkAccessManager *m_manager;
     QFileIconProvider *m_iconProvider;

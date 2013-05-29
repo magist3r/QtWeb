@@ -40,7 +40,6 @@
 
 #include "downloadmanager.h"
 
-#include "autosaver.h"
 #include "browserapplication.h"
 #include "networkaccessmanager.h"
 
@@ -470,7 +469,6 @@ bool DownloadItem::checkAddTorrent()
   */
 DownloadManager::DownloadManager(QWidget *parent)
     : QDialog(parent, Qt::Window)
-    , m_autoSaver(new AutoSaver(this))
     , m_manager(BrowserApplication::networkAccessManager())
     , m_iconProvider(0)
     , m_removePolicy(Never)
@@ -500,8 +498,7 @@ DownloadManager::DownloadManager(QWidget *parent)
 
 DownloadManager::~DownloadManager()
 {
-    m_autoSaver->changeOccurred();
-    m_autoSaver->saveIfNeccessary();
+    save();
     if (m_iconProvider)
         delete m_iconProvider;
 }
@@ -608,7 +605,7 @@ void DownloadManager::setRemovePolicy(RemovePolicy policy)
     if (policy == m_removePolicy)
         return;
     m_removePolicy = policy;
-    m_autoSaver->changeOccurred();
+    save();
 }
 
 void DownloadManager::save() const
@@ -744,7 +741,7 @@ void DownloadManager::cleanup_list()
         delete m_iconProvider;
         m_iconProvider = 0;
     }
-    m_autoSaver->changeOccurred();
+    save();
 }
 
 void DownloadManager::cleanup_full()
@@ -789,7 +786,7 @@ void DownloadManager::cleanup_full()
         delete m_iconProvider;
         m_iconProvider = 0;
     }
-    m_autoSaver->changeOccurred();
+    save();
 }
 
 void DownloadManager::updateItemCount()
@@ -841,7 +838,7 @@ bool DownloadModel::removeRows(int row, int count, const QModelIndex &parent)
             endRemoveRows();
         }
     }
-    m_downloadManager->m_autoSaver->changeOccurred();
+    m_downloadManager->save();
     return true;
 }
 

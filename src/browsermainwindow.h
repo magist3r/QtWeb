@@ -45,7 +45,6 @@
 #include <QtGui/QIcon>
 #include <QtCore/QUrl>
 
-class AutoSaver;
 class BookmarksToolBar;
 class ChaseWidget;
 class QWebFrame;
@@ -204,7 +203,6 @@ private:
     BookmarksToolBar *m_bookmarksToolbar;
     ChaseWidget *m_chaseWidget;
     TabWidget *m_tabWidget;
-    AutoSaver *m_autoSaver;
     bool    m_positionRestored;
     QString  m_dumpFile;
     bool     m_dumpActionQuit;

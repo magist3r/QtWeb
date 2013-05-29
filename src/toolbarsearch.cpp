@@ -39,7 +39,6 @@
 ****************************************************************************/
 
 #include "toolbarsearch.h"
-#include "autosaver.h"
 
 #include <QtCore/QSettings>
 #include <QtCore/QUrl>
@@ -57,7 +56,6 @@
  */
 ToolbarSearch::ToolbarSearch(QWidget *parent)
     : SearchLineEdit(parent)
-    , m_autosaver(new AutoSaver(this))
     , m_maxSavedSearches(10)
     , m_stringListModel(new QStringListModel(this))
     , m_completer(0)
@@ -80,7 +78,7 @@ ToolbarSearch::ToolbarSearch(QWidget *parent)
 
 ToolbarSearch::~ToolbarSearch()
 {
-    m_autosaver->saveIfNeccessary();
+    save();
 }
 
 void ToolbarSearch::save()
@@ -168,7 +166,7 @@ void ToolbarSearch::searchNow()
     QWebSettings *globalSettings = QWebSettings::globalSettings();
     if (!globalSettings->testAttribute(QWebSettings::PrivateBrowsingEnabled)) {
         m_stringListModel->setStringList(newList);
-        m_autosaver->changeOccurred();
+        save();
     }
 
     QUrl url;
@@ -241,7 +239,7 @@ void ToolbarSearch::checkGoogleSuggest(bool show_google)
 
 void ToolbarSearch::useGoogle()
 {
-    m_autosaver->changeOccurred();
+    save();
     setInactiveText(SEARCH_GOOGLE);
     checkGoogleSuggest( true );
     if (!lineEdit()->text().isEmpty())
@@ -250,7 +248,7 @@ void ToolbarSearch::useGoogle()
 
 void ToolbarSearch::useBing()
 {
-    m_autosaver->changeOccurred();
+    save();
     setInactiveText(SEARCH_BING);
     if (!lineEdit()->text().isEmpty())
         searchNow();
@@ -258,7 +256,7 @@ void ToolbarSearch::useBing()
 
 void ToolbarSearch::useYahoo()
 {
-    m_autosaver->changeOccurred();
+    save();
     setInactiveText(SEARCH_YAHOO);
     checkGoogleSuggest( false );
     if (!lineEdit()->text().isEmpty())
@@ -267,7 +265,7 @@ void ToolbarSearch::useYahoo()
 
 void ToolbarSearch::useCuil()
 {
-    m_autosaver->changeOccurred();
+    save();
     setInactiveText(SEARCH_CUIL);
     checkGoogleSuggest( false );
     if (!lineEdit()->text().isEmpty())
@@ -277,7 +275,7 @@ void ToolbarSearch::useCuil()
 
 void ToolbarSearch::useSearch( )
 {
-    m_autosaver->changeOccurred();
+    save();
 
     QAction *action = qobject_cast<QAction *>(sender());
     if (!action)
@@ -408,6 +406,6 @@ void ToolbarSearch::triggeredMenuAction(QAction *action)
 void ToolbarSearch::clear()
 {
     m_stringListModel->setStringList(QStringList());
-    m_autosaver->changeOccurred();;
+    save();
 }
 

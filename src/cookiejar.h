@@ -54,8 +54,6 @@ class QSortFilterProxyModel;
 class QKeyEvent;
 QT_END_NAMESPACE
 
-class AutoSaver;
-
 class CookieJar : public QNetworkCookieJar
 {
     friend class CookieModel;
@@ -116,7 +114,6 @@ private:
     void purgeOldCookies();
     void load();
     bool m_loaded;
-    AutoSaver *m_saveTimer;
 
     AcceptPolicy m_acceptCookies;
     KeepPolicy m_keepCookies;

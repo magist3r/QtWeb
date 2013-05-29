@@ -40,7 +40,6 @@
 
 #include "cookiejar.h"
 
-#include "autosaver.h"
 #include "browserapplication.h"
 
 #include <QtCore/QDateTime>
@@ -105,7 +104,6 @@ QT_END_NAMESPACE
 CookieJar::CookieJar(QObject *parent)
     : QNetworkCookieJar(parent)
     , m_loaded(false)
-    , m_saveTimer(new AutoSaver(this))
     , m_acceptCookies(AcceptOnlyFromSitesNavigatedTo)
 {
 }
@@ -114,13 +112,13 @@ CookieJar::~CookieJar()
 {
     if (m_keepCookies == KeepUntilExit)
         clear();
-    m_saveTimer->saveIfNeccessary();
+    save();
 }
 
 void CookieJar::clear()
 {
     setAllCookies(QList<QNetworkCookie>());
-    m_saveTimer->changeOccurred();
+    save();
     emit cookiesChanged();
 }
 
@@ -220,7 +218,7 @@ void CookieJar::purgeOldCookies()
 
 void CookieJar::changed()
 {
-    m_saveTimer->changeOccurred();
+    save();
 }
 
 QList<QNetworkCookie> CookieJar::cookiesForUrl(const QUrl &url) const
@@ -284,7 +282,7 @@ bool CookieJar::setCookiesFromUrl(const QList<QNetworkCookie> &cookieList, const
     }
 
     if (addedCookies) {
-        m_saveTimer->changeOccurred();
+        save();
         emit cookiesChanged();
     }
     return addedCookies;
@@ -304,7 +302,7 @@ void CookieJar::setAcceptPolicy(AcceptPolicy policy)
     if (policy == m_acceptCookies)
         return;
     m_acceptCookies = policy;
-    m_saveTimer->changeOccurred();
+    save();
 }
 
 CookieJar::KeepPolicy CookieJar::keepPolicy() const
@@ -321,7 +319,7 @@ void CookieJar::setKeepPolicy(KeepPolicy policy)
     if (policy == m_keepCookies)
         return;
     m_keepCookies = policy;
-    m_saveTimer->changeOccurred();
+    save();
 }
 
 QStringList CookieJar::blockedCookies() const
@@ -351,7 +349,7 @@ void CookieJar::setBlockedCookies(const QStringList &list)
         load();
     m_exceptions_block = list;
     qSort(m_exceptions_block.begin(), m_exceptions_block.end());
-    m_saveTimer->changeOccurred();
+    save();
 }
 
 void CookieJar::setAllowedCookies(const QStringList &list)
@@ -360,7 +358,7 @@ void CookieJar::setAllowedCookies(const QStringList &list)
         load();
     m_exceptions_allow = list;
     qSort(m_exceptions_allow.begin(), m_exceptions_allow.end());
-    m_saveTimer->changeOccurred();
+    save();
 }
 
 void CookieJar::setAllowForSessionCookies(const QStringList &list)
@@ -369,7 +367,7 @@ void CookieJar::setAllowForSessionCookies(const QStringList &list)
         load();
     m_exceptions_allowForSession = list;
     qSort(m_exceptions_allowForSession.begin(), m_exceptions_allowForSession.end());
-    m_saveTimer->changeOccurred();
+    save();
 }
 
 CookieModel::CookieModel(CookieJar *cookieJar, QObject *parent)

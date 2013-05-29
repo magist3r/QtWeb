@@ -49,7 +49,6 @@ class QAction;
 class QStringListModel;
 QT_END_NAMESPACE
 
-class AutoSaver;
 class GSuggestCompletion;
 
 class ToolbarSearch : public SearchLineEdit
@@ -84,7 +83,6 @@ private:
     void addSearches();
     void checkGoogleSuggest(bool google);
 
-    AutoSaver *m_autosaver;
     int m_maxSavedSearches;
     QStringListModel *m_stringListModel;
     GSuggestCompletion *m_completer;

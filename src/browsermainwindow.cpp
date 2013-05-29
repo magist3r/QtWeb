@@ -40,7 +40,6 @@
 
 #include "browsermainwindow.h"
 #include "aboutdialog.h"
-#include "autosaver.h"
 #include "bookmarks.h"
 #include "browserapplication.h"
 #include "chasewidget.h"
@@ -90,7 +89,6 @@ extern bool ShellExec(QString path);
 BrowserMainWindow::BrowserMainWindow(QWidget *parent, Qt::WindowFlags flags)
     : QMainWindow(parent, flags)
     , m_tabWidget(new TabWidget(this))
-    , m_autoSaver(new AutoSaver(this))
     , findWidget(0)
     , m_navSplit(0)
     , m_buttonsBar(0)
@@ -177,7 +175,7 @@ BrowserMainWindow::BrowserMainWindow(QWidget *parent, Qt::WindowFlags flags)
     connect(m_tabWidget, SIGNAL(loadProgress(int)),
             this, SLOT(slotLoadProgress(int)));
     connect(m_tabWidget, SIGNAL(tabsChanged()),
-            m_autoSaver, SLOT(changeOccurred()));
+            this, SLOT(save()));
     connect(m_tabWidget, SIGNAL(geometryChangeRequested(const QRect &)),
             this, SLOT(geometryChangeRequested(const QRect &)));
     connect(m_tabWidget, SIGNAL(printRequested(QWebFrame *)),
@@ -217,8 +215,7 @@ BrowserMainWindow::BrowserMainWindow(QWidget *parent, Qt::WindowFlags flags)
 
 BrowserMainWindow::~BrowserMainWindow()
 {
-    m_autoSaver->changeOccurred();
-    m_autoSaver->saveIfNeccessary();
+    save();
 }
 
 void BrowserMainWindow::loadDefaultState()
@@ -612,7 +609,7 @@ void BrowserMainWindow::setupMenu()
     viewMenu->addAction(viewTabBarAction);
     this->addAction(viewTabBarAction);
     connect(viewTabBarAction, SIGNAL(changed()),
-            m_autoSaver, SLOT(changeOccurred()));
+            this, SLOT(save()));
 
     // Show/Hide Stastus Bar
     m_viewStatusBar = new QAction(this);
@@ -1525,7 +1522,7 @@ void BrowserMainWindow::slotViewToolbar()
         updateToolbarActionText(true);
         m_navigationBar->show();
     }
-    m_autoSaver->changeOccurred();
+    save();
 }
 
 void BrowserMainWindow::slotViewBookmarksBar()
@@ -1537,7 +1534,7 @@ void BrowserMainWindow::slotViewBookmarksBar()
         updateBookmarksToolbarActionText(true);
         m_bookmarksToolbar->show();
     }
-    m_autoSaver->changeOccurred();
+    save();
 }
 
 void BrowserMainWindow::updateStatusbarActionText(bool visible)
@@ -1573,7 +1570,7 @@ void BrowserMainWindow::slotViewStatusbar()
         updateStatusbarActionText(true);
         statusBar()->show();
     }
-    m_autoSaver->changeOccurred();
+    save();
 }
 
 void BrowserMainWindow::loadUrl(const QUrl &url)
