@@ -273,7 +273,6 @@ BrowserApplication::~BrowserApplication()
         BrowserApplication::resetSettings( false );
 
         removeDir(BrowserApplication::dataLocation());
-        removeDir(QCoreApplication::applicationDirPath() + "/QtWebSettings");
 
 #ifdef Q_WS_WIN
         HKEY hKey;
