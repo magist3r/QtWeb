@@ -1,5 +1,7 @@
 # qt source directory
 src/qt/.*
+src/qtwebkit-23
+temp-src
 build
 
 # C++ objects and libs
