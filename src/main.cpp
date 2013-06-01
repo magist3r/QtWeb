@@ -57,7 +57,7 @@ int main(int argc, char **argv)
 
 #ifndef QT_SHARED
     Q_INIT_RESOURCE(WebCore);
-    Q_INIT_RESOURCE(InspectorBackendStub);
+    Q_INIT_RESOURCE(InspectorBackendCommands);
     Q_INIT_RESOURCE(WebKit);
 #endif
 

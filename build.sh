@@ -10,12 +10,12 @@ MAKE_COMMAND="make -j$COMPILE_JOBS"
 PATCHES=() # Array of patches
 MKSPEC_PATCHES=() # Patches for qmake.conf 
 
-PATCHES+=('0001-configure.patch')
-PATCHES+=('0002-webkit-pro.patch')
-PATCHES+=('0003-qtwebkit-pro.patch')
+#PATCHES+=('0001-configure.patch')
+#PATCHES+=('0002-webkit-pro.patch')
+#PATCHES+=('0003-qtwebkit-pro.patch')
 PATCHES+=('0004-qstyles-qrc.patch')
 PATCHES+=('0005-qwidget-cpp.patch')
-PATCHES+=('0006-webkit-disable-npapi.patch')
+#PATCHES+=('0006-webkit-disable-npapi.patch')
 
 until [ -z "$1" ]; do
     case $1 in
@@ -75,7 +75,7 @@ if ! $SKIP_QT_BUILD; then
         OPTIONS+=' -openssl'
         OPTIONS+=' -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.6.sdk'
         
-        PATCHES+=('0031-mac-fix-includepath-for-npapi.patch')
+        #PATCHES+=('0031-mac-fix-includepath-for-npapi.patch')
     elif [[ $OSTYPE = msys ]]; then
         SSL_LIBS='-lssleay32 -llibeay32 -lcrypt32 -lgdi32'
         OPTIONS+=' -openssl-linked'
@@ -85,7 +85,7 @@ if ! $SKIP_QT_BUILD; then
 
         MKSPEC_PATCHES+=('0011-windows-mkspec.patch')
         
-        PATCHES+=('0012-windows-webcore-pro.patch')
+        #PATCHES+=('0012-windows-webcore-pro.patch')
         PATCHES+=('0013-windows-dotnet-style.patch')
     elif [[ $OSTYPE = beos ]]; then
         OPTIONS+=' -no-largefile'
@@ -98,7 +98,7 @@ if ! $SKIP_QT_BUILD; then
             SSL_LIBS='-lssl -lcrypto -lcrypt32 -lgdi32'
             OPTIONS+=' -openssl-linked'
             
-            PATCHES+=('0012-windows-webcore-pro.patch')
+            #PATCHES+=('0012-windows-webcore-pro.patch')
             PATCHES+=('0013-windows-dotnet-style.patch')
             
             MKSPEC_PATCHES+=('0014-windows-mkspec-cross-compile.patch')
@@ -123,11 +123,13 @@ if ! $SKIP_QT_BUILD; then
         fi
     fi
 
-    OPTIONS+=' -webkit'
-    OPTIONS+=' -qt-libjpeg'
-    OPTIONS+=' -qt-libpng'
-    OPTIONS+=' -qt-zlib'
+    if [[ ! $OSTYPE = linux* ]]; then
+        OPTIONS+=' -qt-libjpeg'
+        OPTIONS+=' -qt-libpng'
+        OPTIONS+=' -qt-zlib'
+    fi
 
+    OPTIONS+=' -no-webkit'
     OPTIONS+=' -nomake demos'
     OPTIONS+=' -nomake docs'
     OPTIONS+=' -nomake examples'
@@ -164,6 +166,7 @@ if ! $SKIP_QT_BUILD; then
     # make clean if we have previous build in src/qt
     if $CLEAN_QT_BUILD; then
         make confclean
+        rm -rf ../../src/qtwebkit-23/WebKitBuild
     fi
     
     #Applying patches for Qt
@@ -183,6 +186,25 @@ if ! $SKIP_QT_BUILD; then
     done
 
     cd ../..
+    
+    pushd src/qtwebkit-23
+    QTDIR=../../src/qt Tools/Scripts/build-webkit --qt --no-3d-rendering --no-webgl --no-gamepad --qmakearg="DEFINES+=WTF_USE_3D_GRAPHICS=0"
+    pushd WebKitBuild/Release/Source
+    for i in 'JavaScriptCore' 'WebCore' 'WebKit' 'WTF'; do 
+         pushd "$i/release" 
+         if [ $i == 'WebKit' ]; then
+	     ar -x "libWebKit1.a"
+	 else
+	     ar -x "lib$i.a"
+	 fi
+	 popd
+    done
+    rm libQtWebKit.a 
+    ar rcs libQtWebKit.a JavaScriptCore/release/*.o WebCore/release/*.o WebKit/release/*.o WTF/release/*.o
+    popd
+    popd
+    cp src/qtwebkit-23/WebKitBuild/Release/Source/libQtWebKit.a src/qt/lib
+    cp libQtWebKit.prl src/qt/lib
 fi # end of Qt build
 
 src/qt/bin/qmake -r -config release
