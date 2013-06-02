@@ -1,3 +1,13 @@
+-- v3.8.4, build 106
+ * Fixed russian language in languages list in settings
+ * [Issue 171] Fixed empty cache function
+ * Show notfound.html when loading error occurs
+ * [Issue 122] Fixed cookies with https over proxy
+ * Fixed google suggest for non-latin searches
+ * [Issue 163] Fixed cyrillic logins and passwords in password manager
+ * Fixed urlencoded links and added support for cyrillic domains
+ * Added support for non-latin filenames in downloads
+
 -- v3.8.4, build 105
  * webinspector is working again
  * downloaded files are opening in the right program (or in the file manager) on all systems
