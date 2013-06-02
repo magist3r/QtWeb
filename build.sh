@@ -176,13 +176,12 @@ if ! $SKIP_QT_BUILD; then
     cd ../..
 fi # end of Qt build
 
-src/qt/bin/qmake -config release
+src/qt/bin/qmake -r -config release
 make clean
 $MAKE_COMMAND
 
 #fix qt_menu.nib issue
 if [[ $OSTYPE = darwin* ]]; then
-    cd ..
     cp -r src/qt/src/gui/mac/qt_menu.nib build/QtWeb.app/Contents/Resources/
 fi
 
