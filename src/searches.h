@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2008-2009 Alexei Chaloupov <alexei.chaloupov@gmail.com>
- *
+ * Copyright (C) 2013 Sergei Lopatin <magist3r@gmail.com>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -21,6 +21,8 @@
 
 #include <QDialog>
 #include <QSettings>
+#include <QItemDelegate>
+#include <QtGui/QKeyEvent>
 #include "ui_searches.h"
 
 QT_BEGIN_NAMESPACE
@@ -44,20 +46,22 @@ class SearchesModel : public QAbstractTableModel
     Q_OBJECT
 
 public:
-    SearchesModel(QObject *parent = 0);
-    ~SearchesModel();
+    SearchesModel(QObject *parent);
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
     bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex());
+    bool setData(const QModelIndex &index, const QVariant &value, int role);
+    Qt::ItemFlags flags(const QModelIndex &index) const;
+    int addRow(QString name, QString value);
 
-    void addSearch(QString name, QString value);
-    void removeSearch(QString name);
+public slots:
+    void loadDefaultProviders();
+    void save();
 
 private:
-    QSettings   m_data;
-    QSettings   m_exclude;
+    QList< QPair<QString,QString> > *m_searchProviders;
 };
 
 class Searches : public QDialog, public Ui_SearchesDialog
@@ -66,14 +70,13 @@ class Searches : public QDialog, public Ui_SearchesDialog
 
 public:
     Searches(QWidget *parent);
-    ~Searches();
+    void keyPressEvent(QKeyEvent *event);
 
 private slots:
-    void addSearch();
+    void addSearchProvider();
     void addEbay();
     void addAsk();
-
-    bool showSearchDialog(QString& name, QString& value);
+    void removeSelectedRows();
 
 private:
     QSortFilterProxyModel *m_proxyModel;

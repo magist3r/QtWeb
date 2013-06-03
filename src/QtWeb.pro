@@ -121,7 +121,6 @@ FORMS += aboutdialog.ui \
     proxy.ui \
     resetsettings.ui \
     savepdf.ui \
-    search.ui \
     searches.ui \
     settings.ui \
     shortcuts.ui
