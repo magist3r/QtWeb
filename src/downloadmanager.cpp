@@ -129,7 +129,6 @@ void DownloadItem::init()
     m_url = m_reply->url();
     m_reply->setParent(this);
 
-
     connect(m_reply, SIGNAL(readyRead()), this, SLOT(downloadReadyRead()));
     connect(m_reply, SIGNAL(error(QNetworkReply::NetworkError)),
             this, SLOT(error(QNetworkReply::NetworkError)));
@@ -436,6 +435,9 @@ bool DownloadItem::downloadedSuccessfully() const
 
 void DownloadItem::finished()
 {
+    if (m_reply->bytesAvailable() > 0)
+        downloadReadyRead();
+
     m_finished = true;
     progressBar->hide();
     stopButton->setEnabled(false);
