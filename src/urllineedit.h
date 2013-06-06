@@ -87,12 +87,14 @@ private slots:
     void webViewIconChanged();
     void loadUrl(QString);
     void editingURL(const QString&);
+    void storeUrl(const QUrl &url);
 
 private:
     QLinearGradient generateGradient(const QColor &color) const;
     WebView *m_webView;
     UrlIconLabel *m_iconLabel;
     QColor m_defaultBaseColor;
+    QUrl m_storedUrl;
 
 };
 

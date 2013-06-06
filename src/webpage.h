@@ -63,6 +63,7 @@ class WebPage : public QWebPage {
 
 signals:
     void loadingUrl(const QUrl &url);
+    void storeUrlOnError(const QUrl &url);
 
 public:
     WebPage(QObject *parent = 0);
