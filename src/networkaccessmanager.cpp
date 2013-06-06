@@ -357,11 +357,10 @@ QNetworkReply * NetworkAccessManager::createRequest ( Operation op, const QNetwo
             foreach(QString ad, *m_adBlock)
             {
                 rx.setPattern(ad); 
-                if (rx.exactMatch(url))
-                {   
-                    QNetworkReply *reply = QNetworkAccessManager::createRequest(op, req, outgoingData);
-                    reply->abort();
-                    return reply;
+                if (rx.exactMatch(url)) {
+                    QNetworkRequest req2;
+                    req2.setUrl(QUrl());
+                    return QNetworkAccessManager::createRequest(op, req2, outgoingData);
                 }
             }
         }
