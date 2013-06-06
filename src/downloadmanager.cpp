@@ -118,6 +118,11 @@ DownloadItem::DownloadItem(QNetworkReply *reply, bool requestFileName, QWidget *
     init();
 }
 
+DownloadItem::~DownloadItem()
+{
+    m_reply->deleteLater();
+}
+
 void DownloadItem::init()
 {
     if (!m_reply)
@@ -127,36 +132,35 @@ void DownloadItem::init()
 
     // attach to the m_reply
     m_url = m_reply->url();
-    m_reply->setParent(this);
-
-    connect(m_reply, SIGNAL(readyRead()), this, SLOT(downloadReadyRead()));
-    connect(m_reply, SIGNAL(error(QNetworkReply::NetworkError)),
-            this, SLOT(error(QNetworkReply::NetworkError)));
-    connect(m_reply, SIGNAL(downloadProgress(qint64, qint64)),
-            this, SLOT(downloadProgress(qint64, qint64)));
-    connect(m_reply, SIGNAL(metaDataChanged()),
-            this, SLOT(metaDataChanged()));
-    connect(m_reply, SIGNAL(finished()),
-            this, SLOT(finished()));
-
-    // reset info
-    downloadInfoLabel->clear();
-    progressBar->setValue(0);
+   // m_reply->setParent(this);
     m_success_init = getFileName();
 
-    // start timer for the download estimation
-    m_downloadTime.start();
+    if (m_success_init) {
 
-    if (m_reply->error() != QNetworkReply::NoError) 
-    {
-        error(m_reply->error());
-        finished();
-    }
-    else
-    {
-        if (m_finished)
-        {
+        connect(m_reply, SIGNAL(readyRead()), this, SLOT(downloadReadyRead()));
+        connect(m_reply, SIGNAL(error(QNetworkReply::NetworkError)),
+                this, SLOT(error(QNetworkReply::NetworkError)));
+        connect(m_reply, SIGNAL(downloadProgress(qint64, qint64)),
+                this, SLOT(downloadProgress(qint64, qint64)));
+        connect(m_reply, SIGNAL(metaDataChanged()),
+                this, SLOT(metaDataChanged()));
+        connect(m_reply, SIGNAL(finished()),
+                this, SLOT(finished()));
+
+        // reset info
+        downloadInfoLabel->clear();
+        progressBar->setValue(0);
+
+
+        // start timer for the download estimation
+        m_downloadTime.start();
+
+        if (m_reply->error() != QNetworkReply::NoError) {
+            error(m_reply->error());
             finished();
+        } else {
+            if (m_finished)
+                finished();
         }
     }
 }

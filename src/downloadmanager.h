@@ -58,6 +58,7 @@ signals:
 
 public:
     DownloadItem(QNetworkReply *reply = 0, bool requestFileName = false, QWidget *parent = 0);
+    ~DownloadItem();
     bool downloading() const;
     bool downloadedSuccessfully() const;
     bool initSuccess() {return m_success_init; }
