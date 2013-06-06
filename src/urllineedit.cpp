@@ -250,7 +250,12 @@ void UrlLineEdit::paintEvent(QPaintEvent *event)
         QColor loadingColor = QColor(116, 192, 250);
         painter.setBrush(generateGradient(loadingColor));
         painter.setPen(Qt::transparent);
-        int mid = backgroundRect.width() / 100 * progress;
+        int mid;
+        if (progress == 0 || progress == 100)
+            mid = 0;
+        else
+            mid = backgroundRect.width() / 100.0 * progress;
+
         QRect progressRect(backgroundRect.x(), backgroundRect.y(), mid, backgroundRect.height());
         painter.drawRect(progressRect);
     }
