@@ -164,8 +164,6 @@ void UrlLineEdit::setWebView(WebView *webView)
     m_iconLabel->m_webView = webView;
     connect(webView, SIGNAL(urlChanged(const QUrl &)),
         this, SLOT(webViewUrlChanged(const QUrl &)));
-    connect(webView, SIGNAL(loadFinished(bool)),
-        this, SLOT(webViewIconChanged()));
     connect(webView, SIGNAL(iconChanged()),
         this, SLOT(webViewIconChanged()));
     connect(webView, SIGNAL(loadProgress(int)),
@@ -206,7 +204,7 @@ void UrlLineEdit::webViewIconChanged()
 {
     if (m_webView)
     {
-        QIcon icon = BrowserApplication::instance()->icon(m_webView->url()); 
+        QIcon icon = BrowserApplication::instance()->icon(m_webView->url(), m_webView);
         if (!icon.isNull())
         {
             QPixmap pixmap(icon.pixmap(16, 16));

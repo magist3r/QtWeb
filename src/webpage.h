@@ -82,7 +82,6 @@ protected:
     virtual QString userAgentForUrl(const QUrl& url) const;
     bool acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &request, NavigationType type);
     QWebPage *createWindow(QWebPage::WebWindowType type);
-    void DefineHostIcon(const QUrl& host);
     bool extension(Extension extension, const ExtensionOption *option, ExtensionReturn *output);
     bool supportsExtension(Extension extension) const;
 

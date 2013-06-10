@@ -145,10 +145,7 @@ BrowserApplication::BrowserApplication(int &argc, char **argv)
     m_lastSession = settings.value(QLatin1String("lastSession")).toByteArray();
     settings.endGroup();
 
-    connect(&m_iconManager, SIGNAL(finished(QNetworkReply*)),SLOT(iconDownloadFinished(QNetworkReply*)));
-
     QTimer::singleShot(0, this, SLOT(postLaunch()));
-
 }
 
 void BrowserApplication::CheckSetTranslator()
@@ -435,6 +432,8 @@ void BrowserApplication::loadSettings()
     defaultSettings->setOfflineStoragePath(localStoragePath);
     defaultSettings->setOfflineWebApplicationCachePath(localStoragePath);
 
+    defaultSettings->setIconDatabasePath(dataLocation());
+
     if (settings.value(QLatin1String("customUserStyleSheet"), false).toBool())
     {
         QUrl url = settings.value(QLatin1String("userStyleSheet")).toUrl();
@@ -452,54 +451,6 @@ void BrowserApplication::loadSettings()
         QWebSettings::globalSettings()->setAttribute(QWebSettings::PrivateBrowsingEnabled, true);
         WebPage::setUserAgent( QLatin1String("") );
     }
-    settings.endGroup();
-
-    settings.beginGroup(QLatin1String("proxy"));
-    if (settings.value(QLatin1String("enabled"), false).toBool()) 
-    {
-        QNetworkProxy pxy;
-        if (settings.value(QLatin1String("type"), 0).toInt() == 0)
-            pxy = QNetworkProxy::Socks5Proxy;
-        else
-            pxy = QNetworkProxy::HttpProxy;
-        pxy.setHostName(settings.value(QLatin1String("hostName")).toString());
-        pxy.setPort(settings.value(QLatin1String("port"), 1080).toInt());
-        pxy.setUser(settings.value(QLatin1String("userName")).toString());
-        pxy.setPassword(settings.value(QLatin1String("password")).toString());
-        m_iconManager.setProxy(pxy);
-    }
-    else
-    if (settings.value(QLatin1String("autoProxy"), false).toBool()) 
-    {
-        QNetworkProxy pxy;
-#ifdef Q_WS_WIN
-        HKEY hKey;
-        wchar_t key[256];
-        wcscpy(key, L"Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings\\");
-        if (ERROR_SUCCESS == RegOpenKeyExW(HKEY_CURRENT_USER, key, 0, KEY_READ, &hKey))
-        {
-            DWORD dwEnabled = FALSE; DWORD dwBufSize = sizeof(dwEnabled);
-            if (RegQueryValueExW(hKey, L"ProxyEnable", NULL, NULL, (LPBYTE)&dwEnabled, &dwBufSize ) == ERROR_SUCCESS
-                && dwEnabled)
-            {
-                memset(key,0,sizeof(key)); dwBufSize = sizeof(key) / sizeof(TCHAR);
-                if (RegQueryValueExW(hKey, L"ProxyServer", NULL, NULL, (LPBYTE)&key, &dwBufSize ) == ERROR_SUCCESS)
-                {
-                    pxy = QNetworkProxy::HttpProxy;
-                    QStringList lst = QString::fromWCharArray(key).split(':');
-                    if (lst.size() > 0)
-                    {
-                        pxy.setHostName(lst.at(0));
-                        pxy.setPort( lst.size() > 1 ? lst.at(1).toInt() : 1080 );
-                        m_iconManager.setProxy(pxy);
-                    }
-                }
-            }
-            RegCloseKey(hKey);
-        }
-#endif
-    }
-
     settings.endGroup();
 
     mainWindow()->loadSettings();
@@ -726,121 +677,24 @@ AutoComplete *BrowserApplication::autoCompleter()
     return s_autoCompleter;
 }
 
-#ifdef Q_WS_WIN
-    #include "windows.h"
-#endif
-
-void BrowserApplication::iconDownloadFinished(QNetworkReply* reply)
+QIcon BrowserApplication::icon(const QUrl &url, const WebView *webView) const
 {
-    if (!reply->error()) 
-    {
-        QUrl url = reply->url();
-        QString filename = QDir::toNativeSeparators(QDir::tempPath()) + QDir::separator() + url.host() + ".ico" ;
-        QFile file(filename);
-        if (file.open(QIODevice::WriteOnly)) 
-        {
-            file.write( reply->readAll() );
-            file.close();
+    if (url.scheme() == QLatin1String("https"))
+        return QIcon(QLatin1String(":secureicon.png"));
 
-#ifdef Q_WS_WIN
-            HICON i = (HICON)LoadImage( NULL, (LPCWSTR)filename.utf16(), IMAGE_ICON, 16 , 16 , LR_LOADFROMFILE);
-            QPixmap pix = QPixmap::fromWinHICON( i ) ;
-#else
-            QIcon icon(filename);
-            QPixmap pix = icon.pixmap(16,16);
-            
-#endif
-            if (!pix.isNull())
-            {
-                QSettings settings(BrowserApplication::dataLocation() + "/Icons", QSettings::IniFormat);
-                settings.beginGroup(QLatin1String("Icons"));
-                QBuffer imageBuffer;
-                imageBuffer.open(QBuffer::ReadWrite);
-                if (pix.save(&imageBuffer, "PNG") && !pix.isNull() )
-                {
-                    settings.setValue(url.host(), imageBuffer.buffer());
-                    setHostIcon(url.host(), pix);
-                }
-                settings.endGroup();
-            }
-            file.remove();
-        }
-    }
-    reply->deleteLater();
-}
+    if (QWebSettings::iconDatabasePath().isEmpty())
+        QWebSettings::setIconDatabasePath(dataLocation());
 
+    QIcon icon;
+    if (webView)
+        icon = webView->icon();
+    else
+        icon = QWebSettings::iconForUrl(url);
 
-QIcon BrowserApplication::getHostIcon(const QString &host)
-{
-    QReadLocker locker(&lockIcons);
-    
-    return s_hostIcons[host];
-}
+    if (!icon.isNull())
+        return icon.pixmap(16, 16);
 
-void BrowserApplication::setHostIcon(const QString &host, const QIcon& icon)
-{
-    QWriteLocker locker(&lockIcons);
-    s_hostIcons[host] = icon;
-}
-
-void BrowserApplication::CheckIcon(const QUrl &url)
-{
-    if (url.isEmpty())
-        return;
-
-    QString host = url.host();
-    QIcon icon = getHostIcon( host );
-    if ( icon.isNull() && !host.isEmpty())
-    {
-        QSettings settings(BrowserApplication::dataLocation() + "/Icons", QSettings::IniFormat);
-        settings.beginGroup(QLatin1String("Icons"));
-        QPixmap pix;
-        QByteArray image = settings.value( host ).toByteArray();
-        settings.endGroup();
-        pix.loadFromData( image, "PNG" );
-        if (!pix.isNull())
-            return;
-
-        QUrl iconUrl = url.scheme() + "://" + host + "/favicon.ico";
-        QNetworkRequest request(iconUrl);
-        m_iconManager.get(request);
-    }
-}
-
-QIcon BrowserApplication::icon(const QUrl &url) const
-{
-     if (url.scheme() == QLatin1String("https"))
-     {
-        if (m_defaultSecureIcon.isNull())
-            m_defaultSecureIcon = QIcon(QLatin1String(":secureicon.png"));
-
-         return m_defaultSecureIcon.pixmap(16,16);
-     }
-
-    if (!url.host().isEmpty())
-    {
-        QString host = url.host();
-        QIcon icon = getHostIcon(host);
-        if (!icon.isNull())
-            return icon;
-        
-        {
-            QSettings settings(BrowserApplication::dataLocation() + "/Icons", QSettings::IniFormat);
-            settings.beginGroup(QLatin1String("Icons"));
-            QPixmap pix;
-            QByteArray image = settings.value( host ).toByteArray();
-            settings.endGroup();
-            if (pix.loadFromData(image, "PNG"))
-                if (!pix.isNull())
-                    return QIcon(pix).pixmap(16,16);
-        }
-
-    }
-
-    if (m_defaultIcon .isNull())
-        m_defaultIcon = QIcon(QLatin1String(":defaulticon.png"));
-
-    return m_defaultIcon.pixmap(16, 16);
+    return QWebSettings::iconForUrl(QUrl("about:blank"));
 }
 
 void BrowserApplication::closeMainWindows()

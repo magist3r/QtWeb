@@ -380,9 +380,9 @@ int TabWidget::addNewTab(WebView *view, bool empty)
         html.replace(QLatin1String("LOGO_BINARY_DATA_HERE"),
                      QString(QLatin1String(imageBuffer.buffer().toBase64())));
     }
-    view->setHtml( html );
- 
-    return  index;
+    view->setHtml(html);
+
+    return index;
 }
 
 WebView *TabWidget::newEmptyTab()
@@ -636,7 +636,7 @@ void TabWidget::webViewIconChanged()
     int index = webViewIndex(webView);
     if (-1 != index) 
     {
-        QIcon icon =  BrowserApplication::instance()->icon(webView->url());
+        QIcon icon = webView->icon();
         if (!icon.isNull())
         {
             QLabel *label = animationLabel(index, false);
@@ -653,13 +653,12 @@ void TabWidget::webViewLoadFinished(bool ok)
 {
     WebView *webView = qobject_cast<WebView*>(sender());
     int index = webViewIndex(webView);
-    if (-1 != index) 
+    if (-1 != index)
     {
-        QLabel *label = animationLabel(index, true);
+        QLabel *label = animationLabel(index, false);
         if (label->movie())
             label->movie()->stop();
     }
-    webViewIconChanged();
 }
 
 void TabWidget::webViewTitleChanged(const QString &title)

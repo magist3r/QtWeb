@@ -63,6 +63,7 @@ class QNetworkAccessManager;
 class QNetworkReply;
 class AutoComplete;
 class TorrentWindow;
+class WebView;
 
 class BrowserApplication : public QApplication
 {
@@ -81,9 +82,8 @@ public:
     bool isTheOnlyBrowser() const;
     BrowserMainWindow *mainWindow();
     QList<BrowserMainWindow*> mainWindows();
-    QIcon icon(const QUrl &url) const;
+    QIcon icon(const QUrl &url, const WebView *webView = 0) const;
 
-    void CheckIcon(const QUrl &url);
     void CheckSetTranslator();
 
     void saveSession();
@@ -124,7 +124,6 @@ private slots:
     void postLaunch();
     void openUrl(const QUrl &url);
     void newLocalSocketConnection();
-    void iconDownloadFinished(QNetworkReply*);
 
 private:
     void clean();
@@ -146,9 +145,6 @@ private:
     QList<QPointer<BrowserMainWindow> > m_mainWindows;
     QLocalServer *m_localServer;
     QByteArray m_lastSession;
-    mutable QIcon m_defaultIcon;
-    mutable QIcon m_defaultSecureIcon;
-    QNetworkAccessManager m_iconManager;
     bool quiting;
 };
 

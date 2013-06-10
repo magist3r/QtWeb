@@ -304,7 +304,6 @@ bool WebPage::acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &r
             webView->load(request);
             m_keyboardModifiers = Qt::NoModifier;
             m_pressedButtons = Qt::NoButton;
-            DefineHostIcon(request.url());
             return false;
     }
 
@@ -317,7 +316,6 @@ bool WebPage::acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &r
         {
             WebView* webView = mainWindow()->tabWidget()->newTab(true);
             webView->load(request);
-            //DefineHostIcon(request.url());
             return false;
         }
     }
@@ -330,7 +328,6 @@ bool WebPage::acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &r
             {
                 m_loadingUrl = request.url();
                 //emit loadingUrl(m_loadingUrl); // ??? to avoid unnecessary LineURL change
-                DefineHostIcon(request.url());
                 return true;
             }
             else
@@ -348,11 +345,6 @@ bool WebPage::acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &r
     }
 
     return QWebPage::acceptNavigationRequest(frame, request, type);
-}
-
-void WebPage::DefineHostIcon(const QUrl& url)
-{
-    BrowserApplication::instance()->CheckIcon(url);
 }
 
 bool WebPage::extension(QWebPage::Extension extension, const QWebPage::ExtensionOption *option, QWebPage::ExtensionReturn *output)
