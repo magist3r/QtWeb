@@ -86,7 +86,6 @@ public:
     TabWidget(QWidget *parent = 0);
     TabBar *tabBar() { return m_tabBar; }
     void clear();
-    int addNewTab(WebView *view, bool empty = false);
     void addWebAction(QAction *action, QWebPage::WebAction webAction);
     void setCurrentTabTitle( QString title) { setCurrentTitle(title); }
     QAction *newTabAction() const;

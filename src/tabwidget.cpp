@@ -351,45 +351,10 @@ int TabWidget::webViewIndex(WebView *webView) const
     return index;
 }
 
-int TabWidget::addNewTab(WebView *view, bool empty)
-{
-    int index = addTab(view, tr("about:blank"));
-    if (index == 0)
-        return index;
-
-    QSettings settings;
-    settings.beginGroup(QLatin1String("MainWindow"));
-    int newTabAction = settings.value(QLatin1String("newTabAction"), 0).toInt();
-
-    if (newTabAction == 2 || newTabAction == 1 || !empty)
-    {
-        return index;
-    }
-
-    QFile file(QLatin1String(":/Welcome.html"));
-    bool isOpened = file.open(QIODevice::ReadOnly | QIODevice::Text);
-    Q_ASSERT(isOpened);
-    QString html = QString(QLatin1String(file.readAll()));
-
-    QPixmap pix= style()->standardIcon(QStyle::SP_MessageBoxInformation).pixmap(32,32);
-
-    QBuffer imageBuffer;
-    imageBuffer.open(QBuffer::ReadWrite);
-    if (pix.save(&imageBuffer, "PNG")) 
-    {
-        html.replace(QLatin1String("LOGO_BINARY_DATA_HERE"),
-                     QString(QLatin1String(imageBuffer.buffer().toBase64())));
-    }
-    view->setHtml(html);
-
-    return index;
-}
-
 WebView *TabWidget::newEmptyTab()
 {
     return newTab(true, true);
 }
-
 
 WebView *TabWidget::newTab(bool makeCurrent, bool empty)
 {
@@ -421,7 +386,6 @@ WebView *TabWidget::newTab(bool makeCurrent, bool empty)
         emptyWidget->setAutoFillBackground(true);
         disconnect(this, SIGNAL(currentChanged(int)),
             this, SLOT(currentChanged(int)));
-        //addNewTab(emptyWidget);
         addTab(emptyWidget, tr("Blank Tab"));
         connect(this, SIGNAL(currentChanged(int)),
             this, SLOT(currentChanged(int)));
@@ -456,7 +420,7 @@ WebView *TabWidget::newTab(bool makeCurrent, bool empty)
     connect(webView->page(), SIGNAL(toolBarVisibilityChangeRequested(bool)),
             this, SIGNAL(toolBarVisibilityChangeRequested(bool)));
 
-    addNewTab(webView, empty);
+    addTab(webView, tr("about:blank"));
 
     if (makeCurrent)
         setCurrentWidget(webView);
@@ -477,13 +441,41 @@ WebView *TabWidget::newTab(bool makeCurrent, bool empty)
         currentLineEdit()->setFocus();
     }
 
-    QSettings settings;
-    settings.beginGroup(QLatin1String("MainWindow"));
-    int newTabAction = settings.value(QLatin1String("newTabAction"), 0).toInt();
-    if (newTabAction == 1 && empty)
-    {
-        QString home = settings.value(QLatin1String("home"), QLatin1String("http://www.qtweb.net/")).toString();
-        loadUrlInCurrentTab(home);
+    if (empty) { // handle options for new empty tab
+        QSettings settings;
+        settings.beginGroup(QLatin1String("MainWindow"));
+        int newTabAction = settings.value(QLatin1String("newTabAction"), 0).toInt();
+        switch (newTabAction) {
+
+        case 0: // welcome page
+        {
+            QFile file(QLatin1String(":/Welcome.html"));
+            bool isOpened = file.open(QIODevice::ReadOnly | QIODevice::Text);
+            Q_ASSERT(isOpened);
+            QString html = QString(QLatin1String(file.readAll()));
+
+            QPixmap pix= style()->standardIcon(QStyle::SP_MessageBoxInformation).pixmap(32,32);
+
+            QBuffer imageBuffer;
+            imageBuffer.open(QBuffer::ReadWrite);
+            if (pix.save(&imageBuffer, "PNG"))
+            {
+                html.replace(QLatin1String("LOGO_BINARY_DATA_HERE"),
+                             QString(QLatin1String(imageBuffer.buffer().toBase64())));
+            }
+            webView->setHtml(html);
+            break;
+        }
+        case 1: // home page
+        {
+            QString home = settings.value(QLatin1String("home"), QLatin1String("http://www.qtweb.net/")).toString();
+            loadUrlInCurrentTab(QUrl::fromUserInput(home));
+            break;
+        }
+        case 2: // empty page
+            loadUrlInCurrentTab(QUrl("about:blank"));
+            break;
+        }
     }
 
     return webView;
