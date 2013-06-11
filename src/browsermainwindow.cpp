@@ -96,7 +96,6 @@ BrowserMainWindow::BrowserMainWindow(QWidget *parent, Qt::WindowFlags flags)
     , m_historyForward(0)
     , m_stop(0)
     , m_reload(0)
-    , m_load(0)
     , m_stylesMenu(0)
     , m_encodingMenu(0)
     , m_styles(0)
@@ -2137,7 +2136,6 @@ void BrowserMainWindow::slotLoadProgress(int progress)
     if (progress < 100 && progress > 0) {
         m_chaseWidget->setAnimated(true);
         disconnect(m_stopReload, SIGNAL(triggered()), m_reload, SLOT(trigger()));
-        disconnect(m_stopReload, SIGNAL(triggered()), m_load, SLOT(trigger()));
         if (m_stopIcon.isNull())
             m_stopIcon = style()->standardIcon(QStyle::SP_BrowserStop);
         m_stopReload->setIcon(m_stopIcon);
@@ -2147,7 +2145,6 @@ void BrowserMainWindow::slotLoadProgress(int progress)
         m_reload->setEnabled(false);
     } else {
         m_chaseWidget->setAnimated(false);
-        disconnect(m_stopReload, SIGNAL(triggered()), m_load, SLOT(trigger()));
         disconnect(m_stopReload, SIGNAL(triggered()), m_stop, SLOT(trigger()));
         m_stopReload->setIcon(m_reloadIcon);
         connect(m_stopReload, SIGNAL(triggered()), m_reload, SLOT(trigger()));

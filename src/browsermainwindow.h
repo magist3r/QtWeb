@@ -222,7 +222,6 @@ private:
 
     QAction *m_stop;
     QAction *m_reload;
-    QAction *m_load;
     QAction *m_stopReload;
     QAction *m_viewMenuBar;
     QAction *m_viewToolBar;
