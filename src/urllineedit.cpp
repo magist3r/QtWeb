@@ -139,7 +139,7 @@ UrlLineEdit::UrlLineEdit(QWidget *parent)
     m_iconLabel->resize(16, 16);
     setLeftWidget(m_iconLabel);
     m_defaultBaseColor = palette().color(QPalette::Base);
-    m_storedUrl = QUrl();
+    m_urlError = false;
 
     connect(m_lineEdit, SIGNAL(textEdited(const QString&)),
             this, SLOT(editingURL(const QString&)));
@@ -152,9 +152,9 @@ void UrlLineEdit::editingURL(const QString& )
     BrowserApplication::instance()->mainWindow()->setLoadIcon();
 }
 
-void UrlLineEdit::storeUrl(const QUrl &url)
+void UrlLineEdit::errorLoadingUrl()
 {
-    m_storedUrl = url;
+    m_urlError = true;
 }
 
 void UrlLineEdit::setWebView(WebView *webView)
@@ -168,8 +168,8 @@ void UrlLineEdit::setWebView(WebView *webView)
         this, SLOT(webViewIconChanged()));
     connect(webView, SIGNAL(loadProgress(int)),
         this, SLOT(update()));
-    connect(webView->page(), SIGNAL(storeUrlOnError(const QUrl &)),
-            this, SLOT(storeUrl(const QUrl &)));
+    connect(webView->page(), SIGNAL(errorLoadingUrl()),
+            this, SLOT(errorLoadingUrl()));
 
     // AC: to avoid blue non-completed
     connect(webView, SIGNAL(loadFinished(bool)),
@@ -186,12 +186,10 @@ void UrlLineEdit::loadUrl(QString url)
 
 void UrlLineEdit::webViewUrlChanged(const QUrl &url)
 {
-    // Prevent url changing to "about:blank" on error
-    if (!m_storedUrl.isEmpty()) {
-        if (m_storedUrl.toString(QUrl::StripTrailingSlash) == m_lineEdit->text() || m_storedUrl.toString() == m_lineEdit->text()) {
-            m_storedUrl = QUrl();
-            return;
-        }
+    // Prevent url changing on error
+    if (m_urlError) {
+        m_urlError = false;
+        return;
     }
 
     QString str;

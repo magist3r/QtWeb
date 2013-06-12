@@ -371,7 +371,7 @@ bool WebPage::extension(QWebPage::Extension extension, const QWebPage::Extension
         }
         file.close();
         errorPage->content = html.toUtf8();
-        storeUrlOnError(info->url);
+        errorLoadingUrl();
         return true;
     }
     return QWebPage::extension(extension, option, output);
