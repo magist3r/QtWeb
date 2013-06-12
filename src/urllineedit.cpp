@@ -194,7 +194,14 @@ void UrlLineEdit::webViewUrlChanged(const QUrl &url)
         }
     }
 
-    m_lineEdit->setText(url.toString().replace(" ","%20"));
+    QString str;
+    QChar ch(0xfffd); // detect non-utf8 with this symbol
+    if (url.toString().contains(ch))
+        str = QString::fromUtf8(url.toEncoded());
+    else
+        str = url.toString();
+
+    m_lineEdit->setText(str);
     m_lineEdit->setCursorPosition(0);
     QIcon icon = BrowserApplication::instance()->icon(m_webView->url());
     m_iconLabel->setPixmap( icon.pixmap(16,16) );
