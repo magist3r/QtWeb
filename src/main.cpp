@@ -41,10 +41,7 @@
 #ifndef QT_SHARED
     #include <QtPlugin>
 
-    #ifndef Q_WS_WIN
-        Q_IMPORT_PLUGIN(qico)
-    #endif
-
+    Q_IMPORT_PLUGIN(qico)
     Q_IMPORT_PLUGIN(qcncodecs)
     Q_IMPORT_PLUGIN(qjpcodecs)
     Q_IMPORT_PLUGIN(qkrcodecs)
