@@ -1,4 +1,4 @@
 QMAKE_PRL_TARGET = libQtWebKit.a
 QMAKE_PRL_CONFIG = include_source_dir lex yacc uic resources qt release incremental link_prl gdb_dwarf_index def_files_disabled exceptions no_mocdepend release stl qt_no_framework webkit_configured static link_pkgconfig no_webkit2 include_webinspector static release create_pc create_prl config_step depend_includepath hide_symbols bsymbolic_functions x11 x11lib x11inc staticlib static moc thread
-QMAKE_PRL_VERSION = 4.10.2
-QMAKE_PRL_LIBS = -lXrender -lxslt -lz -ldl -lm -lgio-2.0 -lgstapp-0.10 -lgstinterfaces-0.10 -lgstpbutils-0.10 -pthread -lgstvideo-0.10 -lgstbase-0.10 -lgstreamer-0.10 -lgobject-2.0 -lgmodule-2.0 -lgthread-2.0 -lxml2 -lglib-2.0 -lsqlite3 -lfontconfig -lQtGui -lQtNetwork -lQtCore -lpthread -lXext -lX11 -lm 
+QMAKE_PRL_VERSION = 4.10.1
+QMAKE_PRL_LIBS = -lXrender -lz -ldl -lm -pthread -lxml2 -lfontconfig -lQtGui -lQtNetwork -lQtCore -lpthread -lXext -lX11 -lm 

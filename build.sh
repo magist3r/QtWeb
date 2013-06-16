@@ -1,5 +1,7 @@
 #!/bin/bash
 PATCHDIR="$(pwd)/qt-patches"
+export QTDIR=$(pwd)/src/qt
+export PATH=$QTDIR/bin:$PATH
 SSL_LIBS=''
 SKIP_QT_BUILD=false
 CLEAN_QT_BUILD=false
@@ -56,6 +58,11 @@ done
 
 function qt_error {
     echo "Qt build error! See logs above."
+    exit 1
+}
+
+function qtwebkit_error {
+    echo "QtWebKit 2.3 build error! See logs above."
     exit 1
 }
 
@@ -123,12 +130,8 @@ if ! $SKIP_QT_BUILD; then
         fi
     fi
 
-    if [[ ! $OSTYPE = linux* ]]; then
-        OPTIONS+=' -qt-libjpeg'
-        OPTIONS+=' -qt-libpng'
-        OPTIONS+=' -qt-zlib'
-    fi
-
+    OPTIONS+=' -qt-libjpeg'
+    OPTIONS+=' -qt-libpng'
     OPTIONS+=' -no-webkit'
     OPTIONS+=' -nomake demos'
     OPTIONS+=' -nomake docs'
@@ -157,7 +160,7 @@ if ! $SKIP_QT_BUILD; then
     OPTIONS+=' -D QT_NO_STYLE_MOTIF'
     OPTIONS+=' -optimized-qmake'
 
-    cd src/qt
+    pushd src/qt
     if [ ! -e ./configure ]; then
         echo "Looks like you forgot to extract Qt sources in src/qt directory!"
         exit 1
@@ -166,7 +169,7 @@ if ! $SKIP_QT_BUILD; then
     # make clean if we have previous build in src/qt
     if $CLEAN_QT_BUILD; then
         make confclean
-        rm -rf ../../src/qtwebkit-23/WebKitBuild
+        rm -rf webkit-qtwebkit-23/WebKitBuild
     fi
     
     #Applying patches for Qt
@@ -184,11 +187,26 @@ if ! $SKIP_QT_BUILD; then
     for i in "${PATCHES[@]}"; do
         patch -p0 -R < "$PATCHDIR/$i"
     done
-
-    cd ../..
     
-    pushd src/qtwebkit-23
-    QTDIR=../../src/qt Tools/Scripts/build-webkit --qt --no-3d-rendering --no-webgl --no-gamepad --qmakearg="DEFINES+=WTF_USE_3D_GRAPHICS=0"
+    #qtwebkit build
+    pushd webkit-qtwebkit-23
+    QTWEBKIT_OPTIONS=''
+    QTWEBKIT_OPTIONS+=' --qt'
+    QTWEBKIT_OPTIONS+=' --release'
+    QTWEBKIT_OPTIONS+=" --qmakearg=CONFIG+=static"
+    QTWEBKIT_OPTIONS+=" --qmakearg=DEFINES+=Q_NODLL"
+    QTWEBKIT_OPTIONS+=" --qmakearg=DEFINES+=STATIC"
+    
+    QTWEBKIT_OPTIONS+=' --no-webkit2'
+    QTWEBKIT_OPTIONS+=' --no-3d-rendering'
+    QTWEBKIT_OPTIONS+=' --no-webgl'
+    QTWEBKIT_OPTIONS+=' --no-gamepad'
+    QTWEBKIT_OPTIONS+=' --no-video'
+    QTWEBKIT_OPTIONS+=' --no-xslt'
+    QTWEBKIT_OPTIONS+=' --no-sql-database'
+    QTWEBKIT_OPTIONS+=" --qmakearg=DEFINES+=WTF_USE_3D_GRAPHICS=0"
+    
+    Tools/Scripts/build-webkit $QTWEBKIT_OPTIONS || qtwebkit_error
     pushd WebKitBuild/Release/Source
     for i in 'JavaScriptCore' 'WebCore' 'WebKit' 'WTF'; do 
          pushd "$i/release" 
@@ -199,11 +217,12 @@ if ! $SKIP_QT_BUILD; then
 	 fi
 	 popd
     done
-    rm libQtWebKit.a 
+    rm libQtWebKit.a
     ar rcs libQtWebKit.a JavaScriptCore/release/*.o WebCore/release/*.o WebKit/release/*.o WTF/release/*.o
     popd
     popd
-    cp src/qtwebkit-23/WebKitBuild/Release/Source/libQtWebKit.a src/qt/lib
+    cp webkit-qtwebkit-23/WebKitBuild/Release/Source/libQtWebKit.a ./lib
+    popd
     cp libQtWebKit.prl src/qt/lib
 fi # end of Qt build
 
