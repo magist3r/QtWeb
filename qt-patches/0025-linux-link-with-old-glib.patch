@@ -1,0 +1,26 @@
+--- src/corelib/kernel/qeventdispatcher_glib.cpp	2012-11-23 16:09:55.000000000 +0600
++++ src/corelib/kernel/qeventdispatcher_glib.cpp.new	2013-06-17 15:41:58.031068206 +0600
+@@ -313,8 +313,10 @@
+         }
+     }
+ 
+-#if GLIB_CHECK_VERSION (2, 22, 0)
++#ifndef OLD_GLIB
++# if GLIB_CHECK_VERSION (2, 22, 0)
+     g_main_context_push_thread_default (mainContext);
++# endif
+ #endif
+ 
+     // setup post event source
+@@ -395,8 +397,10 @@
+     d->postEventSource = 0;
+ 
+     Q_ASSERT(d->mainContext != 0);
+-#if GLIB_CHECK_VERSION (2, 22, 0)
++#ifndef OLD_GLIB
++# if GLIB_CHECK_VERSION (2, 22, 0)
+     g_main_context_pop_thread_default (d->mainContext);
++# endif
+ #endif
+     g_main_context_unref(d->mainContext);
+     d->mainContext = 0;

@@ -105,12 +105,21 @@ if ! $SKIP_QT_BUILD; then
         else
             OPTIONS+=' -system-freetype'
             OPTIONS+=' -fontconfig'
+            OPTIONS+=' -glib'
+            OPTIONS+=' -gtkstyle'
             OPTIONS+=' -reduce-relocations'
             OPTIONS+=' -openssl'
-            
+            OPTIONS+=' -platform linux-g++-32'
+            OPTIONS+=' -D OLD_GLIBC'
+            OPTIONS+=' -D OLD_GLIB'
+            OPTIONS+=' -D _GNU_SOURCE'
+
             MKSPEC_PATCHES+=('0021-linux-mkspec.patch')
-            
+
             PATCHES+=('0022-linux-qgtkstyle-qtbug-23569.patch')
+            PATCHES+=('0023-linux-link-with-old-glibc.patch')
+            PATCHES+=('0024-linux-webkit-not-link-with-gio.patch')
+            PATCHES+=('0025-linux-link-with-old-glib.patch')
         fi
     fi
 

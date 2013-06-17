@@ -1,0 +1,27 @@
+--- src/corelib/kernel/qcore_unix_p.h	2013-06-17 00:34:47.131240054 +0600
++++ src/corelib/kernel/qcore_unix_p.h.new	2013-06-17 00:34:38.337415552 +0600
+@@ -71,6 +71,10 @@
+ #  include <ioLib.h>
+ #endif
+ 
++#ifdef OLD_GLIBC
++# undef O_CLOEXEC
++#endif
++
+ struct sockaddr;
+ 
+ #if defined(Q_OS_LINUX) && defined(O_CLOEXEC)
+--- src/corelib/io/qfilesystemwatcher_inotify.cpp	2013-06-17 00:55:27.312597492 +0600
++++ src/corelib/io/qfilesystemwatcher_inotify.cpp.new	2013-06-17 01:11:15.765733737 +0600
+@@ -216,6 +216,11 @@
+ 
+ #endif
+ 
++#ifdef OLD_GLIBC
++# undef __NR_inotify_init1
++# undef IN_CLOEXEC
++#endif
++
+ QT_BEGIN_NAMESPACE
+ 
+ QInotifyFileSystemWatcherEngine *QInotifyFileSystemWatcherEngine::create()
