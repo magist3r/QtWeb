@@ -4,6 +4,8 @@ QT_URL='http://download.qt-project.org/official_releases/qt/4.8/4.8.4/'
 QT_SRC='qt-everywhere-opensource-src-4.8.4.tar.gz'
 QTWEBKIT_URL='http://gitorious.org/webkit/qtwebkit-23/archive-tarball/qtwebkit-2.3.1b'
 QTWEBKIT_SRC='qtwebkit-2.3.1b.tar.gz'
+OPENSSL_URL='http://www.openssl.org/source/'
+OPENSSL_SRC='openssl-1.0.1e.tar.gz'
 
 if [ ! -e "$TEMP_DIR" ]; then
     mkdir "$TEMP_DIR"
@@ -17,5 +19,12 @@ if [ ! -e "$TEMP_DIR/$QTWEBKIT_SRC" ]; then
     wget -O "$TEMP_DIR/$QTWEBKIT_SRC" "$QTWEBKIT_URL"
 fi
 
+if [ ! -e "$TEMP_DIR/$OPENSSL_SRC" ] && [[ $OSTYPE = cygwin ]]; then
+    wget -O "$TEMP_DIR/$OPENSSL_SRC" "$OPENSSL_URL$OPENSSL_SRC"
+fi
+
 tar -C src/qt --strip-components=1 -xf $TEMP_DIR/$QT_SRC
 tar -C src/qt -xf $TEMP_DIR/$QTWEBKIT_SRC
+if [[ $OSTYPE = cygwin ]]; then
+    tar -C src/qt -xf $TEMP_DIR/$OPENSSL_SRC
+fi
