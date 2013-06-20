@@ -1,0 +1,22 @@
+--- webkit-qtwebkit-23/Source/WebCore/WebCore.pri	2013-04-24 21:37:47.000000000 +0600
++++ webkit-qtwebkit-23/Source/WebCore/WebCore.pri.new	2013-06-18 18:48:00.248924246 +0600
+@@ -255,7 +255,7 @@
+         PKGCONFIG += sqlite3
+     }
+ } else {
+-    SQLITE3SRCDIR = $$(SQLITE3SRCDIR)
++    SQLITE3SRCDIR = $${SQLITE3SRCDIR}
+     isEmpty(SQLITE3SRCDIR): SQLITE3SRCDIR = ../../../qtbase/src/3rdparty/sqlite/
+     exists($${SQLITE3SRCDIR}/sqlite3.c) {
+         INCLUDEPATH += $${SQLITE3SRCDIR}
+@@ -285,10 +285,6 @@
+         LIBS += -lwebp
+     }
+ } else {
+-    !win32-*:!mac {
+-        DEFINES += WTF_USE_LIBJPEG=1 WTF_USE_LIBPNG=1
+-        LIBS += -ljpeg -lpng
+-    }
+     contains(DEFINES, HAVE_LIBWEBP=1) {
+         DEFINES += WTF_USE_WEBP=1
+         LIBS += -lwebp

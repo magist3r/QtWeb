@@ -694,7 +694,7 @@ QIcon BrowserApplication::icon(const QUrl &url, const WebView *webView) const
     if (!icon.isNull())
         return icon.pixmap(16, 16);
 
-    return QWebSettings::iconForUrl(QUrl("about:blank"));
+    return QIcon(QLatin1String(":/webkit/resources/urlIcon.png"));
 }
 
 void BrowserApplication::closeMainWindows()

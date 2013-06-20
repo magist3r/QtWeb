@@ -1,5 +1,6 @@
 #!/bin/bash
 PATCHDIR="$(pwd)/qt-patches"
+USE_QTWEBKIT_23=false
 export QTDIR=$(pwd)/src/qt
 export PATH=$QTDIR/bin:$PATH
 SSL_LIBS=''
@@ -9,15 +10,9 @@ CROSS_COMPILE=false
 CROSS_COMPILE_PREFIX='i686-w64-mingw32-'
 COMPILE_JOBS=8
 MAKE_COMMAND="make -j$COMPILE_JOBS"
-PATCHES=() # Array of patches
+QT_PATCHES=() # Array of qt patches
+QTWEBKIT_PATCHES=() # Array of qtwebkit patches
 MKSPEC_PATCHES=() # Patches for qmake.conf 
-
-#PATCHES+=('0001-configure.patch')
-#PATCHES+=('0002-webkit-pro.patch')
-#PATCHES+=('0003-qtwebkit-pro.patch')
-PATCHES+=('0004-qstyles-qrc.patch')
-PATCHES+=('0005-qwidget-cpp.patch')
-#PATCHES+=('0006-webkit-disable-npapi.patch')
 
 until [ -z "$1" ]; do
     case $1 in
@@ -26,6 +21,9 @@ until [ -z "$1" ]; do
             shift;;
         "--clean-qt-build")
             CLEAN_QT_BUILD=true
+            shift;;
+        "--use-qtwebkit-23")
+            USE_QTWEBKIT_23=true
             shift;;
         "--cross-compile")
             CROSS_COMPILE=true
@@ -44,6 +42,7 @@ until [ -z "$1" ]; do
             echo
             echo "  --skip-qt-build             Skip build of Qt."
             echo "  --clean-qt-build            Clean Qt build tree."
+            echo "  --use-qtwebkit-23           Build QtWeb with QtWebKit 2.3."
             echo "  --cross-compile [prefix]    Cross-compile Qt for windows on linux (requires static openssl installed)"
             echo "                              and specify prefix (default: i686-w64-mingw32-)"
             echo "  --jobs NUM                  How many parallel compile jobs to use. Defaults to 4."
@@ -66,6 +65,16 @@ function qtwebkit_error {
     exit 1
 }
 
+QT_PATCHES+=('0004-qstyles-qrc.patch')
+QT_PATCHES+=('0005-qwidget-cpp.patch')
+
+if ! $USE_QTWEBKIT_23; then
+    QTWEBKIT_PATCHES+=('0001-configure.patch')
+    QTWEBKIT_PATCHES+=('0002-webkit-pro.patch')
+    QTWEBKIT_PATCHES+=('0003-qtwebkit-pro.patch')
+    QTWEBKIT_PATCHES+=('0006-webkit-disable-video.patch')
+fi
+
 if ! $SKIP_QT_BUILD; then
 
     OPTIONS=''
@@ -82,7 +91,8 @@ if ! $SKIP_QT_BUILD; then
         OPTIONS+=' -openssl'
         OPTIONS+=' -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.6.sdk'
         
-        #PATCHES+=('0031-mac-fix-includepath-for-npapi.patch')
+        if ! $USE_QTWEBKIT_23; then QTWEBKIT_PATCHES+=('0031-mac-fix-includepath-for-npapi.patch'); fi
+        
     elif [[ $OSTYPE = msys ]]; then
         SSL_LIBS='-lssleay32 -llibeay32 -lcrypt32 -lgdi32'
         OPTIONS+=' -openssl-linked'
@@ -91,9 +101,9 @@ if ! $SKIP_QT_BUILD; then
         MAKE_COMMAND=nmake
 
         MKSPEC_PATCHES+=('0011-windows-mkspec.patch')
+        QT_PATCHES+=('0013-windows-dotnet-style.patch')
+        if ! $USE_QTWEBKIT_23; then QTWEBKIT_PATCHES+=('0012-windows-webcore-pro.patch'); fi
         
-        #PATCHES+=('0012-windows-webcore-pro.patch')
-        PATCHES+=('0013-windows-dotnet-style.patch')
     elif [[ $OSTYPE = beos ]]; then
         OPTIONS+=' -no-largefile'
         OPTIONS+=' -no-pch'
@@ -105,10 +115,10 @@ if ! $SKIP_QT_BUILD; then
             SSL_LIBS='-lssl -lcrypto -lcrypt32 -lgdi32'
             OPTIONS+=' -openssl-linked'
             
-            #PATCHES+=('0012-windows-webcore-pro.patch')
-            PATCHES+=('0013-windows-dotnet-style.patch')
-            
+            QT_PATCHES+=('0013-windows-dotnet-style.patch')
             MKSPEC_PATCHES+=('0014-windows-mkspec-cross-compile.patch')
+            if ! $USE_QTWEBKIT_23; then QTWEBKIT_PATCHES+=('0012-windows-webcore-pro.patch'); fi
+            
         else
             OPTIONS+=' -system-freetype'
             OPTIONS+=' -fontconfig'
@@ -123,16 +133,28 @@ if ! $SKIP_QT_BUILD; then
 
             MKSPEC_PATCHES+=('0021-linux-mkspec.patch')
 
-            PATCHES+=('0022-linux-qgtkstyle-qtbug-23569.patch')
-            PATCHES+=('0023-linux-link-with-old-glibc.patch')
-            PATCHES+=('0024-linux-webkit-not-link-with-gio.patch')
-            PATCHES+=('0025-linux-link-with-old-glib.patch')
+            QT_PATCHES+=('0022-linux-qgtkstyle-qtbug-23569.patch')
+            QT_PATCHES+=('0023-linux-link-with-old-glibc.patch')
+            QT_PATCHES+=('0025-linux-link-with-old-glib.patch')
+            
+            if $USE_QTWEBKIT_23; then
+                QTWEBKIT_PATCHES+=('0026-linux-qtwebkit-23-dont-link-with-jpeg-and-png.patch')
+                QTWEBKIT_PATCHES+=('0027-linux-qtwebkit-23-dont-link-with-sqlite.patch')
+            else    
+                QTWEBKIT_PATCHES+=('0024-linux-webkit-not-link-with-gio.patch')
+            fi
         fi
+    fi
+    
+    if $USE_QTWEBKIT_23; then
+        OPTIONS+=' -no-webkit'
+    else
+        OPTIONS+=' -webkit'
     fi
 
     OPTIONS+=' -qt-libjpeg'
     OPTIONS+=' -qt-libpng'
-    OPTIONS+=' -no-webkit'
+    OPTIONS+=' -qt-zlib'
     OPTIONS+=' -nomake demos'
     OPTIONS+=' -nomake docs'
     OPTIONS+=' -nomake examples'
@@ -166,68 +188,75 @@ if ! $SKIP_QT_BUILD; then
         exit 1
     fi
     
+    if $USE_QTWEBKIT_23 && [ ! -e ./webkit-qtwebkit-23 ]; then
+        echo "Looks like you forgot to extract QtWebKit 2.3 sources in src/qt/webkit-qtwebkit-23 directory!"
+        exit 1
+    fi
+    
     # make clean if we have previous build in src/qt
     if $CLEAN_QT_BUILD; then
         make confclean
-        rm -rf webkit-qtwebkit-23/WebKitBuild
+        if $USE_QTWEBKIT_23; then 
+            rm -rf webkit-qtwebkit-23/WebKitBuild 
+        fi
     fi
     
-    #Applying patches for Qt
-    for i in "${PATCHES[@]}"; do
+    #Applying patches for Qt and QtWebKit
+    for i in "${QT_PATCHES[@]}"; do
         patch -p0 -N < "$PATCHDIR/$i"
     done
     
     for j in "${MKSPEC_PATCHES[@]}"; do
         patch -p0 -N < "$PATCHDIR/$j"
     done
+    
+    for k in "${QTWEBKIT_PATCHES[@]}"; do
+        patch -p0 -N < "$PATCHDIR/$k"
+    done
 
     OPENSSL_LIBS="$SSL_LIBS" ./configure -prefix $PWD $OPTIONS && $MAKE_COMMAND || qt_error
     
+    #qtwebkit build
+    if $USE_QTWEBKIT_23; then
+        pushd webkit-qtwebkit-23
+        QTWEBKIT_OPTIONS=''
+        QTWEBKIT_OPTIONS+=' --qt'
+        QTWEBKIT_OPTIONS+=' --release'
+        QTWEBKIT_OPTIONS+=" --qmakearg=CONFIG+=static"
+        QTWEBKIT_OPTIONS+=" --qmakearg=DEFINES+=Q_NODLL"
+        QTWEBKIT_OPTIONS+=" --qmakearg=DEFINES+=STATIC"
+    
+        QTWEBKIT_OPTIONS+=' --no-webkit2'
+        QTWEBKIT_OPTIONS+=' --no-3d-rendering'
+        QTWEBKIT_OPTIONS+=' --no-webgl'
+        QTWEBKIT_OPTIONS+=' --no-gamepad'
+        QTWEBKIT_OPTIONS+=' --no-video'
+        QTWEBKIT_OPTIONS+=' --no-xslt'
+        QTWEBKIT_OPTIONS+=" --qmakearg=DEFINES+=WTF_USE_3D_GRAPHICS=0"
+        QTWEBKIT_OPTIONS+=" --qmakearg=DEFINES+=WTF_USE_ZLIB=0"
+    
+        Tools/Scripts/build-webkit $QTWEBKIT_OPTIONS || qtwebkit_error
+        pushd WebKitBuild/Release
+        make install
+        popd
+        popd
+    fi
+    
     #Revert patches to clean sources
-    for i in "${PATCHES[@]}"; do
+    for i in "${QT_PATCHES[@]}"; do
         patch -p0 -R < "$PATCHDIR/$i"
     done
     
-    #qtwebkit build
-    pushd webkit-qtwebkit-23
-    QTWEBKIT_OPTIONS=''
-    QTWEBKIT_OPTIONS+=' --qt'
-    QTWEBKIT_OPTIONS+=' --release'
-    QTWEBKIT_OPTIONS+=" --qmakearg=CONFIG+=static"
-    QTWEBKIT_OPTIONS+=" --qmakearg=DEFINES+=Q_NODLL"
-    QTWEBKIT_OPTIONS+=" --qmakearg=DEFINES+=STATIC"
-    
-    QTWEBKIT_OPTIONS+=' --no-webkit2'
-    QTWEBKIT_OPTIONS+=' --no-3d-rendering'
-    QTWEBKIT_OPTIONS+=' --no-webgl'
-    QTWEBKIT_OPTIONS+=' --no-gamepad'
-    QTWEBKIT_OPTIONS+=' --no-video'
-    QTWEBKIT_OPTIONS+=' --no-xslt'
-    QTWEBKIT_OPTIONS+=' --no-sql-database'
-    QTWEBKIT_OPTIONS+=" --qmakearg=DEFINES+=WTF_USE_3D_GRAPHICS=0"
-    
-    Tools/Scripts/build-webkit $QTWEBKIT_OPTIONS || qtwebkit_error
-    pushd WebKitBuild/Release/Source
-    for i in 'JavaScriptCore' 'WebCore' 'WebKit' 'WTF'; do 
-         pushd "$i/release" 
-         if [ $i == 'WebKit' ]; then
-	     ar -x "libWebKit1.a"
-	 else
-	     ar -x "lib$i.a"
-	 fi
-	 popd
+    for k in "${QTWEBKIT_PATCHES[@]}"; do
+        patch -p0 -R < "$PATCHDIR/$k"
     done
-    rm libQtWebKit.a
-    ar rcs libQtWebKit.a JavaScriptCore/release/*.o WebCore/release/*.o WebKit/release/*.o WTF/release/*.o
     popd
-    popd
-    cp webkit-qtwebkit-23/WebKitBuild/Release/Source/libQtWebKit.a ./lib
-    popd
-    cp libQtWebKit.prl src/qt/lib
 fi # end of Qt build
 
-src/qt/bin/qmake -r -config release
-make clean
+QMAKE_ARGS=
+if $USE_QTWEBKIT_23; then QMAKE_ARGS="DEFINES+=QTWEBKIT_23"; fi
+$MAKE_COMMAND distclean
+src/qt/bin/qmake "$QMAKE_ARGS" -r -config release 
 $MAKE_COMMAND
 
 #fix qt_menu.nib issue

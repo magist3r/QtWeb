@@ -1,0 +1,17 @@
+--- webkit-qtwebkit-23/Tools/qmake/mkspecs/features/features.prf	2013-06-18 18:48:42.008150912 +0600
++++ webkit-qtwebkit-23/Tools/qmake/mkspecs/features/features.prf.new	2013-06-18 18:48:49.866005412 +0600
+@@ -209,14 +209,6 @@
+     # is called QmlEngine and it is safe for us to use QQuick1 again.
+ }
+ 
+-# Try to use an system wide SQlite installation
+-if(!contains(QT_CONFIG, no-pkg-config):packagesExist("sqlite3"))|mac {
+-    DEFINES += HAVE_SQLITE3=1
+-} else {
+-    SQLITE3SRCDIR = $$(SQLITE3SRCDIR)
+-    isEmpty(SQLITE3SRCDIR):isEmpty(_QMAKE_SUPER_CACHE_): error("WebKit requires SQLite. Either make it available via pkg-config, set $SQLITE3SRCDIR or build WebKit under qt5.git.")
+-}
+-
+ # Gamepad API Support
+ linux-*:!contains(DEFINES, ENABLE_GAMEPAD=.) {
+     packagesExist(libudev): DEFINES += ENABLE_GAMEPAD=1

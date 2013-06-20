@@ -15,7 +15,6 @@ fi
 
 if [ ! -e "$TEMP_DIR/$QTWEBKIT_SRC" ]; then
     wget -O "$TEMP_DIR/$QTWEBKIT_SRC" "$QTWEBKIT_URL"
-    echo $?
 fi
 
 tar -C src/qt --strip-components=1 -xf $TEMP_DIR/$QT_SRC
