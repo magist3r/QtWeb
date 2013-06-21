@@ -23,8 +23,6 @@ if [ ! -e "$TEMP_DIR/$OPENSSL_SRC" ] && [[ $OSTYPE = cygwin ]]; then
     wget -O "$TEMP_DIR/$OPENSSL_SRC" "$OPENSSL_URL$OPENSSL_SRC"
 fi
 
-tar -C src/qt --strip-components=1 -xf $TEMP_DIR/$QT_SRC
-tar -C src/qt -xf $TEMP_DIR/$QTWEBKIT_SRC
-if [[ $OSTYPE = cygwin ]]; then
-    tar -C src/qt -xf $TEMP_DIR/$OPENSSL_SRC
-fi
+if [ ! -e src/qt/configure ]; then tar -C src/qt --strip-components=1 -xf $TEMP_DIR/$QT_SRC; fi
+if [ ! -e src/qt/webkit-qtwebkit-23 ]; then tar -C src/qt -xf $TEMP_DIR/$QTWEBKIT_SRC; fi
+if [[ $OSTYPE = cygwin ]] && [ ! -e src/qt/openssl-1.0.1e ]; then tar -C src/qt -xf $TEMP_DIR/$OPENSSL_SRC; fi
