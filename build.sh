@@ -27,6 +27,7 @@ if [[ $OSTYPE = cygwin ]]; then
     export FrameworkDir=$(cygpath -ua "$SYSTEMROOT/Microsoft.NET/Framework")
     export TARGET_CPU='x86'
     export QTDIR=$(cygpath -wlpa "$QTDIR")
+    export QMAKEPATH="$QTDIR/webkit-qtwebkit-23/Tools/qmake"
     MAKE_COMMAND=nmake
 
     export LIBPATH="$FrameworkDir/$FrameworkVersion:$FrameworkDir/$Framework35Version:$VCINSTALLDIR/lib:$LIBPATH"
@@ -94,6 +95,9 @@ if ! $USE_QTWEBKIT_23; then
     QTWEBKIT_PATCHES+=('0002-webkit-pro.patch')
     QTWEBKIT_PATCHES+=('0003-qtwebkit-pro.patch')
     QTWEBKIT_PATCHES+=('0006-webkit-disable-video.patch')
+else
+    QTWEBKIT_PATCHES+=('0041-qtwebkit-23-dont-link-with-jpeg-and-png.patch')
+    QTWEBKIT_PATCHES+=('0042-qtwebkit-23-dont-link-with-sqlite.patch')
 fi
 
 if ! $SKIP_QT_BUILD; then
@@ -157,7 +161,11 @@ if ! $SKIP_QT_BUILD; then
 
         MKSPEC_PATCHES+=('0011-windows-mkspec.patch')
         QT_PATCHES+=('0013-windows-dotnet-style.patch')
-        if ! $USE_QTWEBKIT_23; then QTWEBKIT_PATCHES+=('0012-windows-webcore-pro.patch'); fi
+        if ! $USE_QTWEBKIT_23; then
+            QTWEBKIT_PATCHES+=('0012-windows-webcore-pro.patch')
+        else
+            QTWEBKIT_PATCHES+=('0015-windows-qtwebkit-23-cygwin.patch')
+        fi
         ;;
     beos)
         OPTIONS+=' -no-largefile'
@@ -193,12 +201,7 @@ if ! $SKIP_QT_BUILD; then
             QT_PATCHES+=('0023-linux-link-with-old-glibc.patch')
             QT_PATCHES+=('0025-linux-link-with-old-glib.patch')
             
-            if $USE_QTWEBKIT_23; then
-                QTWEBKIT_PATCHES+=('0026-linux-qtwebkit-23-dont-link-with-jpeg-and-png.patch')
-                QTWEBKIT_PATCHES+=('0027-linux-qtwebkit-23-dont-link-with-sqlite.patch')
-            else    
-                QTWEBKIT_PATCHES+=('0024-linux-webkit-not-link-with-gio.patch')
-            fi
+            if ! $USE_QTWEBKIT_23; then QTWEBKIT_PATCHES+=('0024-linux-webkit-not-link-with-gio.patch'); fi
         fi
         ;;
     *)
