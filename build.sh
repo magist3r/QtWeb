@@ -27,7 +27,6 @@ if [[ $OSTYPE = cygwin ]]; then
     export FrameworkDir=$(cygpath -ua "$SYSTEMROOT/Microsoft.NET/Framework")
     export TARGET_CPU='x86'
     export QTDIR=$(cygpath -wlpa "$QTDIR")
-    export QMAKEPATH="$QTDIR/webkit-qtwebkit-23/Tools/qmake"
     MAKE_COMMAND=nmake
 
     export LIBPATH="$FrameworkDir/$FrameworkVersion:$FrameworkDir/$Framework35Version:$VCINSTALLDIR/lib:$LIBPATH"
@@ -278,6 +277,8 @@ if ! $SKIP_QT_BUILD; then
         QTWEBKIT_OPTIONS+=' --no-xslt'
         QTWEBKIT_OPTIONS+=" --qmakearg=DEFINES+=WTF_USE_3D_GRAPHICS=0"
         QTWEBKIT_OPTIONS+=" --qmakearg=DEFINES+=WTF_USE_ZLIB=0"
+
+        if [[ $OSTYPE == cygwin ]]; then export QMAKEPATH="$QTDIR/webkit-qtwebkit-23/Tools/qmake"; fi
     
         Tools/Scripts/build-webkit $QTWEBKIT_OPTIONS || qtwebkit_error
         pushd WebKitBuild/Release
