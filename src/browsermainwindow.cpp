@@ -1087,6 +1087,7 @@ void BrowserMainWindow::slotAboutToShowEncodingMenu()
     alignmentGroup->addAction(menuAddEncoding("Korean", "EUC-KR"));
     // japanese
     alignmentGroup->addAction(menuAddEncoding("Japanese",   "ISO-2022-JP"));
+    alignmentGroup->addAction(menuAddEncoding("Japanese",   "Shift-JIS"));
     alignmentGroup->addAction(menuAddEncoding("Japanese",   "EUC-JP"));
     m_encodingMenu->addSeparator();
 
