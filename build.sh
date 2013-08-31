@@ -196,7 +196,7 @@ if ! $SKIP_QT_BUILD; then
 
             MKSPEC_PATCHES+=('0021-linux-mkspec.patch')
 
-            QT_PATCHES+=('0022-linux-qgtkstyle-qtbug-23569.patch')
+            #QT_PATCHES+=('0022-linux-qgtkstyle-qtbug-23569.patch')
             QT_PATCHES+=('0023-linux-link-with-old-glibc.patch')
             QT_PATCHES+=('0025-linux-link-with-old-glib.patch')
             

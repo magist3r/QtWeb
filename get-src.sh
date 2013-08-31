@@ -1,7 +1,7 @@
 #!/bin/bash
 TEMP_DIR='temp-src'
-QT_URL='http://download.qt-project.org/official_releases/qt/4.8/4.8.4/'
-QT_SRC='qt-everywhere-opensource-src-4.8.4.tar.gz'
+QT_URL='http://download.qt-project.org/official_releases/qt/4.8/4.8.5/'
+QT_SRC='qt-everywhere-opensource-src-4.8.5.tar.gz'
 QTWEBKIT_URL='http://gitorious.org/webkit/qtwebkit-23/archive-tarball/qtwebkit-2.3.1b'
 QTWEBKIT_SRC='qtwebkit-2.3.1b.tar.gz'
 OPENSSL_URL='http://www.openssl.org/source/'
