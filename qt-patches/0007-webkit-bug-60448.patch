@@ -1,11 +1,12 @@
---- src/3rdparty/webkit/Source/WebCore/rendering/RenderInline.cpp	2013-06-07 11:16:57.000000000 +0600
-+++ src/3rdparty/webkit/Source/WebCore/rendering/RenderInline.cpp.new	2013-08-31 23:51:17.065280932 +0600
-@@ -98,6 +98,8 @@
-             if (firstLineBox()->parent()) {
+--- src/3rdparty/webkit/Source/WebCore/rendering/RenderInline.cpp	2013-09-01 00:15:42.263244786 +0600
++++ src/3rdparty/webkit/Source/WebCore/rendering/RenderInline.cpp.new	2013-09-01 00:16:16.956607417 +0600
+@@ -99,7 +99,8 @@
                  for (InlineFlowBox* box = firstLineBox(); box; box = box->nextLineBox())
                      box->remove();
-+            } else if (parent())  
-+                parent()->dirtyLinesFromChangedChild(this); 
              }
-         }
+-        }
++        } else if (parent())  
++            parent()->dirtyLinesFromChangedChild(this); 
      }
+ 
+     m_lineBoxes.deleteLineBoxes(renderArena());
