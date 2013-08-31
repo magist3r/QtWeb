@@ -94,6 +94,7 @@ if ! $USE_QTWEBKIT_23; then
     QTWEBKIT_PATCHES+=('0002-webkit-pro.patch')
     QTWEBKIT_PATCHES+=('0003-qtwebkit-pro.patch')
     QTWEBKIT_PATCHES+=('0006-webkit-disable-video.patch')
+    QTWEBKIT_PATCHES+=('0007-webkit-bug-60448.patch')
 else
     QTWEBKIT_PATCHES+=('0041-qtwebkit-23-dont-link-with-jpeg-and-png.patch')
     QTWEBKIT_PATCHES+=('0042-qtwebkit-23-dont-link-with-sqlite.patch')
