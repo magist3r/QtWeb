@@ -104,7 +104,7 @@ BrowserApplication::BrowserApplication(int &argc, char **argv)
 {
     QCoreApplication::setOrganizationName(QLatin1String("QtWeb.NET"));
     QCoreApplication::setApplicationName(QLatin1String("QtWeb Internet Browser"));
-    QCoreApplication::setApplicationVersion(QLatin1String("3.8.4"));
+    QCoreApplication::setApplicationVersion(QLatin1String("3.8.5"));
     QString serverName = QCoreApplication::applicationName();
     
     definePortableRunMode();
