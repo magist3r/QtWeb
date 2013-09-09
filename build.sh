@@ -90,7 +90,9 @@ QT_PATCHES+=('0004-qstyles-qrc.patch')
 QT_PATCHES+=('0005-qwidget-cpp.patch')
 
 if ! $USE_QTWEBKIT_23; then
-    QTWEBKIT_PATCHES+=('0001-configure.patch')
+    if [[ $OSTYPE != cygwin ]]; then
+        QTWEBKIT_PATCHES+=('0001-configure.patch')
+    fi
     QTWEBKIT_PATCHES+=('0002-webkit-pro.patch')
     QTWEBKIT_PATCHES+=('0003-qtwebkit-pro.patch')
     QTWEBKIT_PATCHES+=('0006-webkit-disable-video.patch')
