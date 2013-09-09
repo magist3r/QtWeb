@@ -33,6 +33,12 @@ if [[ $OSTYPE = cygwin ]]; then
     export PATH="$LIBPATH:$VCINSTALLDIR/bin:$VSINSTALLDIR/Common7/Tools:$VSINSTALLDIR/Common7/IDE:$VCINSTALLDIR/VCPackages:$WindowsSdkDir/Bin:$OPENSSL/bin:$QTDIR/bin:$PATH"
     export LIB=$(cygpath -wlpa "$VCINSTALLDIR/lib:$WindowsSdkDir/Lib:$OPENSSL/lib:$LIB")
     export INCLUDE=$(cygpath -wlpa "$VCINSTALLDIR/include/:$WindowsSdkDir/Include/:$OPENSSL/include/:$INCLUDE")
+    
+    # Generate env.bat
+    echo "set LIBPATH=$(cygpath -wlpa "$LIBPATH")"$'\r' > env.bat
+    echo "set PATH=$(cygpath -wlpa "$PATH")"$'\r' >> env.bat
+    echo "set LIB=$LIB"$'\r' >> env.bat
+    echo "set INCLUDE=$INCLUDE"$'\r' >> env.bat
 fi
 
 until [ -z "$1" ]; do
@@ -152,7 +158,7 @@ if ! $SKIP_QT_BUILD; then
         ;;
     cygwin)
         SSL_LIBS="OPENSSL_LIBS=\"ssleay32.lib libeay32.lib crypt32.lib gdi32.lib\""
-        CONFIGURE_COMMAND="./configure.exe"
+        CONFIGURE_COMMAND="configure.exe"
         OPTIONS=("${OPTIONS[@]// -silent}")
         OPTIONS=("${OPTIONS[@]// -openssl}")
         OPTIONS=("${OPTIONS[@]// -optimized-qmake}")
@@ -250,6 +256,9 @@ if ! $SKIP_QT_BUILD; then
         patch -p0 -N < "$PATCHDIR/$k"
     done
 
+    COMMAND="$CONFIGURE_COMMAND -prefix "$QTDIR" $OPTIONS "$SSL_LIBS""
+    COMMAND=$(echo $COMMAND | sed 's/ *$//g')
+    
     if [[ $OSTYPE = cygwin ]]; then
         #build openssl
         pushd $QTDIR/openssl-1.0.1e/
@@ -257,12 +266,20 @@ if ! $SKIP_QT_BUILD; then
         ms/do_ms.bat
         $MAKE_COMMAND -f ms/nt.mak install
         popd
-    fi
+        
+        #generate and run configure.cmd & build.cmd
+        echo "call ../../env.bat"$'\r' > configure.cmd
+        echo "call ../../env.bat"$'\r' > build.cmd
 
-    COMMAND="$CONFIGURE_COMMAND -prefix "$QTDIR" $OPTIONS "$SSL_LIBS""
-    COMMAND=$(echo $COMMAND | sed 's/ *$//g')
-    eval "$COMMAND" || qt_error
-    $MAKE_COMMAND || qt_error
+        echo "$COMMAND"$'\r' >> configure.cmd
+        cmd /c configure.cmd || qt_error
+
+        echo "$MAKE_COMMAND"$'\r' >> build.cmd
+        cmd /c build.cmd || qt_error
+    else
+        eval "$COMMAND" || qt_error
+        $MAKE_COMMAND || qt_error
+    fi
     
     #qtwebkit build
     if $USE_QTWEBKIT_23; then
@@ -283,9 +300,17 @@ if ! $SKIP_QT_BUILD; then
         QTWEBKIT_OPTIONS+=" --qmakearg=DEFINES+=WTF_USE_3D_GRAPHICS=0"
         QTWEBKIT_OPTIONS+=" --qmakearg=DEFINES+=WTF_USE_ZLIB=0"
 
-        if [[ $OSTYPE == cygwin ]]; then export QMAKEPATH="$QTDIR/webkit-qtwebkit-23/Tools/qmake"; fi
-    
-        Tools/Scripts/build-webkit $QTWEBKIT_OPTIONS || qtwebkit_error
+        if [[ $OSTYPE == cygwin ]]; then 
+            #generate and run qtwebkit_build.cmd
+            export QMAKEPATH="$QTDIR/webkit-qtwebkit-23/Tools/qmake"
+            echo "call ../../../env.bat"$'\r' > qtwebkit_build.cmd
+            echo "set QMAKEPATH=$(cygpath -wla "$QMAKEPATH")"$'\r' >> qtwebkit_build.cmd
+            echo "perl Tools/Scripts/build-webkit $QTWEBKIT_OPTIONS"$'\r' >> qtwebkit_build.cmd
+            cmd /c qtwebkit_build.cmd || qtwebkit_error
+        else
+            Tools/Scripts/build-webkit $QTWEBKIT_OPTIONS || qtwebkit_error
+        fi
+        
         pushd WebKitBuild/Release
         $MAKE_COMMAND install
         popd
