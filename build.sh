@@ -169,6 +169,7 @@ if ! $SKIP_QT_BUILD; then
 
         MKSPEC_PATCHES+=('0011-windows-mkspec.patch')
         QT_PATCHES+=('0013-windows-dotnet-style.patch')
+        QT_PATCHES+=('0016-windows-fix-build-qtbug-32773.patch')
         if ! $USE_QTWEBKIT_23; then
             QTWEBKIT_PATCHES+=('0012-windows-webcore-pro.patch')
         else
@@ -188,6 +189,7 @@ if ! $SKIP_QT_BUILD; then
             OPTIONS+=" -device-option CROSS_COMPILE=$CROSS_COMPILE_PREFIX"
             
             QT_PATCHES+=('0013-windows-dotnet-style.patch')
+            QT_PATCHES+=('0016-windows-fix-build-qtbug-32773.patch')
             MKSPEC_PATCHES+=('0014-windows-mkspec-cross-compile.patch')
             if ! $USE_QTWEBKIT_23; then QTWEBKIT_PATCHES+=('0012-windows-webcore-pro.patch'); fi
             
