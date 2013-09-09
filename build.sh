@@ -259,7 +259,7 @@ if ! $SKIP_QT_BUILD; then
 
     COMMAND="$CONFIGURE_COMMAND -prefix "$QTDIR" $OPTIONS "$SSL_LIBS""
     COMMAND=$(echo $COMMAND | sed 's/ *$//g')
-    $COMMAND || qt_error
+    eval "$COMMAND" || qt_error
     $MAKE_COMMAND || qt_error
     
     #qtwebkit build
