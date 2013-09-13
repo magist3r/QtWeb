@@ -50,8 +50,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 3,8,5,108
- PRODUCTVERSION 3,8,5,108
+ FILEVERSION 3,8,5,109
+ PRODUCTVERSION 3,8,5,109
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -68,12 +68,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "QtWeb.NET"
             VALUE "FileDescription", "QtWeb Internet Browser"
-            VALUE "FileVersion", "3, 8, 5, 108"
+            VALUE "FileVersion", "3, 8, 5, 109"
             VALUE "InternalName", "QtWeb Internet Browser"
             VALUE "LegalCopyright", "Copyright (C) 2008-2013 QtWeb.NET"
             VALUE "OriginalFilename", "QtWeb.exe"
             VALUE "ProductName", "QtWeb Internet Browser"
-            VALUE "ProductVersion", "3, 8, 5, 108"
+            VALUE "ProductVersion", "3, 8, 5, 109"
         END
     END
     BLOCK "VarFileInfo"
