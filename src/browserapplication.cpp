@@ -449,7 +449,7 @@ void BrowserApplication::loadSettings()
     if (private_browsing)
     {
         QWebSettings::globalSettings()->setAttribute(QWebSettings::PrivateBrowsingEnabled, true);
-        WebPage::setUserAgent( QLatin1String("") );
+        WebPage::setUserAgent(QLatin1String(""));
     }
     settings.endGroup();
 

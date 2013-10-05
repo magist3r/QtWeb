@@ -58,6 +58,7 @@
 #include <QtWebKit/QWebHitTestResult>
 #include <qdesktopservices.h>
 #include <QtUiTools/QUiLoader>
+#include <QRegExp>
 
 #include <QtCore/QDebug>
 #include <QtCore/QBuffer>
@@ -85,145 +86,43 @@ BrowserMainWindow *WebPage::mainWindow()
 }
 
 QString WebPage::m_userAgent;
+QString WebPage::m_defaultAgent;
+bool WebPage::m_useCustomAgent;
 
 void WebPage::setUserAgent(QString agent) 
 {
-    m_userAgent = agent;
-}
+    if (agent == "default") {
+        QSettings settings;
+        settings.beginGroup(QLatin1String("websettings"));
+        bool bUseCustomAgent = settings.value(QLatin1String("customUserAgent"), false).toBool();
+        if (bUseCustomAgent) {
+            m_useCustomAgent = true;
 
-void WebPage::setDefaultAgent(  )
-{
-    QString ver;
-#ifdef Q_WS_WIN
-    switch(QSysInfo::WindowsVersion) 
-    {
-        case QSysInfo::WV_32s:
-            ver = "Windows 3.1";
-            break;
-        case QSysInfo::WV_95:
-            ver = "Windows 95";
-            break;
-        case QSysInfo::WV_98:
-            ver = "Windows 98";
-            break;
-        case QSysInfo::WV_Me:
-            ver = "Windows 98; Win 9x 4.90";
-            break;
-        case QSysInfo::WV_NT:
-            ver = "WinNT4.0";
-            break;
-        case QSysInfo::WV_2000:
-            ver = "Windows NT 5.0";
-            break;
-        case QSysInfo::WV_XP:
-            ver = "Windows NT 5.1";
-            break;
-        case QSysInfo::WV_2003:
-            ver = "Windows NT 5.2";
-            break;
-        case QSysInfo::WV_VISTA:
-            ver = "Windows NT 6.0";
-            break;
-        case QSysInfo::WV_CE:
-            ver = "Windows CE";
-            break;
-        case QSysInfo::WV_CENET:
-            ver = "Windows CE .NET";
-            break;
-        case QSysInfo::WV_CE_5:
-            ver = "Windows CE 5.x";
-            break;
-        case QSysInfo::WV_CE_6:
-            ver = "Windows CE 6.x";
-            break;
-        default:
-            ver = "Windows NT based";
-    }
-#else
+            m_userAgent = settings.value(QLatin1String("UserAgent"), "").toString();
+            if (m_userAgent == "Internet Explorer")
+                m_userAgent = "Mozilla/4.0 (compatible; MSIE 8.0; %W;  Trident/4.0)";
+            else if (m_userAgent == "Firefox")
+                m_userAgent = "Mozilla/5.0 (Windows; U; %W; %L; rv:1.9.0.5) Gecko/2008120121 Firefox/3.0.5";
+            else if (m_userAgent == "Opera")
+                m_userAgent = "Opera/9.63 (%W; U; en) Presto/2.1.1";
+            else if (m_userAgent == "Safari")
+                m_userAgent = "Mozilla/5.0 (Windows; U; %W; %L) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Safari/528.17";
+            else if (m_userAgent == "Chrome")
+                m_userAgent = "Mozilla/5.0 (Windows; U; %W; %L) AppleWebKit/525.13 (KHTML, like Gecko) Chrome/0.A.B.C Safari/525.13";
 
-    #ifdef Q_WS_MAC
-        switch(QSysInfo::MacintoshVersion) 
-        {
-            case QSysInfo::MV_10_3:
-                ver = "Intel MacOS X 10.3";
-                break;
-            case QSysInfo::MV_10_4:
-                ver = "Intel MacOS X 10.4";
-                break;
-            case QSysInfo::MV_10_5:
-                ver = "Intel MacOS X 10.5";
-                break;
-            case QSysInfo::MV_10_6:
-                ver = "Intel MacOS X 10.6";
-                break;
-            default:
-                ver = "MacOS X";
+            m_userAgent = m_userAgent.replace("%L", QLocale::system().name());
+            QRegExp rx("([^;]*)\\)");
+            if (rx.indexIn(m_defaultAgent) >= 0 && m_userAgent.contains("%W"))
+                m_userAgent = m_userAgent.replace("%W", rx.cap(1));
+
+        } else {
+            m_userAgent = m_defaultAgent;
+            m_useCustomAgent = false;
         }
-    #else
-        ver = "Linux";
-    #endif
-#endif
-    // language
-    QString name = QLocale::system().name();
-    name[2] = QLatin1Char('-');
-
-    QSettings settings;
-    settings.beginGroup(QLatin1String("websettings"));
-    bool bUseCustomAgent = settings.value(QLatin1String("customUserAgent"), false).toBool();
-    if (bUseCustomAgent)
-    {
-        m_userAgent = settings.value(QLatin1String("UserAgent"), "").toString();
-        if (m_userAgent == "Internet Explorer")
-            m_userAgent = "Mozilla/4.0 (compatible; MSIE 8.0; %W;  Trident/4.0)";
-        else if (m_userAgent == "Firefox")
-            m_userAgent = "Mozilla/5.0 (Windows; U; %W; %L; rv:1.9.0.5) Gecko/2008120121 Firefox/3.0.5";
-        else if (m_userAgent == "Opera")
-            m_userAgent = "Opera/9.63 (%W; U; en) Presto/2.1.1";
-        else if (m_userAgent == "Safari")
-            m_userAgent = "Mozilla/5.0 (Windows; U; %W; %L) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Safari/528.17";
-        else if (m_userAgent == "Chrome")
-            m_userAgent = "Mozilla/5.0 (Windows; U; %W; %L) AppleWebKit/525.13 (KHTML, like Gecko) Chrome/0.A.B.C Safari/525.13";
-
-        m_userAgent = m_userAgent.replace("%W", ver);
-        m_userAgent = m_userAgent.replace("%L", name);
-        return;
+    } else {
+        m_useCustomAgent = true;
+        m_userAgent = agent;
     }
-
-#ifdef Q_WS_MAC
-    QString ua = QLatin1String("Mozilla/5.0 (Macintosh; %1; %2; ");
-#else
-    #ifdef  Q_WS_X11
-        QString ua = QLatin1String("Mozilla/5.0 (X11; %1; %2; ");
-    #else
-        QString ua = QLatin1String("Mozilla/5.0 (Windows; %1; %2; ");
-    #endif
-#endif
-
-    QChar securityStrength(QLatin1Char('N'));
-    if (QSslSocket::supportsSsl())
-        securityStrength = QLatin1Char('U');
-    ua = ua.arg(securityStrength);
-
-    ua = QString(ua).arg(ver);
-    
-    // Language
-    ua.append(name);
-    ua.append(QLatin1String(") "));
-
-    // webkit/qt version
-    ua.append(QLatin1String("AppleWebKit/534.34 (KHTML, like Gecko) "));
-
-    // Application name/version
-    QString appName = QCoreApplication::applicationName();
-    if (!appName.isEmpty()) {
-        ua.append(QLatin1Char(' ') + appName);
-        QString appVer = QCoreApplication::applicationVersion();
-        if (!appVer.isEmpty())
-            ua.append(QLatin1Char('/') + appVer);
-        ua.append(QLatin1String(" http://www.QtWeb.net"));
-    } 
-
-    m_userAgent = ua;
 }
 
 const QString& WebPage::getUserAgent()
@@ -233,7 +132,20 @@ const QString& WebPage::getUserAgent()
 
 QString WebPage::userAgentForUrl(const QUrl& url) const
 {
-    return getUserAgent();
+    QString userAgent = QWebPage::userAgentForUrl(url);//getUserAgent();
+    if (m_defaultAgent != userAgent)
+        m_defaultAgent = userAgent;
+
+    if (m_userAgent.isNull())
+        m_userAgent = userAgent;
+
+    if (m_useCustomAgent) {
+        QRegExp rx("([^;]*)\\)");
+        if (rx.indexIn(m_defaultAgent) >= 0 && m_userAgent.contains("%W"))
+            m_userAgent = m_userAgent.replace("%W", rx.cap(1));
+    }
+
+    return m_userAgent;
 }
 
 

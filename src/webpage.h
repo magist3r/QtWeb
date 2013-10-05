@@ -69,8 +69,7 @@ public:
     WebPage(QObject *parent = 0);
     BrowserMainWindow *mainWindow();
 
-    static void setUserAgent(QString agent);
-    static void setDefaultAgent( );
+    static void setUserAgent(QString agent = "default");
     static const QString& getUserAgent();
 
     enum OpenAction {
@@ -102,6 +101,8 @@ private:
     OpenAction m_openAction;
     QUrl m_loadingUrl;
     static QString m_userAgent;
+    static QString m_defaultAgent;
+    static bool m_useCustomAgent;
 };
 
 #endif // WEBPAGE_H

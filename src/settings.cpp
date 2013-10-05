@@ -553,7 +553,7 @@ void SettingsDialog::saveToSettings()
     }
 
     settings.endGroup();
-    WebPage::setDefaultAgent();
+    WebPage::setUserAgent();
 
     //Privacy
     settings.beginGroup(QLatin1String("cookies"));
