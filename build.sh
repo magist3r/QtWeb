@@ -332,9 +332,14 @@ fi # end of Qt build
 
 QMAKE_ARGS=
 if $USE_QTWEBKIT_23; then QMAKE_ARGS="DEFINES+=QTWEBKIT_23"; fi
-$MAKE_COMMAND distclean
-src/qt/bin/qmake "$QMAKE_ARGS" -r -config release 
+if [ -e ./build ]; then
+    rm -rf ./build
+fi
+mkdir build
+pushd build
+../src/qt/bin/qmake "$QMAKE_ARGS" -r -config release ../QtWeb.pro
 $MAKE_COMMAND
+popd
 
 #fix qt_menu.nib issue
 if [[ $OSTYPE = darwin* ]]; then

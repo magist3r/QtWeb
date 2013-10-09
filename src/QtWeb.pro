@@ -1,20 +1,19 @@
 TEMPLATE = app
 TARGET = QtWeb
-DESTDIR = ../build
 QT += network xml webkit
 CONFIG += static
 QTPLUGIN += qcncodecs qjpcodecs qkrcodecs qtwcodecs qico 
 DEFINES += QT_NO_UITOOLS
 
-INCLUDEPATH += $$DESTDIR/moc \
-    $$DESTDIR/rcc \
-    $$DESTDIR/uic \
+INCLUDEPATH += moc \
+    rcc \
+    uic \
     .
     
-MOC_DIR = $$DESTDIR/moc/
-OBJECTS_DIR = $$DESTDIR/obj/
-UI_DIR = $$DESTDIR/uic/
-RCC_DIR = $$DESTDIR/rcc/
+MOC_DIR = moc/
+OBJECTS_DIR = obj/
+UI_DIR = uic/
+RCC_DIR = rcc/
 
 #Windows resource file
 win32:RC_FILE = QtWeb.rc
