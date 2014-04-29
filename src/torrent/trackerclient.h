@@ -45,7 +45,9 @@
 #include <QList>
 #include <QObject>
 #include <QHostAddress>
-#include <QHttp>
+#include <QtHttp>
+// In Qt 5 no more QHttp
+//#include <QNetworkAccessManager>
 
 #include "metainfo.h"
 #include "torrentclient.h"

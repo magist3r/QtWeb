@@ -19,6 +19,7 @@
 
 #include "autocomplete.h"
 #include <QUrl>
+#include <QUrlQuery>
 #include <QMap>
 #include <QDomElement>
 #include <QSettings>
@@ -66,7 +67,7 @@ QString DecryptPassword(QString str)
     {
         for (int j = 0; j < 4 ; j++)
         {
-            char c = str[i + j].toAscii();
+            char c = str[i + j].toLatin1();//.toLatin1();
             int v = 0;
             if (c >= '0' && c <= '9')
                 v = c - '0';
@@ -130,7 +131,8 @@ bool AutoComplete::evaluate(QUrl form_url)
     QMap<QString, QString> data_map;
     QUrl url( "?" + m_data );
     QPair<QString, QString> item;
-    foreach(item, url.queryItems())
+    QUrlQuery urlQuery(url);
+    foreach(item, urlQuery.queryItems())
     {
         QString name = item.first;
         QString value = item.second;
@@ -238,7 +240,8 @@ next_form:
             settings.setValue( "form_username_control", user_name);
 
             bool bFirst = true;
-            foreach(item, url.queryItems())
+
+            foreach(item, urlQuery.queryItems())
             {
                 QString name = item.first;
                 QString lower_name = name.toLower();

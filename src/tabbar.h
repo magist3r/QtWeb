@@ -41,11 +41,11 @@
 #ifndef TABBAR_H
 #define TABBAR_H
 
-#include <QtGui/QTabBar>
+#include <QtWidgets/QTabBar>
 
 class QUrl;
 
-#include <QtGui/QShortcut>
+#include <QtWidgets/QShortcut>
 /*
     Tab bar with a few more features such as a context menu and shortcuts
  */
@@ -107,7 +107,7 @@ private:
     bool m_showTabBarWhenOneTab;
 };
 
-#include <QtWebKit/QWebPage>
+#include <QtWebKitWidgets/QWebPage>
 
 QT_BEGIN_NAMESPACE
 class QAction;

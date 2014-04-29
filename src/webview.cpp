@@ -50,8 +50,8 @@
 #include "commands.h"
 
 #include <QtGui/QClipboard>
-#include <QtGui/QMenu>
-#include <QtGui/QMessageBox>
+#include <QtWidgets/QMenu>
+#include <QtWidgets/QMessageBox>
 #include <QtGui/QMouseEvent>
 #include <QProgressDialog>
 #include <QFileDialog>
@@ -60,6 +60,7 @@
 
 #include <QtCore/QDebug>
 #include <QtCore/QBuffer>
+#include <QFtp>
 
 
 WebView::WebView(QWidget* parent)   
@@ -248,7 +249,7 @@ void WebView::copyMailtoAddress()
     if (!m_hitResult.isNull() && !m_hitResult.linkUrl().isEmpty())
     {
         if (m_hitResult.linkUrl().scheme() == "mailto")
-            QApplication::clipboard()->setText( m_hitResult.linkUrl().encodedPath() );
+            QApplication::clipboard()->setText( m_hitResult.linkUrl().toEncoded());//.encodedPath() );
         else
         {
             if (!m_hitResult.linkUrl().scheme().isEmpty())
@@ -331,7 +332,7 @@ void WebView::applyEncoding()
 
         QString html = mainframe->toHtml();
 
-        QTextCodec *codec = QTextCodec::codecForName( enc.toAscii() );
+        QTextCodec *codec = QTextCodec::codecForName( enc.toLatin1() );
         if (!codec)
             return;
 
@@ -342,14 +343,14 @@ void WebView::applyEncoding()
         m_encoding_in_progress = true;
         m_current_encoding = enc;
         m_current_encoding_url = url();
-        QString output = decoder->toUnicode(html.toAscii());
+        QString output = decoder->toUnicode(html.toLatin1());
         mainframe->setHtml(output, mainframe->url());
 
         QList<QWebFrame *> children = mainframe->childFrames();
         foreach(QWebFrame *frame, children)
         {
             html = frame->toHtml();
-            output = decoder->toUnicode(html.toAscii());
+            output = decoder->toUnicode(html.toLatin1());
             frame->setHtml(output, frame->url());
         }
         m_encoding_in_progress = false;

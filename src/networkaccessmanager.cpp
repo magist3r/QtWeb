@@ -49,9 +49,9 @@
 #include "cookiejar.h"
 #include <QtCore/QSettings>
 
-#include <QtGui/QDialog>
-#include <QtGui/QMessageBox>
-#include <QtGui/QStyle>
+#include <QtWidgets/QDialog>
+#include <QtWidgets/QMessageBox>
+#include <QtWidgets/QStyle>
 #include <QtGui/QTextDocument>
 
 #include <QtNetwork/QAuthenticator>
@@ -67,7 +67,7 @@
 
 #include <qnetworkdiskcache.h>
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN
     #include <windows.h>
 #endif
 
@@ -142,7 +142,7 @@ void NetworkAccessManager::loadSettings()
     {
         m_useProxy = false;
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN
         HKEY hKey;
         wchar_t key[256];
         wcscpy(key, L"Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings\\");
@@ -249,7 +249,8 @@ void NetworkAccessManager::authenticationRequired(QNetworkReply *reply, QAuthent
     passwordDialog.iconLabel->setPixmap(mainWindow->style()->standardIcon(QStyle::SP_MessageBoxQuestion, 0, mainWindow).pixmap(32, 32));
 
     QString introMessage = tr("<qt>Enter username and password for \"%1\" at %2</qt>");
-    introMessage = introMessage.arg(Qt::escape(reply->url().toString())).arg(Qt::escape(reply->url().toString()));
+    introMessage = introMessage.arg(reply->url().toString().toHtmlEscaped().arg(reply->url().toString().toHtmlEscaped()));
+        //Qt::escape(reply->url().toString())).arg(Qt::escape(reply->url().toString()));
     passwordDialog.introLabel->setText(introMessage);
     passwordDialog.introLabel->setWordWrap(true);
 
@@ -273,7 +274,7 @@ void NetworkAccessManager::proxyAuthenticationRequired(const QNetworkProxy &prox
     proxyDialog.iconLabel->setPixmap(mainWindow->style()->standardIcon(QStyle::SP_MessageBoxQuestion, 0, mainWindow).pixmap(32, 32));
 
     QString introMessage = tr("<qt>Connect to proxy \"%1\" using:</qt>");
-    introMessage = introMessage.arg(Qt::escape(proxy.hostName()));
+    introMessage = introMessage.arg(proxy.hostName().toHtmlEscaped());//Qt::escape(proxy.hostName()));
     proxyDialog.introLabel->setText(introMessage);
     proxyDialog.introLabel->setWordWrap(true);
 

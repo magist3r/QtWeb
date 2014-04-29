@@ -60,6 +60,7 @@
 #include <QtCore/QReadWriteLock>
 
 #include <QtGui/QDesktopServices>
+#include <QtCore/QStandardPaths>
 #include <QtGui/QFileOpenEvent>
 
 #include <QtNetwork/QLocalServer>
@@ -71,7 +72,7 @@
 #include <QtCore/QDebug>
 #include <QMessageBox>
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN
     #include "shlwapi.h"
     #include "shellapi.h"
 #endif
@@ -272,7 +273,7 @@ BrowserApplication::~BrowserApplication()
         removeDir(BrowserApplication::dataLocation());
         removeDir(QCoreApplication::applicationDirPath() + "/QtWebSettings");
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN
         HKEY hKey;
 
         wchar_t key[256];
@@ -403,14 +404,14 @@ void BrowserApplication::loadSettings()
     if (standardFontSize > 16)
         standardFontSize = 16;
     QFont standardFont = QFont(standardFontFamily, standardFontSize);
-    standardFont = qVariantValue<QFont>(settings.value(QLatin1String("standardFont"), standardFont));
+    standardFont = settings.value(QLatin1String("standardFont"), standardFont).value<QFont>();
     defaultSettings->setFontFamily(QWebSettings::StandardFont, standardFont.family());
     defaultSettings->setFontSize(QWebSettings::DefaultFontSize, standardFont.pointSize());
 
     QString fixedFontFamily = defaultSettings->fontFamily(QWebSettings::FixedFont);
     int fixedFontSize = defaultSettings->fontSize(QWebSettings::DefaultFixedFontSize);
     QFont fixedFont = QFont(fixedFontFamily, fixedFontSize);
-    fixedFont = qVariantValue<QFont>(settings.value(QLatin1String("fixedFont"), fixedFont));
+    fixedFont = settings.value(QLatin1String("fixedFont"), fixedFont).value<QFont>();
     defaultSettings->setFontFamily(QWebSettings::FixedFont, fixedFont.family());
     defaultSettings->setFontSize(QWebSettings::DefaultFixedFontSize, fixedFont.pointSize());
 
@@ -740,7 +741,7 @@ bool BrowserApplication::handleMIME(QString content, const QUrl& url)
     if (bDownloadAudioVideo)
         return false;
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN
     HKEY hKey;
 
     wchar_t key[256];
@@ -941,8 +942,8 @@ QString BrowserApplication::dataLocation()
 
         return QCoreApplication::applicationDirPath()+ "/QtWebCache";
     }
-    else
-        return QDesktopServices::storageLocation(QDesktopServices::DataLocation);
+    else// TODO handle empty list
+        return QStandardPaths::standardLocations(QStandardPaths::DataLocation).first();//QDesktopServices::storageLocation(QDesktopServices::DataLocation);
 }
 
 QString BrowserApplication::downloadsLocation(bool create_dir)
@@ -951,8 +952,8 @@ QString BrowserApplication::downloadsLocation(bool create_dir)
 
     if (s_portableRunMode)
         base = QCoreApplication::applicationDirPath();
-    else
-        base = QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation) ;
+    else// TODO handle empty list
+        base = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first();//QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation) ;
 
     QString downs(tr("Downloads"));
 

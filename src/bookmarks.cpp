@@ -51,11 +51,12 @@
 #include <QtCore/QMimeData>
 #include <QtCore/QSettings>
 #include <QtGui/QDragEnterEvent>
-#include <QtGui/QFileDialog>
-#include <QtGui/QHeaderView>
+#include <QDrag>
+#include <QtWidgets/QFileDialog>
+#include <QtWidgets/QHeaderView>
 #include <QtGui/QIcon>
-#include <QtGui/QMessageBox>
-#include <QtGui/QToolButton>
+#include <QtWidgets/QMessageBox>
+#include <QtWidgets/QToolButton>
 #include <QInputDialog>
 
 #include <QtWebKit/QWebSettings>
@@ -1373,7 +1374,7 @@ void BookmarkToolButton::mouseMoveEvent(QMouseEvent *event)
      lst << m_url;
      mimeData->setUrls( lst );
      mimeData->setText( text() );
-     mimeData->setProperty( "move", QVariant(TRUE));
+     mimeData->setProperty( "move", QVariant(true));
      drag->setMimeData(mimeData);
 
     Qt::DropAction dropAction = drag->exec(Qt::CopyAction | Qt::MoveAction);
