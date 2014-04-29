@@ -59,14 +59,14 @@
 #include <QtCore/QTranslator>
 #include <QtCore/QReadWriteLock>
 
-#include <QtGui/QDesktopServices>
-#include <QtGui/QFileOpenEvent>
+#include <QDesktopServices>
+#include <QFileOpenEvent>
 
 #include <QtNetwork/QLocalServer>
 #include <QtNetwork/QLocalSocket>
 #include <QtNetwork/QNetworkProxy>
 
-#include <QtWebKit/QWebSettings>
+#include <QWebSettings>
 #include <QStyleFactory>
 #include <QtCore/QDebug>
 #include <QMessageBox>
@@ -403,14 +403,14 @@ void BrowserApplication::loadSettings()
     if (standardFontSize > 16)
         standardFontSize = 16;
     QFont standardFont = QFont(standardFontFamily, standardFontSize);
-    standardFont = qVariantValue<QFont>(settings.value(QLatin1String("standardFont"), standardFont));
+    standardFont = settings.value(QLatin1String("standardFont"), standardFont).value<QFont>();
     defaultSettings->setFontFamily(QWebSettings::StandardFont, standardFont.family());
     defaultSettings->setFontSize(QWebSettings::DefaultFontSize, standardFont.pointSize());
 
     QString fixedFontFamily = defaultSettings->fontFamily(QWebSettings::FixedFont);
     int fixedFontSize = defaultSettings->fontSize(QWebSettings::DefaultFixedFontSize);
     QFont fixedFont = QFont(fixedFontFamily, fixedFontSize);
-    fixedFont = qVariantValue<QFont>(settings.value(QLatin1String("fixedFont"), fixedFont));
+    fixedFont = settings.value(QLatin1String("fixedFont"), fixedFont).value<QFont>();
     defaultSettings->setFontFamily(QWebSettings::FixedFont, fixedFont.family());
     defaultSettings->setFontSize(QWebSettings::DefaultFixedFontSize, fixedFont.pointSize());
 
@@ -942,7 +942,7 @@ QString BrowserApplication::dataLocation()
         return QCoreApplication::applicationDirPath()+ "/QtWebCache";
     }
     else
-        return QDesktopServices::storageLocation(QDesktopServices::DataLocation);
+        return QStandardPaths::writableLocation(QStandardPaths::DataLocation);
 }
 
 QString BrowserApplication::downloadsLocation(bool create_dir)
@@ -952,7 +952,7 @@ QString BrowserApplication::downloadsLocation(bool create_dir)
     if (s_portableRunMode)
         base = QCoreApplication::applicationDirPath();
     else
-        base = QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation) ;
+        base = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
 
     QString downs(tr("Downloads"));
 

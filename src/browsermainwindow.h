@@ -41,8 +41,8 @@
 #ifndef BROWSERMAINWINDOW_H
 #define BROWSERMAINWINDOW_H
 
-#include <QtGui/QMainWindow>
-#include <QtGui/QIcon>
+#include <QMainWindow>
+#include <QIcon>
 #include <QtCore/QUrl>
 
 class BookmarksToolBar;

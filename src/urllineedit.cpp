@@ -48,16 +48,16 @@
 
 #include <QtCore/QEvent>
 
-#include <QtGui/QApplication>
-#include <QtGui/QCompleter>
-#include <QtGui/QFocusEvent>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QLabel>
-#include <QtGui/QLineEdit>
-#include <QtGui/QPainter>
-#include <QtGui/QStyle>
-#include <QtGui/QStyleOptionFrameV2>
-#include <QtGui/QMessageBox>
+#include <QApplication>
+#include <QCompleter>
+#include <QFocusEvent>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QLineEdit>
+#include <QPainter>
+#include <QStyle>
+#include <QStyleOptionFrameV2>
+#include <QMessageBox>
 
 #include <QtCore/QDebug>
 

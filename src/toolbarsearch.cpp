@@ -43,10 +43,10 @@
 #include <QtCore/QSettings>
 #include <QtCore/QUrl>
 
-#include <QtGui/QCompleter>
-#include <QtGui/QMenu>
-#include <QtGui/QStringListModel>
-#include <QtWebKit/QWebSettings>
+#include <QCompleter>
+#include <QMenu>
+#include <QStringListModel>
+#include <QWebSettings>
 #include "searches.h"
 #include "googlesuggest.h"
 
@@ -170,31 +170,41 @@ void ToolbarSearch::searchNow()
     }
 
     QUrl url;
+    QUrlQuery urlQuery;
+
+    url.setScheme("http");
     if (inactiveText() == SEARCH_GOOGLE)
     {
-        url.setUrl(QLatin1String("http://www.google.com/search"));
-        url.addQueryItem(QLatin1String("q"), searchText);
-        url.addQueryItem(QLatin1String("ie"), QLatin1String("UTF-8"));
-        url.addQueryItem(QLatin1String("oe"), QLatin1String("UTF-8"));
+        url.setScheme("https"); //TODO need configure
+        url.setHost("www.google.com");  //TODO Need static member for hostname
+        url.setPath(QLatin1String("/search"));  //TODO Need static member for path
+        urlQuery.addQueryItem(QLatin1String("q"), searchText);
+        urlQuery.addQueryItem(QLatin1String("ie"), QLatin1String("UTF-8"));
+        urlQuery.addQueryItem(QLatin1String("oe"), QLatin1String("UTF-8"));
     }
     else
     if (inactiveText() == SEARCH_CUIL)
     {
-        url.setUrl(QLatin1String("http://www.cuil.com/search"));
-        url.addQueryItem(QLatin1String("q"), searchText);
+        url.setHost("www.cuil.com");
+        url.setPath("/search");
+        urlQuery.addQueryItem(QLatin1String("q"), searchText);
     }
     else
     if (inactiveText() == SEARCH_YAHOO)
     {
-        url.setUrl(QLatin1String("http://search.yahoo.com/search"));
-        url.addQueryItem(QLatin1String("p"), searchText);
-        url.addQueryItem(QLatin1String("ei"), QLatin1String("UTF-8"));
+        url.setScheme("https"); //TODO need configure
+        url.setHost("search.yahoo.com");  //TODO Need static member for hostname
+        url.setPath("/search");  //TODO Need static member for path
+        urlQuery.addQueryItem(QLatin1String("p"), searchText);
+        urlQuery.addQueryItem(QLatin1String("ei"), QLatin1String("UTF-8"));
     }
     else
     if (inactiveText() == SEARCH_BING)
     {
-        url.setUrl(QLatin1String("http://www.bing.com/search"));
-        url.addQueryItem(QLatin1String("q"), searchText);
+        url.setScheme("https"); //TODO need configure
+        url.setHost(QLatin1String("www.bing.com"));  //TODO Need static member for hostname
+        url.setPath("/search");  //TODO Need static member for path
+        urlQuery.addQueryItem(QLatin1String("q"), searchText);
     }
     else
     {
@@ -213,7 +223,8 @@ void ToolbarSearch::searchNow()
         settings.endGroup();
     }
 
-    url.addQueryItem(QLatin1String("client"), QLatin1String("QtWeb"));
+    urlQuery.addQueryItem(QLatin1String("client"), QLatin1String("QtWeb"));
+    url.setQuery(urlQuery);
 
     if (!keyword_provider.isEmpty())
     {

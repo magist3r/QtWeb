@@ -40,7 +40,7 @@
 
 #include "edittreeview.h"
 
-#include <QtGui/QKeyEvent>
+#include <QKeyEvent>
 
 EditTreeView::EditTreeView(QWidget *parent)
     : QTreeView(parent)

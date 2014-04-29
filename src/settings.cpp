@@ -50,8 +50,8 @@
 #include "webpage.h"
 
 #include <QtCore/QSettings>
-#include <QtGui/QtGui>
-#include <QtWebKit/QtWebKit>
+#include <QtGui>
+#include <QtWebKit>
 #include <QSysInfo>
 #include <QInputDialog>
 
@@ -319,8 +319,8 @@ void SettingsDialog::loadFromSettings()
 
     // Appearance
     settings.beginGroup(QLatin1String("websettings"));
-    fixedFont = qVariantValue<QFont>(settings.value(QLatin1String("fixedFont"), fixedFont));
-    standardFont = qVariantValue<QFont>(settings.value(QLatin1String("standardFont"), standardFont));
+    fixedFont = settings.value(QLatin1String("fixedFont"), fixedFont).value<QFont>();
+    standardFont = settings.value(QLatin1String("standardFont"), standardFont).value<QFont>();
 
     standardLabel->setText(QString(QLatin1String("%1 %2")).arg(standardFont.family()).arg(standardFont.pointSize()));
     fixedLabel->setText(QString(QLatin1String("%1 %2")).arg(fixedFont.family()).arg(fixedFont.pointSize()));

@@ -49,10 +49,10 @@
 #include "autocomplete.h"
 #include "commands.h"
 
-#include <QtGui/QClipboard>
-#include <QtGui/QMenu>
-#include <QtGui/QMessageBox>
-#include <QtGui/QMouseEvent>
+#include <QClipboard>
+#include <QMenu>
+#include <QMessageBox>
+#include <QMouseEvent>
 #include <QProgressDialog>
 #include <QFileDialog>
 #include <QtNetwork>
@@ -60,6 +60,11 @@
 
 #include <QtCore/QDebug>
 #include <QtCore/QBuffer>
+
+// For build with FTP support on Qt 5.* version
+// you need install QFtp manually.
+// See https://qt.gitorious.org/qt/qtftp/source/4e4e73f1007a12a5ab1e035a5ba696d5c07c0e1a:
+#include <QFtp>
 
 
 WebView::WebView(QWidget* parent)   
@@ -248,7 +253,7 @@ void WebView::copyMailtoAddress()
     if (!m_hitResult.isNull() && !m_hitResult.linkUrl().isEmpty())
     {
         if (m_hitResult.linkUrl().scheme() == "mailto")
-            QApplication::clipboard()->setText( m_hitResult.linkUrl().encodedPath() );
+            QApplication::clipboard()->setText( m_hitResult.linkUrl().path());
         else
         {
             if (!m_hitResult.linkUrl().scheme().isEmpty())
@@ -331,7 +336,7 @@ void WebView::applyEncoding()
 
         QString html = mainframe->toHtml();
 
-        QTextCodec *codec = QTextCodec::codecForName( enc.toAscii() );
+        QTextCodec *codec = QTextCodec::codecForName( enc.toLatin1());
         if (!codec)
             return;
 
@@ -342,14 +347,14 @@ void WebView::applyEncoding()
         m_encoding_in_progress = true;
         m_current_encoding = enc;
         m_current_encoding_url = url();
-        QString output = decoder->toUnicode(html.toAscii());
+        QString output = decoder->toUnicode(html.toLatin1());
         mainframe->setHtml(output, mainframe->url());
 
         QList<QWebFrame *> children = mainframe->childFrames();
         foreach(QWebFrame *frame, children)
         {
             html = frame->toHtml();
-            output = decoder->toUnicode(html.toAscii());
+            output = decoder->toUnicode(html.toLatin1());
             frame->setHtml(output, frame->url());
         }
         m_encoding_in_progress = false;
@@ -897,7 +902,6 @@ void WebView::ftpAddToList(const QUrlInfo &urlInfo)
         (!urlInfo.isDir() ? QString("GET FILE</a>") : QString("")) + "</td></tr>";
 
     m_ftpIsDirectory[urlInfo.name()] = urlInfo.isDir();
-
 }
 
 void WebView::ftpUpdateDataTransferProgress(qint64 readBytes,

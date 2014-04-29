@@ -44,7 +44,7 @@
 #include "tabbar.h"
 
 #include <QtCore/QUrl>
-#include <QtGui/QTabWidget>
+#include <QTabWidget>
 QT_BEGIN_NAMESPACE
 class QLineEdit;
 class QMenu;

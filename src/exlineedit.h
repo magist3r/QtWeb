@@ -42,10 +42,10 @@
 #define EXLINEEDIT_H
 
 #include <QtCore/QUrl>
-#include <QtGui/QWidget>
-#include <QtGui/QStyleOptionFrame>
-#include <QtGui/QAbstractButton>
-#include <QtGui/QLineEdit>
+#include <QtWidgets>
+#include <QStyleOptionFrame>
+#include <QAbstractButton>
+#include <QLineEdit>
 
 /* Clear button on the right hand side of the search widget.
     Hidden by default   "A circle with an X in it" */

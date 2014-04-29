@@ -40,8 +40,7 @@
 **
 ****************************************************************************/
 
-#include <QtGui>
-
+#include <QtWidgets>
 #include "addtorrentdialog.h"
 #include "torrentwindow.h"
 #include "ratecontroller.h"

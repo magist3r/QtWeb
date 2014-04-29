@@ -49,10 +49,10 @@
 #include "cookiejar.h"
 #include <QtCore/QSettings>
 
-#include <QtGui/QDialog>
-#include <QtGui/QMessageBox>
-#include <QtGui/QStyle>
-#include <QtGui/QTextDocument>
+#include <QDialog>
+#include <QMessageBox>
+#include <QStyle>
+#include <QTextDocument>
 
 #include <QtNetwork/QAuthenticator>
 #include <QtNetwork/QNetworkProxy>
@@ -249,7 +249,7 @@ void NetworkAccessManager::authenticationRequired(QNetworkReply *reply, QAuthent
     passwordDialog.iconLabel->setPixmap(mainWindow->style()->standardIcon(QStyle::SP_MessageBoxQuestion, 0, mainWindow).pixmap(32, 32));
 
     QString introMessage = tr("<qt>Enter username and password for \"%1\" at %2</qt>");
-    introMessage = introMessage.arg(Qt::escape(reply->url().toString())).arg(Qt::escape(reply->url().toString()));
+    introMessage = introMessage.arg(QString(reply->url().toString()).toHtmlEscaped()).arg(QString(reply->url().toString()).toHtmlEscaped());
     passwordDialog.introLabel->setText(introMessage);
     passwordDialog.introLabel->setWordWrap(true);
 
@@ -273,7 +273,7 @@ void NetworkAccessManager::proxyAuthenticationRequired(const QNetworkProxy &prox
     proxyDialog.iconLabel->setPixmap(mainWindow->style()->standardIcon(QStyle::SP_MessageBoxQuestion, 0, mainWindow).pixmap(32, 32));
 
     QString introMessage = tr("<qt>Connect to proxy \"%1\" using:</qt>");
-    introMessage = introMessage.arg(Qt::escape(proxy.hostName()));
+    introMessage = introMessage.arg(QString(proxy.hostName()).toHtmlEscaped());
     proxyDialog.introLabel->setText(introMessage);
     proxyDialog.introLabel->setWordWrap(true);
 

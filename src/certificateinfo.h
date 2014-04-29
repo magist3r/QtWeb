@@ -20,7 +20,7 @@
 #ifndef CERTIFICATEINFO_H
 #define CERTIFICATEINFO_H
 
-#include <QtGui/QDialog>
+#include <QDialog>
 #include <QtNetwork/QSslCertificate>
 #include <QtNetwork/QSslError>
 

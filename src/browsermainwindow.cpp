@@ -61,22 +61,22 @@
 #include <QtCore/QMetaEnum>
 #include <QTextCodec>
 #include <QProcess>
-#include <QtGui/QDesktopWidget>
-#include <QtGui/QFileDialog>
-#include <QtGui/QPlainTextEdit>
-#include <QtGui/QPrintDialog>
-#include <QtGui/QPrinter>
-#include <QtGui/QMenuBar>
-#include <QtGui/QMessageBox>
-#include <QtGui/QStatusBar>
-#include <QtGui/QToolBar>
-#include <QtGui/QInputDialog>
-#include <QtGui/QDesktopServices>
+#include <QDesktopWidget>
+#include <QFileDialog>
+#include <QPlainTextEdit>
+#include <QPrintDialog>
+#include <QPrinter>
+#include <QMenuBar>
+#include <QMessageBox>
+#include <QStatusBar>
+#include <QToolBar>
+#include <QInputDialog>
+#include <QDesktopServices>
 #include <QThread>
 #include <QFile>
 #include <QStyleFactory>
-#include <QtWebKit/QWebFrame>
-#include <QtWebKit/QWebHistory>
+#include <QWebFrame>
+#include <QWebHistory>
 #include <tabwidget.h>
 #include <QtCore/QDebug>
 #include <networkaccessmanager.h>
@@ -1720,7 +1720,7 @@ void BrowserMainWindow::slotFilePrint()
     printRequested(currentTab()->page()->mainFrame());
 }
 
-#include <QtGui/QPrintPreviewDialog>
+#include <QPrintPreviewDialog>
 
 void BrowserMainWindow::slotFilePrintPreview()
 {

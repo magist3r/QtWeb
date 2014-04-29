@@ -56,7 +56,10 @@ TrackerClient::TrackerClient(TorrentClient *downloader, QObject *parent)
     lastTrackerRequest = false;
     firstSeeding = true;
 
-    connect(&http, SIGNAL(done(bool)), this, SLOT(httpRequestDone(bool)));
+    connect(&http, SIGNAL(finished(QNetworkReply*)),
+            this, SLOT(httpRequestDone(QNetworkReply*)));
+    httpReply = NULL;
+    //connect(&http, SIGNAL(done(bool)), this, SLOT(httpRequestDone(bool)));
 }
 
 void TrackerClient::start(const MetaInfo &info)
@@ -82,14 +85,16 @@ void TrackerClient::startSeeding()
 void TrackerClient::stop()
 {
     lastTrackerRequest = true;
-    http.abort();
+    if(httpReply)
+        httpReply->abort();
     fetchPeerList();
 }
 
 void TrackerClient::timerEvent(QTimerEvent *event)
 {
     if (event->timerId() == requestIntervalTimer) {
-        if (http.state() == QHttp::Unconnected)
+        //if (http.state() == QHttp::Unconnected)
+        if(httpReply == NULL)   //TODO probably logic BUG
             fetchPeerList();
     } else {
         QObject::timerEvent(event);
@@ -101,6 +106,8 @@ void TrackerClient::fetchPeerList()
     // Prepare connection details
     QString fullUrl = metaInfo.announceUrl();
     QUrl url(fullUrl);
+    QUrlQuery urlQuery(url);
+
     QString passkey = "?";
     if (fullUrl.contains("?passkey")) {
         passkey = metaInfo.announceUrl().mid(fullUrl.indexOf("?passkey"), -1);
@@ -148,32 +155,39 @@ void TrackerClient::fetchPeerList()
     if (!trackerId.isEmpty())
         query += "&trackerid=" + trackerId;
 
-    http.setHost(url.host(), url.port() == -1 ? 80 : url.port());
-    if (!url.userName().isEmpty())
-        http.setUser(url.userName(), url.password());
-    http.get(query);
+    //http.setHost(url.host(), url.port() == -1 ? 80 : url.port());
+    //if (!url.userName().isEmpty())
+    //    http.setUser(url.userName(), url.password());
+
+    //TODO need refactoring - change QByteArray & QString => QUrlQuery
+    QString fullQuery = url.scheme() + "://" + url.host() + ":" +
+            (url.port() == -1 ? QString::number(80) : QString::number(url.port())) + "/" + query;
+
+    httpReply = http.get(QNetworkRequest(fullQuery));
 }
 
-void TrackerClient::httpRequestDone(bool error)
+void TrackerClient::httpRequestDone(QNetworkReply * reply)
 {
+    reply->deleteLater();
+
     if (lastTrackerRequest) {
         emit stopped();
         return;
     }
 
-    if (error) {
-        emit connectionError(http.error());
+    if (reply->error()) {
+        emit connectionError(reply->error());
         return;
     }
 
-    QByteArray response = http.readAll();
-    http.abort();
+    QByteArray response = reply->readAll();
+    //http.abort();
 
     BencodeParser parser;
     if (!parser.parse(response)) {
         qWarning("Error parsing bencode response from tracker: %s",
                  qPrintable(parser.errorString()));
-        http.abort();
+        //http.abort();
         return;
     }
 

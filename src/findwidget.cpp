@@ -41,14 +41,14 @@
 ****************************************************************************/
 #include "findwidget.h"
 
-#include <QtGui/QApplication>
-#include <QtGui/QCheckBox>
-#include <QtGui/QHideEvent>
-#include <QtGui/QKeyEvent>
-#include <QtGui/QLabel>
-#include <QtGui/QLayout>
-#include <QtGui/QLineEdit>
-#include <QtGui/QToolButton>
+#include <QApplication>
+#include <QCheckBox>
+#include <QHideEvent>
+#include <QKeyEvent>
+#include <QLabel>
+#include <QLayout>
+#include <QLineEdit>
+#include <QToolButton>
 
 QT_BEGIN_NAMESPACE
 
