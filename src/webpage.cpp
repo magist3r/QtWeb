@@ -48,14 +48,14 @@
 #include "webview.h"
 #include "autocomplete.h"
 
-#include <QtGui/QClipboard>
-#include <QtGui/QMenu>
-#include <QtGui/QMessageBox>
-#include <QtGui/QMouseEvent>
+#include <QClipboard>
+#include <QMenu>
+#include <QMessageBox>
+#include <QMouseEvent>
 #include <QProgressDialog>
 #include <QFileDialog>
 #include <QtNetwork>
-#include <QtWebKit/QWebHitTestResult>
+#include <QWebHitTestResult>
 #include <qdesktopservices.h>
 #include <QtUiTools/QUiLoader>
 #include <QRegExp>

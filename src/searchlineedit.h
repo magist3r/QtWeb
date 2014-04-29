@@ -43,7 +43,7 @@
 
 #include "urllineedit.h"
 
-#include <QtGui/QLineEdit>
+#include <QLineEdit>
 
 QT_BEGIN_NAMESPACE
 class QMenu;

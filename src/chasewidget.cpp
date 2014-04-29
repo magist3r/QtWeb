@@ -42,11 +42,11 @@
 
 #include <QtCore/QPoint>
 
-#include <QtGui/QApplication>
-#include <QtGui/QHideEvent>
-#include <QtGui/QPainter>
-#include <QtGui/QPaintEvent>
-#include <QtGui/QShowEvent>
+#include <QApplication>
+#include <QHideEvent>
+#include <QPainter>
+#include <QPaintEvent>
+#include <QShowEvent>
 
 ChaseWidget::ChaseWidget(QWidget *parent, QPixmap pixmap, bool pixmapEnabled)
     : QWidget(parent)

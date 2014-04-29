@@ -76,9 +76,9 @@ void CertificateInfo::setCertificateChain(const QList<QSslCertificate> &chain)
 
     for (int i = 0; i < chain.size(); ++i) {
         const QSslCertificate &cert = chain.at(i);
-        form->certificationPathView->addItem(tr("%1%2 (%3)").arg(!i ? QString() : tr("Issued by: "))
-                                             .arg(cert.subjectInfo(QSslCertificate::Organization))
-                                             .arg(cert.subjectInfo(QSslCertificate::CommonName)));
+        form->certificationPathView->addItem(tr("%1 %2 (%3)").arg(!i ? QString() : tr("Issued by: "))
+                                             .arg(cert.subjectInfo(QSslCertificate::Organization).join("\n"))
+                                             .arg(cert.subjectInfo(QSslCertificate::CommonName).join("\n")));
     }
 
     form->certificationPathView->setCurrentRow(0);
@@ -90,23 +90,23 @@ void CertificateInfo::updateCertificateInfo(int index)
     if (index >= 0 && index < chain.size()) {
         const QSslCertificate &cert = chain.at(index);
         QStringList lines;
-        lines << tr("Issued to:   %1").arg(cert.subjectInfo(QSslCertificate::Organization))
-              << tr("Issued by:  %1").arg(cert.issuerInfo(QSslCertificate::Organization))
+        lines << tr("Issued to:   %1").arg(cert.subjectInfo(QSslCertificate::Organization).join("\n"))
+              << tr("Issued by:  %1").arg(cert.issuerInfo(QSslCertificate::Organization).join("\n"))
               << tr("Valid from:  %1 to %2").arg(cert.effectiveDate().date().toString("MMM dd, yyyy")).arg(cert.expiryDate().date().toString("MMM dd, yyyy"))
               << tr("")
-              << tr("Organization: %1").arg(cert.subjectInfo(QSslCertificate::Organization))
-              << tr("Subunit: %1").arg(cert.subjectInfo(QSslCertificate::OrganizationalUnitName))
-              << tr("Country: %1").arg(cert.subjectInfo(QSslCertificate::CountryName))
-              << tr("Locality: %1").arg(cert.subjectInfo(QSslCertificate::LocalityName))
-              << tr("State/Province: %1").arg(cert.subjectInfo(QSslCertificate::StateOrProvinceName))
-              << tr("Common Name: %1").arg(cert.subjectInfo(QSslCertificate::CommonName))
+              << tr("Organization: %1").arg(cert.subjectInfo(QSslCertificate::Organization).join("\n"))
+              << tr("Subunit: %1").arg(cert.subjectInfo(QSslCertificate::OrganizationalUnitName).join("\n"))
+              << tr("Country: %1").arg(cert.subjectInfo(QSslCertificate::CountryName).join("\n"))
+              << tr("Locality: %1").arg(cert.subjectInfo(QSslCertificate::LocalityName).join("\n"))
+              << tr("State/Province: %1").arg(cert.subjectInfo(QSslCertificate::StateOrProvinceName).join("\n"))
+              << tr("Common Name: %1").arg(cert.subjectInfo(QSslCertificate::CommonName).join("\n"))
               << QString()
-              << tr("Issuer Organization: %1").arg(cert.issuerInfo(QSslCertificate::Organization))
-              << tr("Issuer Unit Name: %1").arg(cert.issuerInfo(QSslCertificate::OrganizationalUnitName))
-              << tr("Issuer Country: %1").arg(cert.issuerInfo(QSslCertificate::CountryName))
-              << tr("Issuer Locality: %1").arg(cert.issuerInfo(QSslCertificate::LocalityName))
-              << tr("Issuer State/Province: %1").arg(cert.issuerInfo(QSslCertificate::StateOrProvinceName))
-              << tr("Issuer Common Name: %1").arg(cert.issuerInfo(QSslCertificate::CommonName));
+              << tr("Issuer Organization: %1").arg(cert.issuerInfo(QSslCertificate::Organization).join("\n"))
+              << tr("Issuer Unit Name: %1").arg(cert.issuerInfo(QSslCertificate::OrganizationalUnitName).join("\n"))
+              << tr("Issuer Country: %1").arg(cert.issuerInfo(QSslCertificate::CountryName).join("\n"))
+              << tr("Issuer Locality: %1").arg(cert.issuerInfo(QSslCertificate::LocalityName).join("\n"))
+              << tr("Issuer State/Province: %1").arg(cert.issuerInfo(QSslCertificate::StateOrProvinceName).join("\n"))
+              << tr("Issuer Common Name: %1").arg(cert.issuerInfo(QSslCertificate::CommonName).join("\n"));
         foreach (QString line, lines)
             form->certificateInfoView->addItem(line);
     } else {

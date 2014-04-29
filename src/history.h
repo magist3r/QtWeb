@@ -49,7 +49,7 @@
 #include <QtCore/QTimer>
 #include <QtCore/QUrl>
 
-#include <QtGui/QSortFilterProxyModel>
+#include <QSortFilterProxyModel>
 
 #include <QWebHistoryInterface>
 

@@ -46,8 +46,8 @@
 #include <QtCore/QAbstractItemModel>
 #include <QtCore/QStringList>
 
-#include <QtGui/QDialog>
-#include <QtGui/QTableView>
+#include <QDialog>
+#include <QTableView>
 
 QT_BEGIN_NAMESPACE
 class QSortFilterProxyModel;

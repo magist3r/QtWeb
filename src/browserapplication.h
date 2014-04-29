@@ -41,7 +41,7 @@
 #ifndef BROWSERAPPLICATION_H
 #define BROWSERAPPLICATION_H
 
-#include <QtGui/QApplication>
+#include <QApplication>
 
 #include <QtCore/QUrl>
 #include <QtCore/QPointer>

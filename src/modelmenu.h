@@ -41,7 +41,7 @@
 #ifndef MODELMENU_H
 #define MODELMENU_H
 
-#include <QtGui/QMenu>
+#include <QMenu>
 #include <QtCore/QAbstractItemModel>
 
 // A QMenu that is dynamically populated from a QAbstractItemModel

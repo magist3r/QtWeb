@@ -1,5 +1,5 @@
 #include "savepdf.h"
-#include <QtGui/QDesktopServices>
+#include <QDesktopServices>
 #include <QSettings>
 #include <QFileDialog>
 #include <QPrinter>

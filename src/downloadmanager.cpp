@@ -47,15 +47,15 @@
 
 #include <QtCore/QMetaEnum>
 #include <QtCore/QSettings>
-#include <QtGui/QFileDialog>
-#include <QtGui/QHeaderView>
-#include <QtGui/QFileIconProvider>
-#include <QtGui/QDesktopServices>
+#include <QFileDialog>
+#include <QHeaderView>
+#include <QFileIconProvider>
+#include <QDesktopServices>
 #include <QMessageBox>
 #include <QtCore/QDebug>
 #include <QtCore/QProcess>
 
-#include <QtWebKit/QWebSettings>
+#include <QWebSettings>
 #include "torrent/torrentwindow.h"
 
 QString DefaultDownloadPath(bool create_dir)

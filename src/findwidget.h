@@ -42,7 +42,7 @@
 #ifndef FINDWIDGET_H
 #define FINDWIDGET_H
 
-#include <QtGui/QWidget>
+#include <QWidget>
 
 QT_BEGIN_NAMESPACE
 
