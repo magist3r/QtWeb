@@ -5,6 +5,7 @@
 #define VIEWSOURCE_H
 
 #include <QMainWindow>
+#include <QTextEdit>
 #include <QSyntaxHighlighter>
 
 class HtmlHighlighter : public QSyntaxHighlighter

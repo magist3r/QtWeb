@@ -40,7 +40,10 @@
 **
 ****************************************************************************/
 
-#include <QtGui>
+#include <QtWidgets>
+#include <QtWidgets>
+#include <QTreeWidget>
+#include <QItemDelegate>
 
 #include "addtorrentdialog.h"
 #include "torrentwindow.h"

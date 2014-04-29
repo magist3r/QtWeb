@@ -26,4 +26,4 @@ SOURCES += addtorrentdialog.cpp \
 FORMS += forms/addtorrentform.ui
 RESOURCES += icons.qrc
 
-QT += network
+QT += network widgets

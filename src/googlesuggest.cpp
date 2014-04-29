@@ -40,13 +40,13 @@
 ****************************************************************************/
 
 #include <QtCore>
-#include <QtGui>
+#include <QtWidgets>
 #include <QtNetwork>
 #include <QSettings>
 
 #include "googlesuggest.h"
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN
     #include "windows.h"
 #endif
 
@@ -103,7 +103,7 @@ GSuggestCompletion::GSuggestCompletion(QLineEdit *parent): QObject(parent), edit
     if (settings.value(QLatin1String("autoProxy"), false).toBool()) 
     {
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN
         QNetworkProxy pxy;
         HKEY hKey;
         wchar_t key[256];

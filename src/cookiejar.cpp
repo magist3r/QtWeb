@@ -49,16 +49,17 @@
 #include <QtCore/QSettings>
 #include <QtCore/QUrl>
 
-#include <QtGui/QCompleter>
+#include <QtWidgets/QCompleter>
 #include <QtGui/QFont>
 #include <QtGui/QFontMetrics>
-#include <QtGui/QHeaderView>
+#include <QtWidgets/QHeaderView>
 #include <QtGui/QKeyEvent>
-#include <QtGui/QSortFilterProxyModel>
+#include <QtCore/QSortFilterProxyModel>
 
 #include <QtWebKit/QWebSettings>
 
 #include <QtCore/QDebug>
+#include <QNetworkCookie>
 
 static const unsigned int JAR_VERSION = 23;
 
@@ -492,7 +493,9 @@ bool CookieModel::removeRows(int row, int count, const QModelIndex &parent)
 
 void CookieModel::cookiesChanged()
 {
-    reset();
+//    reset();
+    beginResetModel();
+    endResetModel();
 }
 
 CookiesDialog::CookiesDialog(CookieJar *cookieJar, QWidget *parent) : QDialog(parent)
@@ -722,26 +725,32 @@ void CookiesExceptionsDialog::block()
 {
     if (domainLineEdit->text().isEmpty())
         return;
+    m_exceptionsModel->beginResetModel();
     m_exceptionsModel->m_blockedCookies.append(domainLineEdit->text());
     m_cookieJar->setBlockedCookies(m_exceptionsModel->m_blockedCookies);
-    m_exceptionsModel->reset();
+//    m_exceptionsModel->reset();
+    m_exceptionsModel->endResetModel();
 }
 
 void CookiesExceptionsDialog::allow()
 {
     if (domainLineEdit->text().isEmpty())
         return;
+    m_exceptionsModel->beginResetModel();
     m_exceptionsModel->m_allowedCookies.append(domainLineEdit->text());
     m_cookieJar->setAllowedCookies(m_exceptionsModel->m_allowedCookies);
-    m_exceptionsModel->reset();
+//    m_exceptionsModel->reset();
+    m_exceptionsModel->endResetModel();
 }
 
 void CookiesExceptionsDialog::allowForSession()
 {
     if (domainLineEdit->text().isEmpty())
         return;
+    m_exceptionsModel->beginResetModel();
     m_exceptionsModel->m_sessionCookies.append(domainLineEdit->text());
     m_cookieJar->setAllowForSessionCookies(m_exceptionsModel->m_sessionCookies);
-    m_exceptionsModel->reset();
+//    m_exceptionsModel->reset();
+    m_exceptionsModel->endResetModel();
 }
 

@@ -50,7 +50,7 @@
 #include "webpage.h"
 
 #include <QtCore/QSettings>
-#include <QtGui/QtGui>
+#include <QtWidgets/QtWidgets>
 #include <QtWebKit/QtWebKit>
 #include <QSysInfo>
 #include <QInputDialog>
@@ -140,10 +140,10 @@ void SettingsDialog::setProxyEnabled(bool state)
 
 QString DefaultAppStyle()
 {
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN
     return QLatin1String("Windows .NET");
 #else
-    #ifdef Q_WS_MAC
+    #ifdef Q_OS_MAC
         return QLatin1String("Macintosh (aqua)");
     #else
         return QLatin1String("GTK+");
@@ -212,7 +212,7 @@ void SettingsDialog::loadDefaults()
     tbReset->setChecked( false );
     tbJavaScript->setChecked( false );
 
-#ifndef Q_WS_WIN
+#ifndef Q_OS_WIN
     proxyAuto->setVisible(false);
 #endif
 
@@ -319,8 +319,8 @@ void SettingsDialog::loadFromSettings()
 
     // Appearance
     settings.beginGroup(QLatin1String("websettings"));
-    fixedFont = qVariantValue<QFont>(settings.value(QLatin1String("fixedFont"), fixedFont));
-    standardFont = qVariantValue<QFont>(settings.value(QLatin1String("standardFont"), standardFont));
+    fixedFont = settings.value(QLatin1String("fixedFont"), fixedFont).value<QFont>();
+    standardFont = settings.value(QLatin1String("standardFont"), standardFont).value<QFont>();
 
     standardLabel->setText(QString(QLatin1String("%1 %2")).arg(standardFont.family()).arg(standardFont.pointSize()));
     fixedLabel->setText(QString(QLatin1String("%1 %2")).arg(fixedFont.family()).arg(fixedFont.pointSize()));
@@ -344,11 +344,11 @@ void SettingsDialog::loadFromSettings()
 
     chkExtViewer->setChecked( settings.value(QLatin1String("useExtViewer"), chkExtViewer->isChecked()).toBool());
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN
         QLatin1String extViewer("NOTEPAD.EXE");
 #else
 
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
         QLatin1String extViewer("Open");
 #else
         QLatin1String extViewer("gedit");
@@ -771,7 +771,7 @@ void SettingsDialog::editShortcuts()
 
 void SettingsDialog::chooseExtViewer()
 {
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN
     QString filter(tr("Applications (*.exe);;All files (*.*)"));
 #else
     QString filter = tr("All files (*.*)");

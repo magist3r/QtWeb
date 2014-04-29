@@ -61,21 +61,21 @@
 #include <QtCore/QMetaEnum>
 #include <QTextCodec>
 #include <QProcess>
-#include <QtGui/QDesktopWidget>
-#include <QtGui/QFileDialog>
-#include <QtGui/QPlainTextEdit>
-#include <QtGui/QPrintDialog>
-#include <QtGui/QPrinter>
-#include <QtGui/QMenuBar>
-#include <QtGui/QMessageBox>
-#include <QtGui/QStatusBar>
-#include <QtGui/QToolBar>
-#include <QtGui/QInputDialog>
+#include <QtWidgets/QDesktopWidget>
+#include <QtWidgets/QFileDialog>
+#include <QtWidgets/QPlainTextEdit>
+#include <QtPrintSupport/QPrintDialog>
+#include <QtPrintSupport/QPrinter>
+#include <QtWidgets/QMenuBar>
+#include <QtWidgets/QMessageBox>
+#include <QtWidgets/QStatusBar>
+#include <QtWidgets/QToolBar>
+#include <QtWidgets/QInputDialog>
 #include <QtGui/QDesktopServices>
 #include <QThread>
 #include <QFile>
 #include <QStyleFactory>
-#include <QtWebKit/QWebFrame>
+#include <QtWebKitWidgets/QWebFrame>
 #include <QtWebKit/QWebHistory>
 #include <tabwidget.h>
 #include <QtCore/QDebug>
@@ -425,7 +425,7 @@ void BrowserMainWindow::setupMenu()
     BookmarksManager *bookmarksManager = BrowserApplication::bookmarksManager();
     QMenu *importMenu = fileMenu->addMenu(  cmds.ImportTitle() );
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN
     // Import from Internet Explorer
     QAction* import_ie = new QAction(cmds.ImportIETitle(), this);
     import_ie->setShortcuts(cmds.ImportIEShortcuts());
@@ -922,7 +922,7 @@ void BrowserMainWindow::setupMenu()
     toolsMenu->addAction(search);
     this->addAction(search);
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN
     // Enable Virtual Keyboard
     QAction* keyboard = new QAction(cmds.KeyboardTitle(), this);
     if (showMenuIcons())
@@ -967,7 +967,7 @@ void BrowserMainWindow::setupMenu()
     // Help Menu
     QMenu *helpMenu = menuBar()->addMenu(cmds.HelpTitle());
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN
     // Help F1
     QAction* help = new QAction(cmds.HelpTitle(), this);
     if (showMenuIcons())
@@ -1720,7 +1720,7 @@ void BrowserMainWindow::slotFilePrint()
     printRequested(currentTab()->page()->mainFrame());
 }
 
-#include <QtGui/QPrintPreviewDialog>
+#include <QtPrintSupport/QPrintPreviewDialog>
 
 void BrowserMainWindow::slotFilePrintPreview()
 {
@@ -1989,11 +1989,11 @@ extern bool ShellOpenApp(QString app, QString cmd);
 
 void BrowserMainWindow::slotViewPageSource()
 {
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN
     QLatin1String notepad("NOTEPAD.EXE");
 #else
 
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
     QLatin1String notepad("Open");
     #else
         QLatin1String notepad("gedit");

@@ -42,9 +42,9 @@
 
 #include <QtGui/QPainter>
 #include <QtGui/QMouseEvent>
-#include <QtGui/QMenu>
-#include <QtGui/QStyle>
-#include <QtGui/QStyleOptionFrameV2>
+#include <QtWidgets/QMenu>
+#include <QtWidgets/QStyle>
+#include <QtWidgets/QStyleOptionFrameV2>
 
 /*
     Search icon on the left hand side of the search widget
