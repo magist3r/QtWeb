@@ -435,12 +435,6 @@ WebView *TabWidget::newTab(bool makeCurrent, bool empty)
         currentChanged(currentIndex());
     emit tabsChanged();
 
-    // move focus to address bar to type a new site (if new tab is current)
-    if (makeCurrent && empty) {
-        currentLineEdit()->selectAll();
-        currentLineEdit()->setFocus();
-    }
-
     if (empty) { // handle options for new empty tab
         QSettings settings;
         settings.beginGroup(QLatin1String("MainWindow"));
@@ -475,6 +469,11 @@ WebView *TabWidget::newTab(bool makeCurrent, bool empty)
         case 2: // empty page
             loadUrlInCurrentTab(QUrl("about:blank"));
             break;
+        }
+
+        if (makeCurrent) { // move focus to address bar to type a new site (if new tab is current)
+            currentLineEdit()->setFocus();
+            currentLineEdit()->selectAll();
         }
     }
 

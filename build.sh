@@ -33,6 +33,12 @@ if [[ $OSTYPE = cygwin ]]; then
     export PATH="$LIBPATH:$VCINSTALLDIR/bin:$VSINSTALLDIR/Common7/Tools:$VSINSTALLDIR/Common7/IDE:$VCINSTALLDIR/VCPackages:$WindowsSdkDir/Bin:$OPENSSL/bin:$QTDIR/bin:$PATH"
     export LIB=$(cygpath -wlpa "$VCINSTALLDIR/lib:$WindowsSdkDir/Lib:$OPENSSL/lib:$LIB")
     export INCLUDE=$(cygpath -wlpa "$VCINSTALLDIR/include/:$WindowsSdkDir/Include/:$OPENSSL/include/:$INCLUDE")
+    
+    # Generate env.bat
+    echo "set LIBPATH=$(cygpath -wlpa "$LIBPATH")"$'\r' > env.bat
+    echo "set PATH=$(cygpath -wlpa "$PATH")"$'\r' >> env.bat
+    echo "set LIB=$LIB"$'\r' >> env.bat
+    echo "set INCLUDE=$INCLUDE"$'\r' >> env.bat
 fi
 
 until [ -z "$1" ]; do
@@ -90,10 +96,13 @@ QT_PATCHES+=('0004-qstyles-qrc.patch')
 QT_PATCHES+=('0005-qwidget-cpp.patch')
 
 if ! $USE_QTWEBKIT_23; then
-    QTWEBKIT_PATCHES+=('0001-configure.patch')
+    if [[ $OSTYPE != cygwin ]]; then
+        QTWEBKIT_PATCHES+=('0001-configure.patch')
+    fi
     QTWEBKIT_PATCHES+=('0002-webkit-pro.patch')
     QTWEBKIT_PATCHES+=('0003-qtwebkit-pro.patch')
     QTWEBKIT_PATCHES+=('0006-webkit-disable-video.patch')
+    QTWEBKIT_PATCHES+=('0007-webkit-bug-60448.patch')
 else
     QTWEBKIT_PATCHES+=('0041-qtwebkit-23-dont-link-with-jpeg-and-png.patch')
     QTWEBKIT_PATCHES+=('0042-qtwebkit-23-dont-link-with-sqlite.patch')
@@ -149,7 +158,7 @@ if ! $SKIP_QT_BUILD; then
         ;;
     cygwin)
         SSL_LIBS="OPENSSL_LIBS=\"ssleay32.lib libeay32.lib crypt32.lib gdi32.lib\""
-        CONFIGURE_COMMAND="./configure.exe"
+        CONFIGURE_COMMAND="configure.exe"
         OPTIONS=("${OPTIONS[@]// -silent}")
         OPTIONS=("${OPTIONS[@]// -openssl}")
         OPTIONS=("${OPTIONS[@]// -optimized-qmake}")
@@ -160,6 +169,7 @@ if ! $SKIP_QT_BUILD; then
 
         MKSPEC_PATCHES+=('0011-windows-mkspec.patch')
         QT_PATCHES+=('0013-windows-dotnet-style.patch')
+        QT_PATCHES+=('0016-windows-fix-build-qtbug-32773.patch')
         if ! $USE_QTWEBKIT_23; then
             QTWEBKIT_PATCHES+=('0012-windows-webcore-pro.patch')
         else
@@ -179,6 +189,7 @@ if ! $SKIP_QT_BUILD; then
             OPTIONS+=" -device-option CROSS_COMPILE=$CROSS_COMPILE_PREFIX"
             
             QT_PATCHES+=('0013-windows-dotnet-style.patch')
+            QT_PATCHES+=('0016-windows-fix-build-qtbug-32773.patch')
             MKSPEC_PATCHES+=('0014-windows-mkspec-cross-compile.patch')
             if ! $USE_QTWEBKIT_23; then QTWEBKIT_PATCHES+=('0012-windows-webcore-pro.patch'); fi
             
@@ -196,7 +207,7 @@ if ! $SKIP_QT_BUILD; then
 
             MKSPEC_PATCHES+=('0021-linux-mkspec.patch')
 
-            QT_PATCHES+=('0022-linux-qgtkstyle-qtbug-23569.patch')
+            #QT_PATCHES+=('0022-linux-qgtkstyle-qtbug-23569.patch')
             QT_PATCHES+=('0023-linux-link-with-old-glibc.patch')
             QT_PATCHES+=('0025-linux-link-with-old-glib.patch')
             
@@ -247,6 +258,9 @@ if ! $SKIP_QT_BUILD; then
         patch -p0 -N < "$PATCHDIR/$k"
     done
 
+    COMMAND="$CONFIGURE_COMMAND -prefix "$QTDIR" $OPTIONS "$SSL_LIBS""
+    COMMAND=$(echo $COMMAND | sed 's/ *$//g')
+    
     if [[ $OSTYPE = cygwin ]]; then
         #build openssl
         pushd $QTDIR/openssl-1.0.1e/
@@ -254,12 +268,20 @@ if ! $SKIP_QT_BUILD; then
         ms/do_ms.bat
         $MAKE_COMMAND -f ms/nt.mak install
         popd
-    fi
+        
+        #generate and run configure.cmd & build.cmd
+        echo "call ../../env.bat"$'\r' > configure.cmd
+        echo "call ../../env.bat"$'\r' > build.cmd
 
-    COMMAND="$CONFIGURE_COMMAND -prefix "$QTDIR" $OPTIONS "$SSL_LIBS""
-    COMMAND=$(echo $COMMAND | sed 's/ *$//g')
-    $COMMAND || qt_error
-    $MAKE_COMMAND || qt_error
+        echo "$COMMAND"$'\r' >> configure.cmd
+        cmd /c configure.cmd || qt_error
+
+        echo "$MAKE_COMMAND"$'\r' >> build.cmd
+        cmd /c build.cmd || qt_error
+    else
+        eval "$COMMAND" || qt_error
+        $MAKE_COMMAND || qt_error
+    fi
     
     #qtwebkit build
     if $USE_QTWEBKIT_23; then
@@ -280,9 +302,17 @@ if ! $SKIP_QT_BUILD; then
         QTWEBKIT_OPTIONS+=" --qmakearg=DEFINES+=WTF_USE_3D_GRAPHICS=0"
         QTWEBKIT_OPTIONS+=" --qmakearg=DEFINES+=WTF_USE_ZLIB=0"
 
-        if [[ $OSTYPE == cygwin ]]; then export QMAKEPATH="$QTDIR/webkit-qtwebkit-23/Tools/qmake"; fi
-    
-        Tools/Scripts/build-webkit $QTWEBKIT_OPTIONS || qtwebkit_error
+        if [[ $OSTYPE == cygwin ]]; then 
+            #generate and run qtwebkit_build.cmd
+            export QMAKEPATH="$QTDIR/webkit-qtwebkit-23/Tools/qmake"
+            echo "call ../../../env.bat"$'\r' > qtwebkit_build.cmd
+            echo "set QMAKEPATH=$(cygpath -wla "$QMAKEPATH")"$'\r' >> qtwebkit_build.cmd
+            echo "perl Tools/Scripts/build-webkit $QTWEBKIT_OPTIONS"$'\r' >> qtwebkit_build.cmd
+            cmd /c qtwebkit_build.cmd || qtwebkit_error
+        else
+            Tools/Scripts/build-webkit $QTWEBKIT_OPTIONS || qtwebkit_error
+        fi
+        
         pushd WebKitBuild/Release
         $MAKE_COMMAND install
         popd
@@ -302,9 +332,14 @@ fi # end of Qt build
 
 QMAKE_ARGS=
 if $USE_QTWEBKIT_23; then QMAKE_ARGS="DEFINES+=QTWEBKIT_23"; fi
-$MAKE_COMMAND distclean
-src/qt/bin/qmake "$QMAKE_ARGS" -r -config release 
+if [ -e ./build ]; then
+    rm -rf ./build
+fi
+mkdir build
+pushd build
+../src/qt/bin/qmake "$QMAKE_ARGS" -r -config release ../QtWeb.pro
 $MAKE_COMMAND
+popd
 
 #fix qt_menu.nib issue
 if [[ $OSTYPE = darwin* ]]; then

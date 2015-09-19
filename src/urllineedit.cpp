@@ -201,6 +201,9 @@ void UrlLineEdit::webViewUrlChanged(const QUrl &url)
 
     m_lineEdit->setText(str);
     m_lineEdit->setCursorPosition(0);
+    if (m_lineEdit->hasFocus())
+        m_lineEdit->selectAll();
+
     QIcon icon = BrowserApplication::instance()->icon(m_webView->url());
     m_iconLabel->setPixmap( icon.pixmap(16,16) );
 }

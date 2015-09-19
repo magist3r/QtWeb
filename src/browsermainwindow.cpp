@@ -199,7 +199,7 @@ BrowserMainWindow::BrowserMainWindow(QWidget *parent, Qt::WindowFlags flags)
     m_navigationBar->setIconSize(QSize(size, size));
     m_buttonsBar->setIconSize(QSize(size, size));
 
-    WebPage::setDefaultAgent( );
+    WebPage::setUserAgent();
 
     findWidget = new FindWidget(this);
     layout->addWidget(findWidget);
@@ -1087,6 +1087,7 @@ void BrowserMainWindow::slotAboutToShowEncodingMenu()
     alignmentGroup->addAction(menuAddEncoding("Korean", "EUC-KR"));
     // japanese
     alignmentGroup->addAction(menuAddEncoding("Japanese",   "ISO-2022-JP"));
+    alignmentGroup->addAction(menuAddEncoding("Japanese",   "Shift-JIS"));
     alignmentGroup->addAction(menuAddEncoding("Japanese",   "EUC-JP"));
     m_encodingMenu->addSeparator();
 
@@ -1808,7 +1809,7 @@ void BrowserMainWindow::slotPrivateBrowsing()
         local_settings.endGroup();
 
         settings->setAttribute(QWebSettings::PrivateBrowsingEnabled, true);
-        WebPage::setUserAgent( QLatin1String("") );
+        WebPage::setUserAgent(QLatin1String(""));
 
     } 
     else 
@@ -1821,7 +1822,7 @@ void BrowserMainWindow::slotPrivateBrowsing()
 
         settings->setAttribute(QWebSettings::PrivateBrowsingEnabled, false);
         
-        WebPage::setDefaultAgent( );
+        WebPage::setUserAgent();
 
         QList<BrowserMainWindow*> windows = BrowserApplication::instance()->mainWindows();
         for (int i = 0; i < windows.count(); ++i) {
@@ -2472,7 +2473,7 @@ void BrowserMainWindow::slotDisableUserAgent()
         settings.setValue(QLatin1String("UserAgent"), "");
     }
 
-    WebPage::setDefaultAgent( );
+    WebPage::setUserAgent();
     setCurrentAgentIcon();
 }
 
@@ -2608,7 +2609,7 @@ void BrowserMainWindow::setCompatibilityAgent(QString agent)
     }
     m_compatAction->setIcon(QIcon(getAgentIcon( agent )));
 
-    WebPage::setDefaultAgent();
+    WebPage::setUserAgent();
 }
 
 QString BrowserMainWindow::getAgentIcon(QString agent )

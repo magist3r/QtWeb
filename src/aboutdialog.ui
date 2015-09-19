@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>394</width>
+    <width>405</width>
     <height>279</height>
    </rect>
   </property>
@@ -86,7 +86,7 @@
    <item>
     <widget class="QLabel" name="description">
      <property name="text">
-      <string>Copyright 2008-2012 &amp;copy;  QtWeb.NET. All Rights Reserved. &lt;br&gt;Portions of software code were licensed from third parties as&lt;br&gt;described at http://www.qtweb.net/code_licensed.txt</string>
+      <string>Copyright 2008-2013 &amp;copy;  QtWeb.NET. All Rights Reserved. &lt;br&gt;Portions of software code were licensed from third parties as&lt;br&gt;described at http://www.qtweb.net/code_licensed.txt</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignLeading</set>
@@ -167,9 +167,7 @@
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="data/data.qrc"/>
- </resources>
+ <resources/>
  <connections>
   <connection>
    <sender>closeButton</sender>

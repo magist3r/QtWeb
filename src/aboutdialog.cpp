@@ -34,7 +34,7 @@ AboutDialog::AboutDialog(QWidget *parent)
     name->setText(qApp->applicationName() + " " + QApplication::applicationVersion());
     connect(creditsButton, SIGNAL(clicked()), this, SLOT(credits()));
 
-    author->setText( WebPage::getUserAgent() );
+    author->setText(WebPage::getUserAgent());
 
     int dwBuild = BrowserApplication::getApplicationBuild();
     if (dwBuild > 0)

@@ -1,3 +1,17 @@
+-- v3.8.5, build 108
+* Added Shift-JIS encoding
+* Fixed webkit bug #60448 (crash on softpedia.com)
+* Moved to Qt 4.8.5
+
+-- v3.8.4, build 107
+ * Fixed crash on plus.google.com on windows
+ * Prevent url changing to "about:blank" on error
+ * [Issue 173] Block ads properly
+ * Fixed progress in address bar
+ * Fixed crash on close DownloadManager's FileDialog
+ * Fixed download small files
+ * Redesigned searches dialog and model
+ 
 -- v3.8.4, build 106
  * Fixed russian language in languages list in settings
  * [Issue 171] Fixed empty cache function

@@ -1,6 +1,5 @@
 # qt source directory
 src/qt/.*
-src/qtwebkit-23
 temp-src
 build
 
@@ -23,4 +22,4 @@ build
 moc_*.cpp
 qrc_*.cpp
 Makefile*
-*-build-*
+build-*

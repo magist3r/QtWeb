@@ -94,7 +94,7 @@ QReadWriteLock lockIcons;
 
 int BrowserApplication::getApplicationBuild()
 {
-    return 107; // Current Build
+    return 109; // Current Build
 }
 
 BrowserApplication::BrowserApplication(int &argc, char **argv)
@@ -104,7 +104,7 @@ BrowserApplication::BrowserApplication(int &argc, char **argv)
 {
     QCoreApplication::setOrganizationName(QLatin1String("QtWeb.NET"));
     QCoreApplication::setApplicationName(QLatin1String("QtWeb Internet Browser"));
-    QCoreApplication::setApplicationVersion(QLatin1String("3.8.4"));
+    QCoreApplication::setApplicationVersion(QLatin1String("3.8.5"));
     QString serverName = QCoreApplication::applicationName();
     
     definePortableRunMode();
@@ -449,7 +449,7 @@ void BrowserApplication::loadSettings()
     if (private_browsing)
     {
         QWebSettings::globalSettings()->setAttribute(QWebSettings::PrivateBrowsingEnabled, true);
-        WebPage::setUserAgent( QLatin1String("") );
+        WebPage::setUserAgent(QLatin1String(""));
     }
     settings.endGroup();
 
