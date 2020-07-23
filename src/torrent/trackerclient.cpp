@@ -56,7 +56,7 @@ TrackerClient::TrackerClient(TorrentClient *downloader, QObject *parent)
     lastTrackerRequest = false;
     firstSeeding = true;
 
-    connect(&http, SIGNAL(done(bool)), this, SLOT(httpRequestDone(bool)));
+    //connect(&http, SIGNAL(done(bool)), this, SLOT(httpRequestDone(bool)));
 }
 
 void TrackerClient::start(const MetaInfo &info)
@@ -82,18 +82,18 @@ void TrackerClient::startSeeding()
 void TrackerClient::stop()
 {
     lastTrackerRequest = true;
-    http.abort();
+    //http.abort();
     fetchPeerList();
 }
 
 void TrackerClient::timerEvent(QTimerEvent *event)
 {
-    if (event->timerId() == requestIntervalTimer) {
+   /* if (event->timerId() == requestIntervalTimer) {
         if (http.state() == QHttp::Unconnected)
             fetchPeerList();
     } else {
         QObject::timerEvent(event);
-    }
+    }*/
 }
 
 void TrackerClient::fetchPeerList()
@@ -148,15 +148,15 @@ void TrackerClient::fetchPeerList()
     if (!trackerId.isEmpty())
         query += "&trackerid=" + trackerId;
 
-    http.setHost(url.host(), url.port() == -1 ? 80 : url.port());
+  /*  http.setHost(url.host(), url.port() == -1 ? 80 : url.port());
     if (!url.userName().isEmpty())
         http.setUser(url.userName(), url.password());
-    http.get(query);
+    http.get(query);*/
 }
 
 void TrackerClient::httpRequestDone(bool error)
 {
-    if (lastTrackerRequest) {
+    /*if (lastTrackerRequest) {
         emit stopped();
         return;
     }
@@ -232,5 +232,5 @@ void TrackerClient::httpRequestDone(bool error)
             }
         }
         emit peerListUpdated(peers);
-    }
+    }*/
 }

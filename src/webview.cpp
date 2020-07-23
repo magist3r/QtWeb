@@ -50,13 +50,13 @@
 #include "commands.h"
 
 #include <QtGui/QClipboard>
-#include <QtGui/QMenu>
-#include <QtGui/QMessageBox>
+#include <QtWidgets/QMenu>
+#include <QtWidgets/QMessageBox>
 #include <QtGui/QMouseEvent>
 #include <QProgressDialog>
 #include <QFileDialog>
 #include <QtNetwork>
-#include <QtUiTools/QUiLoader>
+//#include <QtUiTools/QUiLoader>
 
 #include <QtCore/QDebug>
 #include <QtCore/QBuffer>
@@ -96,7 +96,8 @@ WebView::WebView(QWidget* parent)
 
     ////////////////////////////////////////////////////////
     // AC: FTP impl
-    m_ftp = NULL;
+    //TBI
+    /*m_ftp = NULL;
     m_ftpFile = NULL;
     m_ftpProgressDialog = new QProgressDialog(this);
     connect(m_ftpProgressDialog, SIGNAL(canceled()), this, SLOT(ftpCancelDownload()));
@@ -109,7 +110,7 @@ WebView::WebView(QWidget* parent)
     {
         setTextSizeMultiplier(ratio);
         QWebSettings::globalSettings()->setAttribute(QWebSettings::ZoomTextOnly, zoom_text_only);
-    }
+    }*/
 }
 
 void WebView::slotInspectElement()
@@ -248,7 +249,7 @@ void WebView::copyMailtoAddress()
     if (!m_hitResult.isNull() && !m_hitResult.linkUrl().isEmpty())
     {
         if (m_hitResult.linkUrl().scheme() == "mailto")
-            QApplication::clipboard()->setText( m_hitResult.linkUrl().encodedPath() );
+            QApplication::clipboard()->setText( m_hitResult.linkUrl().path(QUrl::FullyEncoded).toLatin1());
         else
         {
             if (!m_hitResult.linkUrl().scheme().isEmpty())
@@ -331,7 +332,7 @@ void WebView::applyEncoding()
 
         QString html = mainframe->toHtml();
 
-        QTextCodec *codec = QTextCodec::codecForName( enc.toAscii() );
+        QTextCodec *codec = QTextCodec::codecForName( enc.toLatin1() );
         if (!codec)
             return;
 
@@ -342,14 +343,14 @@ void WebView::applyEncoding()
         m_encoding_in_progress = true;
         m_current_encoding = enc;
         m_current_encoding_url = url();
-        QString output = decoder->toUnicode(html.toAscii());
+        QString output = decoder->toUnicode(html.toLatin1());
         mainframe->setHtml(output, mainframe->url());
 
         QList<QWebFrame *> children = mainframe->childFrames();
         foreach(QWebFrame *frame, children)
         {
             html = frame->toHtml();
-            output = decoder->toUnicode(html.toAscii());
+            output = decoder->toUnicode(html.toLatin1());
             frame->setHtml(output, frame->url());
         }
         m_encoding_in_progress = false;
@@ -427,12 +428,13 @@ void WebView::loadUrl(const QUrl &url, const QString &title )
     if (url.toString().toLower().indexOf("ftp") == 0)
     {
         webPage()->mainWindow()->tabWidget()->setTabText(webPage()->mainWindow()->tabWidget()->currentIndex(), url.toString() );
-        loadFtpUrl(url);
+        //loadFtpUrl(url);
         return;
     }
     else
     {
-        ftpCheckDisconnect();
+        //TBI
+        //ftpCheckDisconnect();
     }
 
     load(url);
@@ -670,8 +672,8 @@ void WebView::downloadRequested(const QNetworkRequest &request)
 
 ///////////////////////////////////////////////////////////////
 // AC: FTP impl
-
-void WebView::ftpCancelDownload()
+//TBI
+/*void WebView::ftpCancelDownload()
 {
     if (m_ftp)
         m_ftp->abort();
@@ -908,4 +910,4 @@ void WebView::ftpUpdateDataTransferProgress(qint64 readBytes,
         m_ftpProgressDialog->setMaximum(totalBytes);
         m_ftpProgressDialog->setValue(readBytes);
     }
-}
+}*/

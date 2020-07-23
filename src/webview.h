@@ -48,8 +48,8 @@ class QProgressDialog;
 class QUrlInfo;
 
 #include <QDateTime>
-#include <QtWebKit/QWebView>
-#include <QtWebKit/QWebHitTestResult>
+#include <QWebView>
+#include <QWebHitTestResult>
 
 class WebPage;
 
@@ -61,7 +61,7 @@ public:
     WebPage *webPage() const { return m_page; }
 
     void loadUrl(const QUrl &url, const QString &title = QString());
-    void loadFtpUrl(const QUrl &url);
+	//void loadFtpUrl(const QUrl &url);
     QUrl url() const;
 
     void slotInspectElement();
@@ -113,9 +113,9 @@ private:
     bool    m_ssl_errors_detected;
 
 //////////////////////////////////////////////////// AC: FTP implementation
-    QFtp*  m_ftp;
+  /*  QFtp*  m_ftp;
     QFile* m_ftpFile;
-    QString m_ftpHtml;
+	QString m_ftpHtml;
 
     QProgressDialog         *m_ftpProgressDialog;
     QHash<QString, bool>    m_ftpIsDirectory;
@@ -129,7 +129,7 @@ private slots:
     void ftpCancelDownload();
     void ftpCommandFinished(int commandId, bool error);
     void ftpAddToList(const QUrlInfo &urlInfo);
-    void ftpUpdateDataTransferProgress(qint64 readBytes, qint64 totalBytes);
+	void ftpUpdateDataTransferProgress(qint64 readBytes, qint64 totalBytes);*/
 };
 
 #endif

@@ -1,6 +1,6 @@
 TEMPLATE = app
 TARGET = QtWeb
-QT += network xml webkit
+QT += network xml webkitwidgets widgets printsupport
 CONFIG += static
 QTPLUGIN += qcncodecs qjpcodecs qkrcodecs qtwcodecs qico 
 DEFINES += QT_NO_UITOOLS
