@@ -1,12 +1,22 @@
 /****************************************************************************
 **
-** Copyright (C) 2012 Digia Plc and/or its subsidiary(-ies).
-** Contact: http://www.qt-project.org/legal
+** Copyright (C) 2016 The Qt Company Ltd.
+** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the examples of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:BSD$
-** You may use this file under the terms of the BSD license as follows:
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
+**
+** BSD License Usage
+** Alternatively, you may use this file under the terms of the BSD license
+** as follows:
 **
 ** "Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions are
@@ -17,8 +27,8 @@
 **     notice, this list of conditions and the following disclaimer in
 **     the documentation and/or other materials provided with the
 **     distribution.
-**   * Neither the name of Digia Plc and its Subsidiary(-ies) nor the names
-**     of its contributors may be used to endorse or promote products derived
+**   * Neither the name of The Qt Company Ltd nor the names of its
+**     contributors may be used to endorse or promote products derived
 **     from this software without specific prior written permission.
 **
 **
@@ -52,7 +62,8 @@ RateController *RateController::instance()
 
 void RateController::addSocket(PeerWireClient *socket)
 {
-    connect(socket, SIGNAL(readyToTransfer()), this, SLOT(scheduleTransfer()));
+    connect(socket, &PeerWireClient::readyToTransfer,
+            this, &RateController::scheduleTransfer);
     socket->setReadBufferSize(downLimit * 4);
     sockets << socket;
     scheduleTransfer();
@@ -60,7 +71,8 @@ void RateController::addSocket(PeerWireClient *socket)
 
 void RateController::removeSocket(PeerWireClient *socket)
 {
-    disconnect(socket, SIGNAL(readyToTransfer()), this, SLOT(scheduleTransfer()));
+    disconnect(socket, &PeerWireClient::readyToTransfer,
+               this, &RateController::scheduleTransfer);
     socket->setReadBufferSize(0);
     sockets.remove(socket);
 }
@@ -68,7 +80,7 @@ void RateController::removeSocket(PeerWireClient *socket)
 void RateController::setDownloadLimit(int bytesPerSecond)
 {
     downLimit = bytesPerSecond;
-    foreach (PeerWireClient *socket, sockets)
+    for (PeerWireClient *socket : qAsConst(sockets))
         socket->setReadBufferSize(downLimit * 4);
 }
 
@@ -86,8 +98,8 @@ void RateController::transfer()
     if (sockets.isEmpty())
         return;
 
-    int msecs = 1000;
-    if (!stopWatch.isNull())
+    qint64 msecs = 1000;
+    if (stopWatch.isValid())
         msecs = qMin(msecs, stopWatch.elapsed());
 
     qint64 bytesToWrite = (upLimit * msecs) / 1000;
@@ -98,7 +110,7 @@ void RateController::transfer()
     }
 
     QSet<PeerWireClient *> pendingSockets;
-    foreach (PeerWireClient *client, sockets) {
+    for (PeerWireClient *client : qAsConst(sockets)) {
         if (client->canTransferMore())
             pendingSockets << client;
     }
@@ -113,11 +125,11 @@ void RateController::transfer()
         qint64 writeChunk = qMax<qint64>(1, bytesToWrite / pendingSockets.size());
         qint64 readChunk = qMax<qint64>(1, bytesToRead / pendingSockets.size());
 
-        QSetIterator<PeerWireClient *> it(pendingSockets);
-        while (it.hasNext() && (bytesToWrite > 0 || bytesToRead > 0)) {
-            PeerWireClient *socket = it.next();
+        for (auto it = pendingSockets.begin(), end = pendingSockets.end(); it != end && (bytesToWrite > 0 || bytesToRead > 0); /*erasing*/) {
+            auto current = it++;
+            PeerWireClient *socket = *current;
             if (socket->state() != QAbstractSocket::ConnectedState) {
-                pendingSockets.remove(socket);
+                pendingSockets.erase(current);
                 continue;
             }
 
@@ -146,7 +158,7 @@ void RateController::transfer()
             if (dataTransferred && socket->canTransferMore())
                 canTransferMore = true;
             else
-                pendingSockets.remove(socket);
+                pendingSockets.erase(current);
         }
     } while (canTransferMore && (bytesToWrite > 0 || bytesToRead > 0) && !pendingSockets.isEmpty());
 

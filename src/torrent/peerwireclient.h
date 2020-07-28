@@ -1,12 +1,22 @@
 /****************************************************************************
 **
-** Copyright (C) 2012 Digia Plc and/or its subsidiary(-ies).
-** Contact: http://www.qt-project.org/legal
+** Copyright (C) 2016 The Qt Company Ltd.
+** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the examples of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:BSD$
-** You may use this file under the terms of the BSD license as follows:
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
+**
+** BSD License Usage
+** Alternatively, you may use this file under the terms of the BSD license
+** as follows:
 **
 ** "Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions are
@@ -17,8 +27,8 @@
 **     notice, this list of conditions and the following disclaimer in
 **     the documentation and/or other materials provided with the
 **     distribution.
-**   * Neither the name of Digia Plc and its Subsidiary(-ies) nor the names
-**     of its contributors may be used to endorse or promote products derived
+**   * Neither the name of The Qt Company Ltd nor the names of its
+**     contributors may be used to endorse or promote products derived
 **     from this software without specific prior written permission.
 **
 **
@@ -63,7 +73,7 @@ struct TorrentBlock
                 && offset == other.offset
                 && length == other.length;
     }
-    
+
     int pieceIndex;
     int offset;
     int length;
@@ -82,7 +92,7 @@ public:
     };
     Q_DECLARE_FLAGS(PeerWireState, PeerWireStateFlag)
 
-    PeerWireClient(const QByteArray &peerId, QObject *parent = 0);
+    explicit PeerWireClient(const QByteArray &peerId, QObject *parent = nullptr);
     void initialize(const QByteArray &infoHash, int pieceCount);
 
     void setPeer(TorrentPeer *peer);
@@ -112,11 +122,15 @@ public:
     qint64 uploadSpeed() const;
 
     bool canTransferMore() const;
-    qint64 bytesAvailable() const { return incomingBuffer.size() + QTcpSocket::bytesAvailable(); }
+    qint64 bytesAvailable() const override { return incomingBuffer.size() + QTcpSocket::bytesAvailable(); }
     qint64 socketBytesAvailable() const { return socket.bytesAvailable(); }
     qint64 socketBytesToWrite() const { return socket.bytesToWrite(); }
 
-    void setReadBufferSize(int size);
+    void setReadBufferSize(qint64 size) override;
+
+    void connectToHost(const QHostAddress &address,
+                       quint16 port, OpenMode openMode = ReadWrite) override;
+    void diconnectFromHost();
 
 signals:
     void infoHashReceived(const QByteArray &infoHash);
@@ -133,17 +147,12 @@ signals:
 
     void bytesReceived(qint64 size);
 
-protected slots:
-    void connectToHostImplementation(const QString &hostName,
-                                     quint16 port, OpenMode openMode = ReadWrite);
-    void diconnectFromHostImplementation();
-
 protected:
-    void timerEvent(QTimerEvent *event);
+    void timerEvent(QTimerEvent *event) override;
 
-    qint64 readData(char *data, qint64 maxlen);
-    qint64 readLineData(char *data, qint64 maxlen);
-    qint64 writeData(const char *data, qint64 len);
+    qint64 readData(char *data, qint64 maxlen) override;
+    qint64 readLineData(char *data, qint64 maxlen) override;
+    qint64 writeData(const char *data, qint64 len) override;
 
 private slots:
     void sendHandShake();

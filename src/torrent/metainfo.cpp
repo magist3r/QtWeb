@@ -1,12 +1,22 @@
 /****************************************************************************
 **
-** Copyright (C) 2012 Digia Plc and/or its subsidiary(-ies).
-** Contact: http://www.qt-project.org/legal
+** Copyright (C) 2016 The Qt Company Ltd.
+** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the examples of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:BSD$
-** You may use this file under the terms of the BSD license as follows:
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
+**
+** BSD License Usage
+** Alternatively, you may use this file under the terms of the BSD license
+** as follows:
 **
 ** "Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions are
@@ -17,8 +27,8 @@
 **     notice, this list of conditions and the following disclaimer in
 **     the documentation and/or other materials provided with the
 **     distribution.
-**   * Neither the name of Digia Plc and its Subsidiary(-ies) nor the names
-**     of its contributors may be used to endorse or promote products derived
+**   * Neither the name of The Qt Company Ltd nor the names of its
+**     contributors may be used to endorse or promote products derived
 **     from this software without specific prior written permission.
 **
 **
@@ -91,12 +101,12 @@ bool MetaInfo::parse(const QByteArray &data)
         QList<QVariant> files = info.value("files").toList();
 
         for (int i = 0; i < files.size(); ++i) {
-            QMap<QByteArray, QVariant> file = qvariant_cast<Dictionary>(files.at(i));
-            QList<QVariant> pathElements = file.value("path").toList();
+            const QMap<QByteArray, QVariant> file = qvariant_cast<Dictionary>(files.at(i));
+            const QList<QVariant> pathElements = file.value("path").toList();
             QByteArray path;
-            foreach (QVariant p, pathElements) {
+            for (const QVariant &p : pathElements) {
                 if (!path.isEmpty())
-                    path += "/";
+                    path += '/';
                 path += p.toByteArray();
             }
 
@@ -131,7 +141,7 @@ bool MetaInfo::parse(const QByteArray &data)
     }
 
     if (dict.contains("creation date"))
-        metaInfoCreationDate.setTime_t(dict.value("creation date").toInt());
+        metaInfoCreationDate.setSecsSinceEpoch(dict.value("creation date").toInt());
     if (dict.contains("comment"))
         metaInfoComment = QString::fromUtf8(dict.value("comment").toByteArray());
     if (dict.contains("created by"))
@@ -211,7 +221,7 @@ qint64 MetaInfo::totalSize() const
         return singleFile().length;
 
     qint64 size = 0;
-    foreach (MetaInfoMultiFile file, multiFiles())
+    for (const MetaInfoMultiFile &file : metaInfoMultiFiles)
         size += file.length;
     return size;
 }
