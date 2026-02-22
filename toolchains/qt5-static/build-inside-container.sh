@@ -14,6 +14,31 @@ INSTALL_DIR="${OUTPUT_DIR}/install"
 MANIFEST_FILE="${OUTPUT_DIR}/build-manifest.txt"
 QT_SRC_DIR="${WORK_DIR}/qt-everywhere-opensource-src-${QT_VERSION}"
 PATCH_DIR="/workspace/toolchains/qt5-static/patches"
+MIN_DEP_CONFIGURE_FLAGS=(
+    -no-dbus
+    -no-gtkstyle
+    -no-fontconfig
+    -icu
+    -qt-pcre
+    -qt-freetype
+    -qt-xcb
+    -qt-xkbcommon-x11
+)
+CONFIGURE_FLAGS=(
+    -opensource
+    -confirm-license
+    -release
+    -static
+    -prefix "$INSTALL_DIR"
+    -nomake tests
+    -nomake examples
+    -nomake tools
+    -qt-zlib
+    -qt-libpng
+    -qt-libjpeg
+    -no-openssl
+    "${MIN_DEP_CONFIGURE_FLAGS[@]}"
+)
 
 fail() {
     echo "error: $*" >&2
@@ -52,20 +77,7 @@ apply_patches() {
 configure_qt() {
     local log_file="$1"
     echo "==> configure Qt"
-    ./configure \
-        -opensource \
-        -confirm-license \
-        -release \
-        -static \
-        -prefix "$INSTALL_DIR" \
-        -nomake tests \
-        -nomake examples \
-        -nomake tools \
-        -qt-zlib \
-        -qt-libpng \
-        -qt-libjpeg \
-        -no-openssl \
-        >"$log_file" 2>&1
+    ./configure "${CONFIGURE_FLAGS[@]}" >"$log_file" 2>&1
 }
 
 webkit_disabled_by_static_notice() {
@@ -102,6 +114,7 @@ if [[ ! -d "${QT_SRC_DIR}/qtwebkit" ]]; then
 fi
 
 pushd "$QT_SRC_DIR" >/dev/null
+log_verify "configure minimal-deps flags: ${MIN_DEP_CONFIGURE_FLAGS[*]}"
 configure_qt "${LOG_DIR}/configure.log"
 
 if webkit_disabled_by_static_notice "${LOG_DIR}/configure.log" && apply_patches; then
@@ -164,6 +177,7 @@ done
     echo "qt_config=${QT_CONFIG}"
     echo "jobs=${JOBS}"
     echo "clean=${CLEAN}"
+    echo "minimal_dep_configure_flags=${MIN_DEP_CONFIGURE_FLAGS[*]}"
     echo "qt_src_archive=${QT_SRC_ARCHIVE}"
     echo "qtwebkit_archive=${QTWEBKIT_ARCHIVE}"
     echo "qt_src_url=${QT_SRC_URL:-}"

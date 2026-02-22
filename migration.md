@@ -1,7 +1,7 @@
 # Qt5 + QtWebKit Migration Plan
 
 ## Goal
-Port QtWeb from Qt4.8.x to Qt5 (with QtWebKit), keeping behavior as close as possible and minimizing feature loss.
+Port QtWeb from Qt4.8.x to Qt5 (with QtWebKit), keeping behavior as close as possible, minimizing feature loss, and maximizing portability by minimizing runtime dependencies.
 
 ## POC Spec
 - Static Qt5 toolchain POC is tracked in `docs/qt5-static-poc.md`.
@@ -11,6 +11,7 @@ Port QtWeb from Qt4.8.x to Qt5 (with QtWebKit), keeping behavior as close as pos
 - In scope:
   - Build system and source compatibility for Qt5 + QtWebKit.
   - Preserve the static-build deployment model (or an equivalent option), since the current custom Qt build exists to maximize portability and keep distribution size small.
+  - Minimize non-essential runtime dependencies (shared libraries/plugins) so the produced build is as portable as practical.
   - Keep current architecture (`BrowserApplication`, `BrowserMainWindow`, `WebView`, `WebPage`, managers).
   - Keep qmake build.
 - Out of scope:
@@ -21,6 +22,7 @@ Port QtWeb from Qt4.8.x to Qt5 (with QtWebKit), keeping behavior as close as pos
 ## Target Baseline
 - Qt `5.5.1` target baseline for migration (latest Qt5 release line that still ships QtWebKit from Qt's own release artifacts).
 - QtWebKit module available (`webkit`, `webkitwidgets`) from Qt's own `qtwebkit-opensource-src-5.5.1` release package.
+- ICU is a hard dependency for Qt5 QtWebKit builds; static Qt5 + QtWebKit path requires ICU-enabled Qt configuration.
 - qmake-based build producing equivalent desktop app behavior.
 
 ### Why this version
@@ -57,6 +59,9 @@ Port QtWeb from Qt4.8.x to Qt5 (with QtWebKit), keeping behavior as close as pos
   - Keep existing Qt4 `build.sh` untouched for legacy path.
   - Add Qt5 build entry path (new script) that uses system Qt5, not patched Qt4 source tree.
   - Define how static linking is handled in Qt5 builds so portability/size goals remain explicit.
+  - Make ICU an explicit build gate for Qt5 QtWebKit (no `-no-icu` path for WebKit-enabled builds).
+  - Define a dependency-minimization policy for Qt5 artifacts (modules, plugins, and optional features to avoid unless required).
+  - Add a basic dependency audit step (for example `ldd` on Linux) so dependency growth is visible during migration.
   - Update qmake project modules conditionally by Qt major version.
 - Files:
   - `src/QtWeb.pro`
@@ -67,6 +72,7 @@ Port QtWeb from Qt4.8.x to Qt5 (with QtWebKit), keeping behavior as close as pos
   - Qt5: `QT += core gui widgets network xml webkit webkitwidgets printsupport`
 - Exit criteria:
   - qmake configure step works under Qt5 (`qmake` generates Makefile).
+  - Portability gates are defined: no Qt shared-library runtime dependency and dependency audit procedure is documented.
 
 ## Phase 2: Platform Macro and Header Compatibility Sweep
 - Actions:
@@ -130,6 +136,7 @@ Port QtWeb from Qt4.8.x to Qt5 (with QtWebKit), keeping behavior as close as pos
 - Actions:
   - Run manual smoke tests and fix regressions.
   - Validate settings persistence keys remain compatible.
+  - Run dependency audit on produced artifacts and reduce avoidable runtime dependencies.
 - Test focus areas:
   - Single-instance behavior and URL handoff.
   - Tab creation rules (current tab/new tab/new window).
@@ -140,6 +147,7 @@ Port QtWeb from Qt4.8.x to Qt5 (with QtWebKit), keeping behavior as close as pos
   - Bookmark/history/password dialogs.
 - Exit criteria:
   - Core workflows function on Qt5 build with no critical regressions.
+  - Runtime dependency set is minimized and documented (including justified unavoidable system dependencies).
 
 ## Phase 7: Cleanup and Hardening
 - Actions:
@@ -163,9 +171,12 @@ Port QtWeb from Qt4.8.x to Qt5 (with QtWebKit), keeping behavior as close as pos
 - Highest risk area is `webview/webpage/tabwidget` behavior changes.
 - `QSettings` key naming must remain stable to preserve user data compatibility.
 - `build.sh` is legacy-Qt4 specific; avoid mixing Qt5 flow into that script.
+- Over-aggressive dependency stripping can break runtime features (for example TLS/certificates, platform integration, and rendering paths); changes need smoke coverage.
+- Building Qt5 statically with QtWebKit while keeping runtime dependencies minimal requires explicit ICU strategy (prefer static ICU linkage in the Qt5 toolchain path).
 
 ## Immediate Next Tasks (start now)
 - Update `src/QtWeb.pro` with Qt version conditionals for module lists.
 - Add `build-qt5.sh` with qmake/make path.
+- Define portability/dependency gates for Qt5 outputs (what is allowed vs disallowed at runtime).
 - Apply mechanical macro replacements (`Q_WS_*` -> `Q_OS_*`) in core files.
 - Migrate `Qt::escape`, `qVariantValue`, `storageLocation`, `queryItems` in first pass.
