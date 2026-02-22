@@ -1,0 +1,29 @@
+--- a/qtwebkit/Source/JavaScriptCore/API/JSStringRef.cpp
++++ b/qtwebkit/Source/JavaScriptCore/API/JSStringRef.cpp
+@@ -37,7 +37,7 @@
+ JSStringRef JSStringCreateWithCharacters(const JSChar* chars, size_t numChars)
+ {
+     initializeThreading();
+-    return OpaqueJSString::create(chars, numChars).leakRef();
++    return OpaqueJSString::create(reinterpret_cast<const UChar*>(chars), numChars).leakRef();
+ }
+ 
+ JSStringRef JSStringCreateWithUTF8CString(const char* string)
+@@ -62,7 +62,7 @@
+ JSStringRef JSStringCreateWithCharactersNoCopy(const JSChar* chars, size_t numChars)
+ {
+     initializeThreading();
+-    return OpaqueJSString::create(StringImpl::createWithoutCopying(chars, numChars, WTF::DoesNotHaveTerminatingNullCharacter)).leakRef();
++    return OpaqueJSString::create(StringImpl::createWithoutCopying(reinterpret_cast<const UChar*>(chars), numChars, WTF::DoesNotHaveTerminatingNullCharacter)).leakRef();
+ }
+ 
+ JSStringRef JSStringRetain(JSStringRef string)
+@@ -83,7 +83,7 @@
+ 
+ const JSChar* JSStringGetCharactersPtr(JSStringRef string)
+ {
+-    return string->characters();
++    return reinterpret_cast<const JSChar*>(string->characters());
+ }
+ 
+ size_t JSStringGetMaximumUTF8CStringSize(JSStringRef string)
