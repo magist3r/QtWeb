@@ -33,6 +33,7 @@ This guide documents QtWeb-specific architecture, constraints, and risk areas.
 ## Build and Tooling Reality
 - Primary build system is qmake (Qt4-era), not CMake.
 - The custom Qt build phase exists intentionally to produce static binaries for maximum portability and a small distributable footprint.
+- For Qt5 migration work, portability means both static linking and minimizing non-essential runtime dependencies.
 - Typical flow:
   - Ensure Qt sources are extracted into `src/qt` (`src/qt/readme.txt`).
   - Optionally run `./get-src.sh` (legacy URLs may be unavailable today).
@@ -60,6 +61,7 @@ This guide documents QtWeb-specific architecture, constraints, and risk areas.
 - Preserve existing Qt4 signal/slot style in nearby code unless you are doing a deliberate full migration.
 - Verify `QSettings` key names carefully; key drift causes silent behavior regressions.
 - Respect singleton/service initialization ordering in `BrowserApplication`.
+- Avoid introducing new runtime dependencies unless required; if unavoidable, document and justify them in migration docs.
 - For browser behavior changes, verify at least:
   - New tab/new window behavior.
   - Session restore.
@@ -93,4 +95,5 @@ This guide documents QtWeb-specific architecture, constraints, and risk areas.
 - No accidental settings-key renames.
 - No new ownership leaks in long-lived managers.
 - No regressions in tab/session/network behavior.
+- For Qt5/static toolchain work, verify produced artifacts do not gain avoidable runtime dependencies (for example via `ldd`) and document any unavoidable ones.
 - Keep platform-specific code paths (`Q_WS_WIN`, old mac/linux branches) compiling when touched.
