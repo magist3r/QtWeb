@@ -19,9 +19,20 @@ cd smoke-tests/qtwebkit-smoke
 ./smoke-build-docker.sh
 ```
 
+Debug build:
+
+```bash
+cd smoke-tests/qtwebkit-smoke
+./smoke-build-docker.sh --debug
+```
+
 Output binary:
 
-`smoke-tests/qtwebkit-smoke/build-docker/qtwebkit-smoke`
+`smoke-tests/qtwebkit-smoke/build-docker-release/qtwebkit-smoke`
+
+Debug output binary:
+
+`smoke-tests/qtwebkit-smoke/build-docker-debug/qtwebkit-smoke`
 
 ## Notes
 
