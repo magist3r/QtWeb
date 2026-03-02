@@ -15,7 +15,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gperf \
     # libdbus-1-dev \
     libglib2.0-dev \
-    libicu-dev \
     # libsqlite3-dev \
     libssl-dev \
     libx11-dev \
