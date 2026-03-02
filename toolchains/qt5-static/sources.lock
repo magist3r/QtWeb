@@ -14,3 +14,8 @@ LOCK_QT5_WEBKIT_FILE="qtwebkit-opensource-src-5.5.1.tar.gz"
 LOCK_QT5_WEBKIT_SRC_URL="https://download.qt.io/new_archive/qt/5.5/5.5.1/submodules/qtwebkit-opensource-src-5.5.1.tar.gz"
 LOCK_QT5_WEBKIT_SHA256="d7776b4f76aae5a495cf16879fed5fd8370342a33116d8f41c30ab4ffd0b9ffd"
 LOCK_QT5_WEBKIT_MD5="67ebccfbcd2bbb7eb24c8af6467a55dd"
+
+LOCK_ICU_SRC_FILE="icu4c-52_1-src.tgz"
+LOCK_ICU_SRC_URL="https://download.qt.io/development_releases/prebuilt/icu/src/icu4c-52_1-src.tgz"
+LOCK_ICU_SRC_SHA256="2f4d5e68d4698e87759dbdc1a586d053d96935787f79961d192c477b029d8092"
+LOCK_ICU_SRC_MD5="9e96ed4c1d99c0d14ac03c140f9f346c"
