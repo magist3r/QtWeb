@@ -7,8 +7,7 @@ can compile and link a `QWebView` application.
 
 - `qtwebkit-smoke.pro`: qmake project
 - `main.cpp`: minimal `QWebView` app
-- `smoke-build.sh`: local host build (uses a qmake `qt.conf` shim)
-- `smoke-build-docker.sh`: recommended build in the same Docker environment as `build-qt5-static.sh`
+- `smoke-build-docker.sh`: build in the same Docker environment as `build-qt5-static.sh`
 
 ## Build
 
@@ -36,8 +35,7 @@ Debug output binary:
 
 ## Notes
 
-- This Qt artifact is configured around `/workspace/...` paths from container
-  builds, so host-only linking may fail unless the host has matching library
-  layout/dependencies.
+- Docker build is required because the smoke app must link against the SSL
+  libraries bundled with the container toolchain.
 - The current static plugin import includes `xcb` platform support. Running
   headless with `-platform offscreen` is not available with this build.

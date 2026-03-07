@@ -81,7 +81,7 @@ Implemented now:
 
 Planned (not yet enforced by scripts):
 - QtWebKit smoke test binary compile/link gate against produced toolchain.
-- Digest-pinned container base image (currently tag-pinned `ubuntu:18.04`).
+- Digest-pinned container base image (currently tag-pinned `ubuntu:16.04`).
 
 ## Run Examples
 Default run:

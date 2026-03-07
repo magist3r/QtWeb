@@ -4,6 +4,11 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 
+fail() {
+    echo "error: $*" >&2
+    exit 1
+}
+
 IMAGE_TAG="${IMAGE_TAG:-qtweb-qt5-static-poc:5.5.1}"
 JOBS="${JOBS:-$(nproc 2>/dev/null || echo 4)}"
 BUILD_TYPE="release"
@@ -15,8 +20,7 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         *)
-            echo "error: unknown argument: $1" >&2
-            exit 1
+            fail "unknown argument: $1"
             ;;
     esac
 done
@@ -32,8 +36,7 @@ case "$BUILD_TYPE" in
         fi
         ;;
     *)
-        echo "error: BUILD_TYPE must be release or debug, got: ${BUILD_TYPE}" >&2
-        exit 1
+        fail "BUILD_TYPE must be release or debug, got: ${BUILD_TYPE}"
         ;;
 esac
 
@@ -54,5 +57,6 @@ docker run --rm \
         cd "${BUILD_DIR_IN_CONTAINER}"
         "${QT_PREFIX_IN_CONTAINER}/bin/qmake" ../qtwebkit-smoke.pro ${QMAKE_CONFIG_ARGS}
         make -j"${JOBS}"
+        cp /etc/ssl/certs/ca-certificates.crt ./ca-certificates.crt
         echo "built: /workspace/${BUILD_DIR_IN_CONTAINER}/qtwebkit-smoke"
     '
