@@ -14,6 +14,8 @@ WORK_DIR="${OUTPUT_DIR}/build"
 LOG_DIR="${OUTPUT_DIR}/logs"
 INSTALL_DIR="${OUTPUT_DIR}/install"
 ICU_INSTALL_DIR="${OUTPUT_DIR}/icu-static"
+OPENSSL_INCLUDE_DIR="/usr/include"
+OPENSSL_LIB_DIR="/usr/lib/x86_64-linux-gnu"
 MANIFEST_FILE="${OUTPUT_DIR}/build-manifest.txt"
 QT_SRC_DIR="${WORK_DIR}/qt-everywhere-opensource-src-${QT_VERSION}"
 PATCH_DIR="/workspace/toolchains/qt5-static/patches"
@@ -58,9 +60,10 @@ CONFIGURE_FLAGS=(
     -qt-zlib
     -qt-libpng
     -qt-libjpeg
-    -no-openssl
     -I "${ICU_INSTALL_DIR}/include"
     -L "${ICU_INSTALL_DIR}/lib"
+    -L "${OPENSSL_LIB_DIR}"
+    -openssl-linked
     "${MIN_DEP_CONFIGURE_FLAGS[@]}"
 )
 
@@ -85,12 +88,12 @@ apply_patches() {
     local patch_file
 
     if [[ ! -d "$PATCH_DIR" ]]; then
-        return 1
+        return 0
     fi
 
     mapfile -t patch_files < <(find "$PATCH_DIR" -maxdepth 1 -type f -name '*.patch' | sort)
     if [[ "${#patch_files[@]}" -eq 0 ]]; then
-        return 1
+        return 0
     fi
 
     for patch_file in "${patch_files[@]}"; do
@@ -159,11 +162,37 @@ build_static_icu() {
     rm -rf "$extract_dir"
 }
 
-configure_icu_env_for_qt() {
+configure_build_env_for_qt() {
     require_dir "$ICU_INSTALL_DIR"
+    echo "==> verify system OpenSSL static archives"
+    require_file "${OPENSSL_INCLUDE_DIR}/openssl/ssl.h"
+    require_file "${OPENSSL_LIB_DIR}/libssl.a"
+    require_file "${OPENSSL_LIB_DIR}/libcrypto.a"
     export PKG_CONFIG_PATH="${ICU_INSTALL_DIR}/lib/pkgconfig${PKG_CONFIG_PATH:+:${PKG_CONFIG_PATH}}"
     export CPPFLAGS="-I${ICU_INSTALL_DIR}/include${CPPFLAGS:+ ${CPPFLAGS}}"
-    export LDFLAGS="-L${ICU_INSTALL_DIR}/lib${LDFLAGS:+ ${LDFLAGS}}"
+    export LDFLAGS="-L${OPENSSL_LIB_DIR} -L${ICU_INSTALL_DIR}/lib${LDFLAGS:+ ${LDFLAGS}}"
+    export OPENSSL_LIBS="-Wl,-Bstatic ${OPENSSL_LIB_DIR}/libssl.a ${OPENSSL_LIB_DIR}/libcrypto.a -Wl,-Bdynamic -ldl -lpthread -lz"
+}
+
+sync_installed_qmake_metadata() {
+    local qtbase_build_dir="${QT_SRC_DIR}/qtbase"
+    local build_qconfig="${qtbase_build_dir}/mkspecs/qconfig.pri"
+    local build_qmodule="${qtbase_build_dir}/mkspecs/qmodule.pri"
+    local build_network_prl="${qtbase_build_dir}/lib/libQt5Network.prl"
+    local install_qconfig="${INSTALL_DIR}/mkspecs/qconfig.pri"
+    local install_qmodule="${INSTALL_DIR}/mkspecs/qmodule.pri"
+    local install_network_prl="${INSTALL_DIR}/lib/libQt5Network.prl"
+    local install_lib_expr='$$[QT_INSTALL_LIBS]'
+
+    require_file "$build_qconfig"
+    require_file "$build_qmodule"
+    require_file "$build_network_prl"
+    require_dir "${INSTALL_DIR}/mkspecs"
+    require_dir "${INSTALL_DIR}/lib"
+
+    cp "$build_qconfig" "$install_qconfig"
+    cp "$build_qmodule" "$install_qmodule"
+    sed "s|${qtbase_build_dir}/lib|${install_lib_expr}|g" "$build_network_prl" > "$install_network_prl"
 }
 
 mkdir -p "$WORK_DIR" "$LOG_DIR"
@@ -178,7 +207,7 @@ case "${CLEAN,,}" in
 esac
 
 build_static_icu
-configure_icu_env_for_qt
+configure_build_env_for_qt
 
 if [[ ! -d "$QT_SRC_DIR" ]]; then
     tar -xf "$QT_SRC_ARCHIVE" -C "$WORK_DIR"
@@ -200,12 +229,8 @@ fi
 
 pushd "$QT_SRC_DIR" >/dev/null
 log_verify "configure minimal-deps flags: ${MIN_DEP_CONFIGURE_FLAGS[*]}"
+apply_patches
 configure_qt "${LOG_DIR}/configure.log"
-
-if webkit_disabled_by_static_notice "${LOG_DIR}/configure.log" && apply_patches; then
-    configure_qt "${LOG_DIR}/configure-retry.log"
-    cp "${LOG_DIR}/configure-retry.log" "${LOG_DIR}/configure.log"
-fi
 
 if webkit_disabled_by_static_notice "${LOG_DIR}/configure.log"; then
     log_verify "warning: configure still reports static WebKit disable notice; continuing to build and validating via installed libraries"
@@ -215,6 +240,7 @@ echo "==> build Qt (make -j${JOBS})"
 make -j"$JOBS" >"${LOG_DIR}/build.log" 2>&1
 echo "==> install Qt"
 make install >"${LOG_DIR}/install.log" 2>&1
+sync_installed_qmake_metadata
 popd >/dev/null
 
 QMAKE_BIN="${INSTALL_DIR}/bin/qmake"
@@ -252,6 +278,10 @@ required_icu_libs=(
     "libicui18n.a"
     "libicudata.a"
 )
+required_ssl_libs=(
+    "libssl.a"
+    "libcrypto.a"
+)
 
 missing=0
 for lib in "${required_libs[@]}"; do
@@ -267,6 +297,21 @@ for lib in "${required_icu_libs[@]}"; do
         missing=1
     fi
 done
+for lib in "${required_ssl_libs[@]}"; do
+    if [[ ! -f "${OPENSSL_LIB_DIR}/${lib}" ]]; then
+        log_verify "missing: ${OPENSSL_LIB_DIR}/${lib}"
+        missing=1
+    fi
+done
+if ! grep -q 'openssl-linked' "${INSTALL_DIR}/mkspecs/qconfig.pri"; then
+    log_verify "missing openssl-linked in: ${INSTALL_DIR}/mkspecs/qconfig.pri"
+    missing=1
+fi
+if ! grep -q 'libssl\.a' "${INSTALL_DIR}/lib/libQt5Network.prl" \
+    || ! grep -q 'libcrypto\.a' "${INSTALL_DIR}/lib/libQt5Network.prl"; then
+    log_verify "missing static OpenSSL archives in: ${INSTALL_DIR}/lib/libQt5Network.prl"
+    missing=1
+fi
 [[ "$missing" -eq 0 ]] || fail "verification failed: required static libraries are missing"
 
 {
@@ -289,8 +334,12 @@ done
     echo "qt_src_md5=${QT_SRC_MD5:-}"
     echo "qtwebkit_md5=${QTWEBKIT_MD5:-}"
     echo "icu_src_md5=${ICU_SRC_MD5:-}"
+    echo "openssl_source=system-package"
+    echo "openssl_include_dir=${OPENSSL_INCLUDE_DIR}"
+    echo "openssl_lib_dir=${OPENSSL_LIB_DIR}"
     echo "verified_libs=${required_libs[*]}"
     echo "verified_icu_libs=${required_icu_libs[*]}"
+    echo "verified_ssl_libs=${required_ssl_libs[*]}"
 } > "$MANIFEST_FILE"
 
 log_verify "verification passed"

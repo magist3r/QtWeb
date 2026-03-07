@@ -1,5 +1,5 @@
 # Base image is version-tagged; switch to a digest-pinned reference when refreshed online.
-FROM ubuntu:18.04
+FROM ubuntu:16.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV LANG=C.UTF-8

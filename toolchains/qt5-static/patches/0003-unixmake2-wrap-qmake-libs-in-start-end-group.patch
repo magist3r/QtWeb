@@ -1,0 +1,15 @@
+diff --git a/qtbase/qmake/generators/unix/unixmake2.cpp b/qtbase/qmake/generators/unix/unixmake2.cpp
+index 3e2b4f2..a11f44e 100644
+--- a/qtbase/qmake/generators/unix/unixmake2.cpp
++++ b/qtbase/qmake/generators/unix/unixmake2.cpp
+@@ -188,8 +188,10 @@ UnixMakefileGenerator::writeMakeParts(QTextStream &t)
+     if(!project->isActiveConfig("staticlib")) {
+         t << "LINK          = " << var("QMAKE_LINK") << endl;
+         t << "LFLAGS        = " << var("QMAKE_LFLAGS") << endl;
+-        t << "LIBS          = $(SUBLIBS) " << fixLibFlags("QMAKE_LIBS").join(' ') << ' '
+-                                           << fixLibFlags("QMAKE_LIBS_PRIVATE").join(' ') << endl;
++        t << "LIBS          = -Wl,--start-group "
++                               << "$(SUBLIBS) " << fixLibFlags("QMAKE_LIBS").join(' ') << ' '
++                               << fixLibFlags("QMAKE_LIBS_PRIVATE").join(' ')
++                               << " -Wl,--end-group" << endl;
+     }
