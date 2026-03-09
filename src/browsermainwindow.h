@@ -76,6 +76,7 @@ public:
     void emptyCache();
     void setLoadIcon();
     void checkToolBarButtons();
+    void setTabStop(QWidget *addrLineEdit);
 
 public slots:
     void loadPage(const QString &url);
@@ -157,6 +158,7 @@ private slots:
     void slotOpenActionUrl(QAction *action);
     void slotShowWindow();
     void slotSwapFocus();
+    void slotFocusCurrentTab();
     void slotAboutToShowPrivacyMenu();
     void slotAboutToShowToolsMenu();
     void slotAboutToShowCompatibility();
@@ -285,4 +287,3 @@ private:
 };
 
 #endif // BROWSERMAINWINDOW_H
-

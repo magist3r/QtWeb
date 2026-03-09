@@ -72,6 +72,7 @@ WebView::WebView(QWidget* parent)
     , m_gestureStarted(false)
     , m_encoding_in_progress(false)
     , m_ssl_errors_detected(false)
+    , m_linkUnderCursor(false)
     , m_ftp(nullptr)
     , m_ftpFile(nullptr)
     , m_ftpProgressDialog(new QProgressDialog(this))
@@ -93,6 +94,8 @@ WebView::WebView(QWidget* parent)
 
     connect(this, SIGNAL(linkClicked(const QUrl&)),
             this, SLOT(clickedUrl(const QUrl &)));
+    connect(page(), SIGNAL(linkHovered(const QString &, const QString &, const QString &)),
+            this, SLOT(linkHover(const QString &, const QString &, const QString &)));
 
     connect(page(), SIGNAL(downloadRequested(const QNetworkRequest &)),
             this, SLOT(downloadRequested(const QNetworkRequest &)));
@@ -238,6 +241,11 @@ void WebView::adBlock()
         NetworkAccessManager* n = BrowserApplication::networkAccessManager();
         n->blockAd( text );
     }
+}
+
+void WebView::linkHover(const QString &link, const QString &title, const QString &textContent)
+{
+    m_linkUnderCursor = !(link.isEmpty() && title.isEmpty() && textContent.isEmpty());
 }
 
 
@@ -588,7 +596,7 @@ void WebView::mouseReleaseEvent(QMouseEvent *event)
         }
     }
 
-    if (/*!event->isAccepted() &&*/ (m_page->m_pressedButtons & Qt::MidButton)) 
+    if (/*!event->isAccepted() &&*/ !m_linkUnderCursor && (m_page->m_pressedButtons & Qt::MidButton))
     {
         QUrl url(QApplication::clipboard()->text(QClipboard::Selection));
         if (!url.isEmpty() && url.isValid() && !url.scheme().isEmpty()) 
