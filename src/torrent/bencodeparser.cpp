@@ -1,12 +1,22 @@
 /****************************************************************************
 **
-** Copyright (C) 2012 Digia Plc and/or its subsidiary(-ies).
-** Contact: http://www.qt-project.org/legal
+** Copyright (C) 2016 The Qt Company Ltd.
+** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the examples of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:BSD$
-** You may use this file under the terms of the BSD license as follows:
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
+**
+** BSD License Usage
+** Alternatively, you may use this file under the terms of the BSD license
+** as follows:
 **
 ** "Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions are
@@ -17,8 +27,8 @@
 **     notice, this list of conditions and the following disclaimer in
 **     the documentation and/or other materials provided with the
 **     distribution.
-**   * Neither the name of Digia Plc and its Subsidiary(-ies) nor the names
-**     of its contributors may be used to endorse or promote products derived
+**   * Neither the name of The Qt Company Ltd nor the names of its
+**     contributors may be used to endorse or promote products derived
 **     from this software without specific prior written permission.
 **
 **
@@ -81,26 +91,26 @@ bool BencodeParser::getByteString(QByteArray *byteString)
     const int contentSize = content.size();
     int size = -1;
     do {
-    char c = content.at(index);
-    if (c < '0' || c > '9') {
-        if (size == -1)
-        return false;
-        if (c != ':') {
-        errString = QString("Unexpected character at pos %1: %2")
-            .arg(index).arg(c);
-        return false;
+        char c = content.at(index);
+        if (c < '0' || c > '9') {
+            if (size == -1)
+                return false;
+            if (c != ':') {
+                errString = QString("Unexpected character at pos %1: %2")
+                        .arg(index).arg(c);
+                return false;
+            }
+            ++index;
+            break;
         }
-        ++index;
-        break;
-    }
-    if (size == -1)
-        size = 0;
-    size *= 10;
-    size += c - '0';
+        if (size == -1)
+            size = 0;
+        size *= 10;
+        size += c - '0';
     } while (++index < contentSize);
 
     if (byteString)
-    *byteString = content.mid(index, size);
+        *byteString = content.mid(index, size);
     index += size;
     return true;
 }
@@ -109,38 +119,38 @@ bool BencodeParser::getInteger(qint64 *integer)
 {
     const int contentSize = content.size();
     if (content.at(index) != 'i')
-    return false;
+        return false;
 
     ++index;
     qint64 num = -1;
     bool negative = false;
 
     do {
-    char c = content.at(index);
-    if (c < '0' || c > '9') {
-        if (num == -1) {
-        if (c != '-' || negative)
-            return false;
-        negative = true;
-        continue;
-        } else {
-        if (c != 'e') {
-            errString = QString("Unexpected character at pos %1: %2")
-            .arg(index).arg(c);
-            return false;
+        char c = content.at(index);
+        if (c < '0' || c > '9') {
+            if (num == -1) {
+                if (c != '-' || negative)
+                    return false;
+                negative = true;
+                continue;
+            } else {
+                if (c != 'e') {
+                    errString = QString("Unexpected character at pos %1: %2")
+                            .arg(index).arg(c);
+                    return false;
+                }
+                ++index;
+                break;
+            }
         }
-        ++index;
-        break;
-        }
-    }
-    if (num == -1)
-        num = 0;
-    num *= 10;
-    num += c - '0';
+        if (num == -1)
+            num = 0;
+        num *= 10;
+        num += c - '0';
     } while (++index < contentSize);
 
     if (integer)
-    *integer = negative ? -num : num;
+        *integer = negative ? -num : num;
     return true;
 }
 
@@ -148,38 +158,38 @@ bool BencodeParser::getList(QList<QVariant> *list)
 {
     const int contentSize = content.size();
     if (content.at(index) != 'l')
-    return false;
+        return false;
 
-    QList<QVariant> tmp;    
+    QList<QVariant> tmp;
     ++index;
 
     do {
-    if (content.at(index) == 'e') {
-        ++index;
-        break;
-    }
+        if (content.at(index) == 'e') {
+            ++index;
+            break;
+        }
 
-    qint64 number;
-    QByteArray byteString;
-    QList<QVariant> tmpList;
-    QMap<QByteArray, QVariant> dictionary;
+        qint64 number;
+        QByteArray byteString;
+        QList<QVariant> tmpList;
+        QMap<QByteArray, QVariant> dictionary;
 
-    if (getInteger(&number))
-        tmp << number;
-    else if (getByteString(&byteString))
-        tmp << byteString;
-    else if (getList(&tmpList))
-        tmp << tmpList;
-    else if (getDictionary(&dictionary))
-        tmp << QVariant::fromValue<QMap<QByteArray, QVariant> >(dictionary);
-    else {
-        errString = QString("error at index %1").arg(index);
-        return false;
-    }
+        if (getInteger(&number))
+            tmp << number;
+        else if (getByteString(&byteString))
+            tmp << byteString;
+        else if (getList(&tmpList))
+            tmp << tmpList;
+        else if (getDictionary(&dictionary))
+            tmp << QVariant::fromValue<QMap<QByteArray, QVariant> >(dictionary);
+        else {
+            errString = QString("error at index %1").arg(index);
+            return false;
+        }
     } while (index < contentSize);
 
     if (list)
-    *list = tmp;
+        *list = tmp;
     return true;
 }
 
@@ -187,48 +197,48 @@ bool BencodeParser::getDictionary(QMap<QByteArray, QVariant> *dictionary)
 {
     const int contentSize = content.size();
     if (content.at(index) != 'd')
-    return false;
+        return false;
 
-    QMap<QByteArray, QVariant> tmp;    
+    QMap<QByteArray, QVariant> tmp;
     ++index;
 
     do {
-    if (content.at(index) == 'e') {
-        ++index;
-        break;
-    }
+        if (content.at(index) == 'e') {
+            ++index;
+            break;
+        }
 
-    QByteArray key;
-    if (!getByteString(&key))
-        break;
+        QByteArray key;
+        if (!getByteString(&key))
+            break;
 
-    if (key == "info")
-      infoStart = index;
+        if (key == "info")
+            infoStart = index;
 
-    qint64 number;
-    QByteArray byteString;
-    QList<QVariant> tmpList;
-    QMap<QByteArray, QVariant> dictionary;
+        qint64 number;
+        QByteArray byteString;
+        QList<QVariant> tmpList;
+        QMap<QByteArray, QVariant> dictionary;
 
-    if (getInteger(&number))
-        tmp.insert(key, number);
-    else if (getByteString(&byteString))
-        tmp.insert(key, byteString);
-    else if (getList(&tmpList))
-        tmp.insert(key, tmpList);
-    else if (getDictionary(&dictionary))
-        tmp.insert(key, QVariant::fromValue<QMap<QByteArray, QVariant> >(dictionary));
-    else {
-        errString = QString("error at index %1").arg(index);
-        return false;
-    }
+        if (getInteger(&number))
+            tmp.insert(key, number);
+        else if (getByteString(&byteString))
+            tmp.insert(key, byteString);
+        else if (getList(&tmpList))
+            tmp.insert(key, tmpList);
+        else if (getDictionary(&dictionary))
+            tmp.insert(key, QVariant::fromValue<QMap<QByteArray, QVariant> >(dictionary));
+        else {
+            errString = QString("error at index %1").arg(index);
+            return false;
+        }
 
-    if (key == "info")
-      infoLength = index - infoStart;
+        if (key == "info")
+            infoLength = index - infoStart;
 
     } while (index < contentSize);
 
     if (dictionary)
-    *dictionary = tmp;
+        *dictionary = tmp;
     return true;
 }
