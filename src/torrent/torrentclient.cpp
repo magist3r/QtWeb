@@ -1,12 +1,22 @@
 /****************************************************************************
 **
-** Copyright (C) 2012 Digia Plc and/or its subsidiary(-ies).
-** Contact: http://www.qt-project.org/legal
+** Copyright (C) 2016 The Qt Company Ltd.
+** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the examples of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:BSD$
-** You may use this file under the terms of the BSD license as follows:
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
+**
+** BSD License Usage
+** Alternatively, you may use this file under the terms of the BSD license
+** as follows:
 **
 ** "Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions are
@@ -17,8 +27,8 @@
 **     notice, this list of conditions and the following disclaimer in
 **     the documentation and/or other materials provided with the
 **     distribution.
-**   * Neither the name of Digia Plc and its Subsidiary(-ies) nor the names
-**     of its contributors may be used to endorse or promote products derived
+**   * Neither the name of The Qt Company Ltd nor the names of its
+**     contributors may be used to endorse or promote products derived
 **     from this software without specific prior written permission.
 **
 **
@@ -50,6 +60,47 @@
 #include <QtCore>
 #include <QNetworkInterface>
 
+#include <algorithm>
+
+#if QT_VERSION < 0x050700
+template <typename T>
+static const T &qAsConst(const T &value)
+{
+    return value;
+}
+#endif
+
+namespace {
+void ensureRandomSeeded()
+{
+    static bool seeded = false;
+    if (!seeded) {
+        seeded = true;
+        qsrand(QDateTime::currentDateTimeUtc().toTime_t());
+    }
+}
+
+int randomBounded(int upper)
+{
+    if (upper <= 0)
+        return 0;
+
+    ensureRandomSeeded();
+    return qrand() % upper;
+}
+
+uint randomBits()
+{
+    ensureRandomSeeded();
+    return uint(qrand()) ^ (uint(qrand()) << 16);
+}
+
+qint64 currentEpochSeconds()
+{
+    return QDateTime::currentDateTimeUtc().toTime_t();
+}
+}
+
 // These constants could also be configurable by the user.
 static const int ServerMinPort = 6881;
 static const int ServerMaxPort = /* 6889 */ 7000;
@@ -62,15 +113,13 @@ static const int RateControlTimerDelay = 1000;
 static const int MinimumTimeBeforeRevisit = 30;
 static const int MaxUploads = 4;
 static const int UploadScheduleInterval = 10000;
-static const int EndGamePieces = 5;
 
-class TorrentPiece {
-public:
-    int index;
-    int length;
+struct TorrentPiece {
     QBitArray completedBlocks;
     QBitArray requestedBlocks;
-    bool inProgress;
+    int index = 0;
+    int length = 0;
+    bool inProgress = false;
 };
 
 class TorrentClientPrivate
@@ -216,7 +265,7 @@ void TorrentClientPrivate::callPeerConnector()
 {
     if (!connectingToClients) {
         connectingToClients = true;
-        QTimer::singleShot(10000, q, SLOT(connectToPeers()));
+        QTimer::singleShot(10000, q, &TorrentClient::connectToPeers);
     }
 }
 
@@ -224,22 +273,22 @@ TorrentClient::TorrentClient(QObject *parent)
     : QObject(parent), d(new TorrentClientPrivate(this))
 {
     // Connect the file manager
-    connect(&d->fileManager, SIGNAL(dataRead(int,int,int,QByteArray)),
-            this, SLOT(sendToPeer(int,int,int,QByteArray)));
-    connect(&d->fileManager, SIGNAL(verificationProgress(int)),
-            this, SLOT(updateProgress(int)));
-    connect(&d->fileManager, SIGNAL(verificationDone()),
-            this, SLOT(fullVerificationDone()));
-    connect(&d->fileManager, SIGNAL(pieceVerified(int,bool)),
-            this, SLOT(pieceVerified(int,bool)));
-    connect(&d->fileManager, SIGNAL(error()),
-            this, SLOT(handleFileError()));
+    connect(&d->fileManager, &FileManager::dataRead,
+            this, &TorrentClient::sendToPeer);
+    connect(&d->fileManager, &FileManager::verificationProgress,
+            this, &TorrentClient::updateProgress);
+    connect(&d->fileManager, &FileManager::verificationDone,
+            this, &TorrentClient::fullVerificationDone);
+    connect(&d->fileManager, &FileManager::pieceVerified,
+            this, &TorrentClient::pieceVerified);
+    connect(&d->fileManager, &FileManager::error,
+            this, &TorrentClient::handleFileError);
 
     // Connect the tracker client
-    connect(&d->trackerClient, SIGNAL(peerListUpdated(QList<TorrentPeer>)),
-            this, SLOT(addToPeerList(QList<TorrentPeer>)));
-    connect(&d->trackerClient, SIGNAL(stopped()),
-            this, SIGNAL(stopped()));
+    connect(&d->trackerClient, &TrackerClient::peerListUpdated,
+            this, &TorrentClient::addToPeerList);
+    connect(&d->trackerClient, &TrackerClient::stopped,
+            this, &TorrentClient::stopped);
 }
 
 TorrentClient::~TorrentClient()
@@ -372,7 +421,7 @@ qint64 TorrentClient::uploadedBytes() const
 int TorrentClient::connectedPeerCount() const
 {
     int tmp = 0;
-    foreach (PeerWireClient *client, d->connections) {
+    for (PeerWireClient *client : d->connections) {
         if (client->state() == QAbstractSocket::ConnectedState)
             ++tmp;
     }
@@ -382,7 +431,7 @@ int TorrentClient::connectedPeerCount() const
 int TorrentClient::seedCount() const
 {
     int tmp = 0;
-    foreach (PeerWireClient *client, d->connections) {
+    for (PeerWireClient *client : d->connections) {
         if (client->availablePieces().count(true) == d->pieceCount)
             ++tmp;
     }
@@ -453,7 +502,7 @@ void TorrentClient::stop()
     }
 
     // Abort all existing connections
-    foreach (PeerWireClient *client, d->connections) {
+    for (PeerWireClient *client : qAsConst(d->connections)) {
         RateController::instance()->removeSocket(client);
         ConnectionManager::instance()->removeConnection(client);
         client->abort();
@@ -476,7 +525,7 @@ void TorrentClient::setPaused(bool paused)
         // connections to 0. Keep the list of peers, so we can quickly
         // resume later.
         d->setState(Paused);
-        foreach (PeerWireClient *client, d->connections)
+        for (PeerWireClient *client : qAsConst(d->connections))
             client->abort();
         d->connections.clear();
         TorrentServer::instance()->removeClient(this);
@@ -611,7 +660,7 @@ void TorrentClient::pieceVerified(int pieceIndex, bool ok)
     }
 
     // Update the peer list so we know who's still interesting.
-    foreach (TorrentPeer *peer, d->peers) {
+    for (TorrentPeer *peer : qAsConst(d->peers)) {
         if (!peer->interesting)
             continue;
         bool interesting = false;
@@ -631,7 +680,7 @@ void TorrentClient::pieceVerified(int pieceIndex, bool ok)
     d->incompletePieces.clearBit(pieceIndex);
 
     // Notify connected peers.
-    foreach (PeerWireClient *client, d->connections) {
+    for (PeerWireClient *client : qAsConst(d->connections)) {
         if (client->state() == QAbstractSocket::ConnectedState
             && !client->availablePieces().testBit(pieceIndex)) {
             client->sendPieceNotification(pieceIndex);
@@ -681,7 +730,7 @@ void TorrentClient::connectToPeers()
 
     // Start as many connections as we can
     while (!weighedPeers.isEmpty() && ConnectionManager::instance()->canAddConnection()
-           && (qrand() % (ConnectionManager::instance()->maxConnections() / 2))) {
+           && randomBounded(ConnectionManager::instance()->maxConnections() / 2)) {
         PeerWireClient *client = new PeerWireClient(ConnectionManager::instance()->clientId(), this);
         RateController::instance()->addSocket(client);
         ConnectionManager::instance()->addConnection(client);
@@ -690,9 +739,9 @@ void TorrentClient::connectToPeers()
         d->connections << client;
 
         // Pick a random peer from the list of weighed peers.
-        TorrentPeer *peer = weighedPeers.takeAt(qrand() % weighedPeers.size());
+        TorrentPeer *peer = weighedPeers.takeAt(randomBounded(weighedPeers.size()));
         weighedPeers.removeAll(peer);
-        peer->connectStart = QDateTime::currentDateTime().toTime_t();
+        peer->connectStart = currentEpochSeconds();
         peer->lastVisited = peer->connectStart;
 
         // Connect to the peer.
@@ -706,12 +755,12 @@ QList<TorrentPeer *> TorrentClient::weighedFreePeers() const
     QList<TorrentPeer *> weighedPeers;
 
     // Generate a list of peers that we want to connect to.
-    uint now = QDateTime::currentDateTime().toTime_t();
+    qint64 now = currentEpochSeconds();
     QList<TorrentPeer *> freePeers;
     QMap<QString, int> connectionsPerPeer;
-    foreach (TorrentPeer *peer, d->peers) {
+    for (TorrentPeer *peer : qAsConst(d->peers)) {
         bool busy = false;
-        foreach (PeerWireClient *client, d->connections) {
+        for (PeerWireClient *client : qAsConst(d->connections)) {
             if (client->state() == PeerWireClient::ConnectedState
                 && client->peerAddress() == peer->address
                 && client->peerPort() == peer->port) {
@@ -731,7 +780,7 @@ QList<TorrentPeer *> TorrentClient::weighedFreePeers() const
 
     // Assign points based on connection speed and pieces available.
     QList<QPair<int, TorrentPeer *> > points;
-    foreach (TorrentPeer *peer, freePeers) {
+    for (TorrentPeer *peer : qAsConst(freePeers)) {
         int tmp = 0;
         if (peer->interesting) {
             tmp += peer->numCompletedPieces;
@@ -747,14 +796,14 @@ QList<TorrentPeer *> TorrentClient::weighedFreePeers() const
         }
         points << QPair<int, TorrentPeer *>(tmp, peer);
     }
-    qSort(points);
+    std::sort(points.begin(), points.end());
 
     // Minimize the list so the point difference is never more than 1.
     typedef QPair<int,TorrentPeer*> PointPair;
     QMultiMap<int, TorrentPeer *> pointMap;
     int lowestScore = 0;
     int lastIndex = 0;
-    foreach (PointPair point, points) {
+    for (const PointPair &point : qAsConst(points)) {
         if (point.first > lowestScore) {
             lowestScore = point.first;
             ++lastIndex;
@@ -805,7 +854,7 @@ void TorrentClient::setupOutgoingConnection()
     PeerWireClient *client = qobject_cast<PeerWireClient *>(sender());
 
     // Update connection statistics.
-    foreach (TorrentPeer *peer, d->peers) {
+    for (TorrentPeer *peer : qAsConst(d->peers)) {
         if (peer->port == client->peerPort() && peer->address == client->peerAddress()) {
             peer->connectTime = peer->lastVisited - peer->connectStart;
             break;
@@ -829,26 +878,26 @@ void TorrentClient::setupOutgoingConnection()
 
 void TorrentClient::initializeConnection(PeerWireClient *client)
 {
-    connect(client, SIGNAL(connected()),
-            this, SLOT(setupOutgoingConnection()));
-    connect(client, SIGNAL(disconnected()),
-            this, SLOT(removeClient()));
+    connect(client, &PeerWireClient::connected,
+            this, &TorrentClient::setupOutgoingConnection);
+    connect(client, &PeerWireClient::disconnected,
+            this, &TorrentClient::removeClient);
     connect(client, SIGNAL(error(QAbstractSocket::SocketError)),
             this, SLOT(removeClient()));
-    connect(client, SIGNAL(piecesAvailable(QBitArray)),
-            this, SLOT(peerPiecesAvailable(QBitArray)));
-    connect(client, SIGNAL(blockRequested(int,int,int)),
-            this, SLOT(peerRequestsBlock(int,int,int)));
-    connect(client, SIGNAL(blockReceived(int,int,QByteArray)),
-            this, SLOT(blockReceived(int,int,QByteArray)));
-    connect(client, SIGNAL(choked()),
-            this, SLOT(peerChoked()));
-    connect(client, SIGNAL(unchoked()),
-            this, SLOT(peerUnchoked()));
-    connect(client, SIGNAL(bytesWritten(qint64)),
-            this, SLOT(peerWireBytesWritten(qint64)));
-    connect(client, SIGNAL(bytesReceived(qint64)),
-            this, SLOT(peerWireBytesReceived(qint64)));
+    connect(client, &PeerWireClient::piecesAvailable,
+            this, &TorrentClient::peerPiecesAvailable);
+    connect(client, &PeerWireClient::blockRequested,
+            this, &TorrentClient::peerRequestsBlock);
+    connect(client, &PeerWireClient::blockReceived,
+            this, &TorrentClient::blockReceived);
+    connect(client, &PeerWireClient::choked,
+            this, &TorrentClient::peerChoked);
+    connect(client, &PeerWireClient::unchoked,
+            this, &TorrentClient::peerUnchoked);
+    connect(client, &PeerWireClient::bytesWritten,
+            this, &TorrentClient::peerWireBytesWritten);
+    connect(client, &PeerWireClient::bytesReceived,
+            this, &TorrentClient::peerWireBytesReceived);
 }
 
 void TorrentClient::removeClient()
@@ -863,8 +912,7 @@ void TorrentClient::removeClient()
     // Remove the client from RateController and all structures.
     RateController::instance()->removeSocket(client);
     d->connections.removeAll(client);
-    QMultiMap<PeerWireClient *, TorrentPiece *>::Iterator it = d->payloads.find(client);
-    while (it != d->payloads.end() && it.key() == client) {
+    for (auto it = d->payloads.find(client); it != d->payloads.end() && it.key() == client; /*erasing*/) {
         TorrentPiece *piece = it.value();
         piece->inProgress = false;
         piece->requestedBlocks.fill(false);
@@ -872,12 +920,16 @@ void TorrentClient::removeClient()
     }
 
     // Remove pending read requests.
-    QMapIterator<int, PeerWireClient *> it2(d->readIds);
-    while (it2.findNext(client))
-        d->readIds.remove(it2.key());
+    for (auto it = d->readIds.begin(), end = d->readIds.end(); it != end; /*erasing*/) {
+        if (it.value() == client)
+            it = d->readIds.erase(it);
+        else
+            ++it;
+    }
 
     // Delete the client later.
-    disconnect(client, SIGNAL(disconnected()), this, SLOT(removeClient()));
+    disconnect(client, &PeerWireClient::disconnected,
+               this, &TorrentClient::removeClient);
     client->deleteLater();
     ConnectionManager::instance()->removeConnection(client);
 
@@ -892,7 +944,7 @@ void TorrentClient::peerPiecesAvailable(const QBitArray &pieces)
     // Find the peer in our list of announced peers. If it's there,
     // then we can use the piece list into to gather statistics that
     // help us decide what peers to connect to.
-    TorrentPeer *peer = 0;
+    TorrentPeer *peer = nullptr;
     QList<TorrentPeer *>::Iterator it = d->peers.begin();
     while (it != d->peers.end()) {
         if ((*it)->address == client->peerAddress() && (*it)->port == client->peerPort()) {
@@ -1020,7 +1072,7 @@ void TorrentClient::blockReceived(int pieceIndex, int begin, const QByteArray &d
     if (blocksLeftForPiece(piece) == 0) {
         // Ask the file manager to verify the newly downloaded piece
         d->fileManager.verifyPiece(piece->index);
-        
+
         // Remove this piece from all payloads
         QMultiMap<PeerWireClient *, TorrentPiece *>::Iterator it = d->payloads.begin();
         while (it != d->payloads.end()) {
@@ -1073,25 +1125,25 @@ void TorrentClient::scheduleUploads()
     // seeding, we sort by upload speed. Seeds are left out; there's
     // no use in unchoking them.
     QList<PeerWireClient *> allClients = d->connections;
-    QMultiMap<int, PeerWireClient *> transferSpeeds;
-    foreach (PeerWireClient *client, allClients) {
+    QVector<QPair<qint64, PeerWireClient *>> transferSpeeds;
+    for (PeerWireClient *client : qAsConst(allClients)) {
         if (client->state() == QAbstractSocket::ConnectedState
             && client->availablePieces().count(true) != d->pieceCount) {
             if (d->state == Seeding) {
-                transferSpeeds.insert(client->uploadSpeed(), client);
+                transferSpeeds.push_back({client->uploadSpeed(), client});
             } else {
-                transferSpeeds.insert(client->downloadSpeed(), client);
+                transferSpeeds.push_back({client->downloadSpeed(), client});
             }
         }
     }
 
+    std::sort(transferSpeeds.begin(), transferSpeeds.end());
+
     // Unchoke the top 'MaxUploads' downloaders (peers that we are
     // uploading to) and choke all others.
     int maxUploaders = MaxUploads;
-    QMapIterator<int, PeerWireClient *> it(transferSpeeds);
-    it.toBack();
-    while (it.hasPrevious()) {
-        PeerWireClient *client = it.previous().value();
+    for (int i = transferSpeeds.size() - 1; i >= 0; --i) {
+        PeerWireClient *client = transferSpeeds.at(i).second;
         bool interested = (client->peerWireState() & PeerWireClient::PeerIsInterested);
 
         if (maxUploaders) {
@@ -1103,7 +1155,7 @@ void TorrentClient::scheduleUploads()
         }
 
         if ((client->peerWireState() & PeerWireClient::ChokingPeer) == 0) {
-            if ((qrand() % 10) == 0) 
+            if (randomBounded(10) == 0)
                 client->abort();
             else
                 client->chokePeer();
@@ -1117,7 +1169,7 @@ void TorrentClient::scheduleUploads()
     // random peer to allow it to compete for a position among the
     // downloaders.  (This is known as an "optimistic unchoke".)
     if (!allClients.isEmpty()) {
-        PeerWireClient *client = allClients[qrand() % allClients.size()];
+        PeerWireClient *client = allClients[randomBounded(allClients.size())];
         if (client->peerWireState() & PeerWireClient::ChokingPeer)
             client->unchokePeer();
     }
@@ -1132,7 +1184,7 @@ void TorrentClient::scheduleDownloads()
 
     // Check what each client is doing, and assign payloads to those
     // who are either idle or done.
-    foreach (PeerWireClient *client, d->connections)
+    for (PeerWireClient *client : qAsConst(d->connections))
         schedulePieceForClient(client);
 }
 
@@ -1150,7 +1202,7 @@ void TorrentClient::schedulePieceForClient(PeerWireClient *client)
     // many blocks have been requested.
     QList<int> currentPieces;
     bool somePiecesAreNotInProgress = false;
-    TorrentPiece *lastPendingPiece = 0;
+    TorrentPiece *lastPendingPiece = nullptr;
     QMultiMap<PeerWireClient *, TorrentPiece *>::Iterator it = d->payloads.find(client);
     while (it != d->payloads.end() && it.key() == client) {
         lastPendingPiece = it.value();
@@ -1170,7 +1222,7 @@ void TorrentClient::schedulePieceForClient(PeerWireClient *client)
     // If all pieces are in progress, but we haven't filled up our
     // block requesting quota, then we need to schedule another piece.
     if (!somePiecesAreNotInProgress || client->incomingBlocks().size() > 0)
-        lastPendingPiece = 0;
+        lastPendingPiece = nullptr;
     TorrentPiece *piece = lastPendingPiece;
 
     // In warmup state, all clients request blocks from the same pieces.
@@ -1178,7 +1230,7 @@ void TorrentClient::schedulePieceForClient(PeerWireClient *client)
         piece = d->payloads.value(client);
         if (!piece) {
             QList<TorrentPiece *> values = d->pendingPieces.values();
-            piece = values.value(qrand() % values.size());
+            piece = values.value(randomBounded(values.size()));
             piece->inProgress = true;
             d->payloads.insert(client, piece);
         }
@@ -1211,7 +1263,7 @@ void TorrentClient::schedulePieceForClient(PeerWireClient *client)
         incompletePiecesAvailableToClient &= client->availablePieces();
 
         // Remove all pieces that this client has already requested.
-        foreach (int i, currentPieces)
+        for (int i : qAsConst(currentPieces))
             incompletePiecesAvailableToClient.clearBit(i);
 
         // Only continue if more pieces can be scheduled. If no pieces
@@ -1235,19 +1287,19 @@ void TorrentClient::schedulePieceForClient(PeerWireClient *client)
             ++it;
         }
         if (!partialPieces.isEmpty())
-            piece = partialPieces.value(qrand() % partialPieces.size());
+            piece = partialPieces.value(randomBounded(partialPieces.size()));
 
         if (!piece) {
             // Pick a random piece 3 out of 4 times; otherwise, pick either
             // one of the most common or the least common pieces available,
             // depending on the state we're in.
             int pieceIndex = 0;
-            if (d->state == WarmingUp || (qrand() & 4) == 0) {
+            if (d->state == WarmingUp || (randomBits() & 4) == 0) {
                 int *occurrences = new int[d->pieceCount];
                 memset(occurrences, 0, d->pieceCount * sizeof(int));
-                
+
                 // Count how many of each piece are available.
-                foreach (PeerWireClient *peer, d->connections) {
+                for (PeerWireClient *peer : qAsConst(d->connections)) {
                     QBitArray peerPieces = peer->availablePieces();
                     int peerPiecesSize = peerPieces.size();
                     for (int i = 0; i < peerPiecesSize; ++i) {
@@ -1282,7 +1334,7 @@ void TorrentClient::schedulePieceForClient(PeerWireClient *client)
                 }
 
                 // Select one piece randomly
-                pieceIndex = piecesReadyForDownload.at(qrand() % piecesReadyForDownload.size());
+                pieceIndex = piecesReadyForDownload.at(randomBounded(piecesReadyForDownload.size()));
                 delete [] occurrences;
             } else {
                 // Make up a list of available piece indices, and pick
@@ -1293,7 +1345,7 @@ void TorrentClient::schedulePieceForClient(PeerWireClient *client)
                     if (incompletePiecesAvailableToClient.testBit(i))
                         values << i;
                 }
-                pieceIndex = values.at(qrand() % values.size());
+                pieceIndex = values.at(randomBounded(values.size()));
             }
 
             // Create a new TorrentPiece and fill in all initial
@@ -1342,10 +1394,10 @@ void TorrentClient::requestMore(PeerWireClient *client)
                          ? MaxBlocksInMultiMode : MaxBlocksInProgress);
     if (numBlocksInProgress == maxInProgress)
         return;
-    
+
     // Starting with the first piece that we're waiting for, request
     // blocks until the quota is filled up.
-    foreach (TorrentPiece *piece, piecesInProgress) {
+    for (TorrentPiece *piece : qAsConst(piecesInProgress)) {
         numBlocksInProgress += requestBlocks(client, piece, maxInProgress - numBlocksInProgress);
         if (numBlocksInProgress == maxInProgress)
             break;
@@ -1385,8 +1437,8 @@ int TorrentClient::requestBlocks(PeerWireClient *client, TorrentPiece *piece, in
         // speedup comes from an increased chance of receiving
         // different blocks from the different peers.
         for (int i = 0; i < bits.size(); ++i) {
-            int a = qrand() % bits.size();
-            int b = qrand() % bits.size();
+            int a = randomBounded(bits.size());
+            int b = randomBounded(bits.size());
             int tmp = bits[a];
             bits[a] = bits[b];
             bits[b] = tmp;
@@ -1439,16 +1491,16 @@ void TorrentClient::peerUnchoked()
 void TorrentClient::addToPeerList(const QList<TorrentPeer> &peerList)
 {
     // Add peers we don't already know of to our list of peers.
-    QList<QHostAddress> addresses =  QNetworkInterface::allAddresses();
-    foreach (TorrentPeer peer, peerList) {
+    const QList<QHostAddress> addresses =  QNetworkInterface::allAddresses();
+    for (const TorrentPeer &peer : peerList) {
         if (addresses.contains(peer.address)
             && peer.port == TorrentServer::instance()->serverPort()) {
             // Skip our own server.
             continue;
         }
-        
+
         bool known = false;
-        foreach (TorrentPeer *knownPeer, d->peers) {
+        for (const TorrentPeer *knownPeer : qAsConst(d->peers)) {
             if (knownPeer->port == peer.port
                 && knownPeer->address == peer.address) {
                 known = true;
@@ -1473,30 +1525,26 @@ void TorrentClient::addToPeerList(const QList<TorrentPeer> &peerList)
     // of the peers that have no (or low) activity.
     int maxPeers = ConnectionManager::instance()->maxConnections() * 3;
     if (d->peers.size() > maxPeers) {
-        // Find what peers are currently connected & active
-        QSet<TorrentPeer *> activePeers;
-        foreach (TorrentPeer *peer, d->peers) {
-            foreach (PeerWireClient *client, d->connections) {
-                if (client->peer() == peer && (client->downloadSpeed() + client->uploadSpeed()) > 1024)
-                    activePeers << peer;
-            }
-        }
+        auto tooMany = d->peers.size() - maxPeers;
 
+        // Find what peers are currently connected & active
+        const auto firstNInactivePeers = [&tooMany, this] (TorrentPeer *peer) {
+            if (!tooMany)
+                return false;
+            for (const PeerWireClient *client : qAsConst(d->connections)) {
+                if (client->peer() == peer && (client->downloadSpeed() + client->uploadSpeed()) > 1024)
+                    return false;
+            }
+            --tooMany;
+            return true;
+        };
         // Remove inactive peers from the peer list until we're below
         // the max connections count.
-        QList<int> toRemove;
-        for (int i = 0; i < d->peers.size() && (d->peers.size() - toRemove.size()) > maxPeers; ++i) {
-            if (!activePeers.contains(d->peers.at(i)))
-                toRemove << i;
-        }
-        QListIterator<int> toRemoveIterator(toRemove);
-        toRemoveIterator.toBack();
-        while (toRemoveIterator.hasPrevious())
-            d->peers.removeAt(toRemoveIterator.previous());
-
+        d->peers.erase(std::remove_if(d->peers.begin(), d->peers.end(),
+                                      firstNInactivePeers),
+                       d->peers.end());
         // If we still have too many peers, remove the oldest ones.
-        while (d->peers.size() > maxPeers)
-            d->peers.takeFirst();
+        d->peers.erase(d->peers.begin(), d->peers.begin() + tooMany);
     }
 
     if (d->state != Paused && d->state != Stopping && d->state != Idle) {

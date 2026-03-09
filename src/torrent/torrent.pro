@@ -1,3 +1,6 @@
+QT += network widgets
+CONFIG += c++11
+
 HEADERS += addtorrentdialog.h \
            bencodeparser.h \
            connectionmanager.h \
@@ -26,4 +29,6 @@ SOURCES += addtorrentdialog.cpp \
 FORMS += forms/addtorrentform.ui
 RESOURCES += icons.qrc
 
-QT += network
+# install
+target.path = $$[QT_INSTALL_EXAMPLES]/network/torrent
+INSTALLS += target
