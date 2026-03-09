@@ -19,8 +19,8 @@
  */
 
 #include "searches.h"
-#include <QtGui/QSortFilterProxyModel>
-#include <QtGui/QHeaderView>
+#include <QtCore/QSortFilterProxyModel>
+#include <QtWidgets/QHeaderView>
 #include <QSettings>
 
 SearchesModel::SearchesModel(QObject *parent)
@@ -136,24 +136,22 @@ int SearchesModel::addRow(QString name, QString value)
     if (oldIndex != -1) { // prevent from inserting more than one unique row
         return oldIndex;
     } else {
-        m_searchProviders->append(pair);
-        int index = m_searchProviders->indexOf(pair);
         beginResetModel();
-        reset();
+        m_searchProviders->append(pair);
         endResetModel();
+        int index = m_searchProviders->indexOf(pair);
         return index;
     }
 }
 
 void SearchesModel::loadDefaultProviders()
 {
+    beginResetModel();
     m_searchProviders->clear();
     m_searchProviders->append(QPair<QString, QString>("Google", "http://www.google.com/search?q="));
     m_searchProviders->append(QPair<QString, QString>("Yahoo", "http://search.yahoo.com/search?p="));
     m_searchProviders->append(QPair<QString, QString>("Bing", "http://www.bing.com/search?q="));
     m_searchProviders->append(QPair<QString, QString>("Cuil", "http://www.cuil.com/search?q="));
-    beginResetModel();
-    reset();
     endResetModel();
 }
 

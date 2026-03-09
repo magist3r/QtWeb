@@ -41,7 +41,7 @@
 #ifndef BROWSERMAINWINDOW_H
 #define BROWSERMAINWINDOW_H
 
-#include <QtGui/QMainWindow>
+#include <QtWidgets/QMainWindow>
 #include <QtGui/QIcon>
 #include <QtCore/QUrl>
 

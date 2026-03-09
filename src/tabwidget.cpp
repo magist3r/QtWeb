@@ -49,14 +49,14 @@
 #include "commands.h"
 
 #include <QtGui/QClipboard>
-#include <QtGui/QCompleter>
-#include <QtGui/QListView>
-#include <QtGui/QMenu>
-#include <QtGui/QMessageBox>
+#include <QtWidgets/QCompleter>
+#include <QtWidgets/QListView>
+#include <QtWidgets/QMenu>
+#include <QtWidgets/QMessageBox>
 #include <QtGui/QMouseEvent>
-#include <QtGui/QStackedWidget>
-#include <QtGui/QStyle>
-#include <QtGui/QToolButton>
+#include <QtWidgets/QStackedWidget>
+#include <QtWidgets/QStyle>
+#include <QtWidgets/QToolButton>
 #include <QFile>
 #include <QtCore/QDebug>
 #include <QBuffer>
