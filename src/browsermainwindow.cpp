@@ -210,11 +210,20 @@ BrowserMainWindow::BrowserMainWindow(QWidget *parent, Qt::WindowFlags flags)
     connect(findWidget, SIGNAL(find(QString, bool)), this,
         SLOT(find(QString, bool)));
     connect(findWidget, SIGNAL(escapePressed()), this, SLOT(slotShowWindow()));
+    connect(m_toolbarSearch, SIGNAL(escapePressed()), this, SLOT(slotFocusCurrentTab()));
 }
 
 BrowserMainWindow::~BrowserMainWindow()
 {
     save();
+}
+
+void BrowserMainWindow::setTabStop(QWidget *addrLineEdit)
+{
+    if (!addrLineEdit)
+        return;
+
+    setTabOrder(addrLineEdit, m_toolbarSearch->lineEdit());
 }
 
 void BrowserMainWindow::loadDefaultState()
@@ -2083,6 +2092,12 @@ void BrowserMainWindow::slotSwapFocus()
     if (currentTab()->hasFocus())
         m_tabWidget->currentLineEdit()->setFocus();
     else
+        currentTab()->setFocus();
+}
+
+void BrowserMainWindow::slotFocusCurrentTab()
+{
+    if (currentTab())
         currentTab()->setFocus();
 }
 

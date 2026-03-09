@@ -93,6 +93,7 @@ private slots:
     void copyMailtoAddress();
     void clickedUrl(const QUrl &url);
     void adBlock();
+    void linkHover(const QString &link, const QString &title, const QString &textContent);
 
 private:
     QString m_statusBarText;
@@ -111,6 +112,7 @@ private:
     QString m_current_encoding;
     QUrl    m_current_encoding_url;
     bool    m_ssl_errors_detected;
+    bool    m_linkUnderCursor;
 
     QFtp *m_ftp;
     QFile* m_ftpFile;

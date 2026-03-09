@@ -307,6 +307,8 @@ void ExLineEdit::isCompleted(QString q)
 void ExLineEdit::keyPressEvent(QKeyEvent *event)
 {
     m_lineEdit->event(event);
+    if (event->key() == Qt::Key_Escape)
+        emit escapePressed();
 
     QWidget::keyPressEvent(event);
 }
@@ -325,6 +327,5 @@ void ExLineEdit::paintEvent(QPaintEvent *)
     initStyleOption(&panel);
     style()->drawPrimitive(QStyle::PE_PanelLineEdit, &panel, &p, this);
 }
-
 
 

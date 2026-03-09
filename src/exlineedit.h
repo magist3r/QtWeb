@@ -110,6 +110,7 @@ protected:
 
 signals:
     void completed(QString);
+    void escapePressed();
 
 
 private slots:
@@ -126,4 +127,3 @@ protected:
 };
 
 #endif // EXLINEEDIT_H
-
