@@ -1,0 +1,64 @@
+FROM amd64/opensuse:42.1
+
+RUN zypper --non-interactive removerepo oss-update repo-update repo-update-non-oss || true \
+    && zypper --non-interactive refresh \
+    && zypper --non-interactive install --no-recommends --force-resolution --oldpackage \
+    bash \
+    bison \
+    flex \
+    gcc-c++ \
+    gcc-c++-32bit \
+    glibc-devel-32bit \
+    gperf \
+    fontconfig-devel \
+    fontconfig-devel-32bit \
+    freetype2-devel \
+    freetype2-devel-32bit \
+    glib2-devel \
+    glib2-devel-32bit \
+    gtk2-devel \
+    gtk2-devel-32bit \
+    libopenssl-devel \
+    libopenssl-devel-32bit \
+    libX11-devel \
+    libX11-devel-32bit \
+    libXau-devel \
+    libXau-devel-32bit \
+    libXcursor-devel \
+    libXcursor-devel-32bit \
+    libXdmcp-devel \
+    libXdmcp-devel-32bit \
+    libXext-devel \
+    libXext-devel-32bit \
+    libXfixes-devel \
+    libXfixes-devel-32bit \
+    libXft-devel \
+    libXft-devel-32bit \
+    libXi-devel \
+    libXi-devel-32bit \
+    libXinerama-devel \
+    libXinerama-devel-32bit \
+    libXmu-devel \
+    libXmu-devel-32bit \
+    libXrandr-devel \
+    libXrandr-devel-32bit \
+    libXrender-devel \
+    libXrender-devel-32bit \
+    libXt-devel \
+    libXt-devel-32bit \
+    make \
+    patch \
+    perl \
+    pcre-devel \
+    pkg-config \
+    python \
+    ruby \
+    wget \
+    zlib-devel \
+    zlib-devel-32bit \
+    ca-certificates-mozilla \
+    && zypper clean --all
+
+WORKDIR /workspace
+
+CMD ["/bin/bash"]

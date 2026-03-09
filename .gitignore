@@ -1,5 +1,6 @@
 # qt source directory
-src/qt/.*
+artifacts
+src/qt/*
 temp-src
 build
 

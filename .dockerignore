@@ -1,0 +1,5 @@
+.git
+build
+temp-src
+src/qt/*
+!src/qt/readme.txt
