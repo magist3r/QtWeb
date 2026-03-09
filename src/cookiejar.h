@@ -46,8 +46,8 @@
 #include <QtCore/QAbstractItemModel>
 #include <QtCore/QStringList>
 
-#include <QtGui/QDialog>
-#include <QtGui/QTableView>
+#include <QtWidgets/QDialog>
+#include <QtWidgets/QTableView>
 
 QT_BEGIN_NAMESPACE
 class QSortFilterProxyModel;
@@ -163,6 +163,7 @@ class CookieExceptionsModel : public QAbstractTableModel
 
 public:
     CookieExceptionsModel(CookieJar *cookieJar, QObject *parent = 0);
+    void reload();
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
@@ -198,4 +199,3 @@ private:
 };
 
 #endif // COOKIEJAR_H
-

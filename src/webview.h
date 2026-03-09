@@ -48,8 +48,8 @@ class QProgressDialog;
 class QUrlInfo;
 
 #include <QDateTime>
-#include <QtWebKit/QWebView>
-#include <QtWebKit/QWebHitTestResult>
+#include <QWebView>
+#include <QWebHitTestResult>
 
 class WebPage;
 
@@ -93,6 +93,7 @@ private slots:
     void copyMailtoAddress();
     void clickedUrl(const QUrl &url);
     void adBlock();
+    void linkHover(const QString &link, const QString &title, const QString &textContent);
 
 private:
     QString m_statusBarText;
@@ -111,9 +112,9 @@ private:
     QString m_current_encoding;
     QUrl    m_current_encoding_url;
     bool    m_ssl_errors_detected;
+    bool    m_linkUnderCursor;
 
-//////////////////////////////////////////////////// AC: FTP implementation
-    QFtp*  m_ftp;
+    QFtp *m_ftp;
     QFile* m_ftpFile;
     QString m_ftpHtml;
 
@@ -121,7 +122,6 @@ private:
     QHash<QString, bool>    m_ftpIsDirectory;
     QString                 m_ftpCurrentPath;
 
-private:
     void ftpCheckDisconnect();
     void ftpDownloadFile(const QUrl &url, QString filename );
 

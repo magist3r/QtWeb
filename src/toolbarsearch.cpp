@@ -42,10 +42,11 @@
 
 #include <QtCore/QSettings>
 #include <QtCore/QUrl>
+#include <QtCore/QUrlQuery>
 
-#include <QtGui/QCompleter>
-#include <QtGui/QMenu>
-#include <QtGui/QStringListModel>
+#include <QtWidgets/QCompleter>
+#include <QtWidgets/QMenu>
+#include <QtCore/QStringListModel>
 #include <QtWebKit/QWebSettings>
 #include "searches.h"
 #include "googlesuggest.h"
@@ -170,31 +171,32 @@ void ToolbarSearch::searchNow()
     }
 
     QUrl url;
+    QUrlQuery query(url);
     if (inactiveText() == SEARCH_GOOGLE)
     {
         url.setUrl(QLatin1String("http://www.google.com/search"));
-        url.addQueryItem(QLatin1String("q"), searchText);
-        url.addQueryItem(QLatin1String("ie"), QLatin1String("UTF-8"));
-        url.addQueryItem(QLatin1String("oe"), QLatin1String("UTF-8"));
+        query.addQueryItem(QLatin1String("q"), searchText);
+        query.addQueryItem(QLatin1String("ie"), QLatin1String("UTF-8"));
+        query.addQueryItem(QLatin1String("oe"), QLatin1String("UTF-8"));
     }
     else
     if (inactiveText() == SEARCH_CUIL)
     {
         url.setUrl(QLatin1String("http://www.cuil.com/search"));
-        url.addQueryItem(QLatin1String("q"), searchText);
+        query.addQueryItem(QLatin1String("q"), searchText);
     }
     else
     if (inactiveText() == SEARCH_YAHOO)
     {
         url.setUrl(QLatin1String("http://search.yahoo.com/search"));
-        url.addQueryItem(QLatin1String("p"), searchText);
-        url.addQueryItem(QLatin1String("ei"), QLatin1String("UTF-8"));
+        query.addQueryItem(QLatin1String("p"), searchText);
+        query.addQueryItem(QLatin1String("ei"), QLatin1String("UTF-8"));
     }
     else
     if (inactiveText() == SEARCH_BING)
     {
         url.setUrl(QLatin1String("http://www.bing.com/search"));
-        url.addQueryItem(QLatin1String("q"), searchText);
+        query.addQueryItem(QLatin1String("q"), searchText);
     }
     else
     {
@@ -213,7 +215,8 @@ void ToolbarSearch::searchNow()
         settings.endGroup();
     }
 
-    url.addQueryItem(QLatin1String("client"), QLatin1String("QtWeb"));
+    query.addQueryItem(QLatin1String("client"), QLatin1String("QtWeb"));
+    url.setQuery(query);
 
     if (!keyword_provider.isEmpty())
     {
