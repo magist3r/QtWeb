@@ -42,7 +42,7 @@
 
 #include <QtCore/QPoint>
 
-#include <QtGui/QApplication>
+#include <QtWidgets/QApplication>
 #include <QtGui/QHideEvent>
 #include <QtGui/QPainter>
 #include <QtGui/QPaintEvent>

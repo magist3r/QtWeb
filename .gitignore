@@ -24,5 +24,6 @@ moc_*.cpp
 qrc_*.cpp
 Makefile*
 build-*
+!build-browser-docker.sh
 !build-qt5-static.sh
 !toolchains/qt5-static/build-inside-container.sh

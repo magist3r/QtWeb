@@ -1,93 +1,69 @@
-# Qt5 + QtWebKit Migration Plan
+# Qt5 Browser Port Implementation Plan
 
-## Goal
-Port QtWeb from Qt4.8.x to Qt5 + QtWebKit with minimal behavior change, minimal feature loss, and minimal runtime dependencies.
+## Summary
+Port QtWeb to the existing static Qt `5.5.1` toolchain on Linux while keeping the legacy Qt4 flow intact. The implementation base stays on `qt5-migration`, and the existing `qt5` branch is used as the donor for already-solved Qt5 application changes. The first source mutation is the automated Qt4-to-Qt5 header rewrite, followed by targeted manual integration until the full browser builds and runs with torrent and FTP support preserved. All Qt5 browser validation builds must run inside Docker against the repository's containerized toolchain environment rather than on the host, and they must be invoked through the repository helper scripts rather than direct `docker` or ad hoc build commands. Host-local `qmake`/`make`/compiler validation runs are explicitly out of policy for this repository.
 
-## Scope
-- In scope:
-  - Qt5 build compatibility for current application architecture.
-  - qmake-based build flow.
-  - Static-build-friendly output and dependency minimization.
-- Out of scope:
-  - Qt6/WebEngine rewrite.
-  - UI redesign.
-  - Broad refactors unrelated to migration blockers.
+## Decisions
+- Delivery branch: `qt5-migration`
+- Donor branch for application porting work: `qt5`
+- Target runtime/build baseline: Qt `5.5.1` static Linux `x86_64`
+- Required build environment for Qt5 validation: Docker container using the repository image/toolchain
+- Required invocation path for Qt5 validation: repository helper scripts such as `build-browser-docker.sh` and `run-broswer.sh`, not direct `docker` commands
+- Keep the existing Qt4 `build.sh` path unchanged
+- Preserve torrent support in the first Qt5 browser milestone
+- Preserve FTP browsing and FTP downloads in the first Qt5 browser milestone
 
-## Baseline and Constraints
-- Target baseline: Qt `5.5.1` (last Qt5 release line with Qt-provided QtWebKit artifacts).
-- Required modules under Qt5: `core gui widgets network xml webkit webkitwidgets printsupport`.
-- ICU is required for Qt5 + QtWebKit builds.
-- Keep legacy Qt4 `build.sh` path intact; introduce a separate Qt5 build path.
+## Implementation Order
+1. Update this document with the concrete execution plan.
+2. Run `/home/magist3r/code/qtbase/bin/fixqt4headers.pl` against `src/` and review the generated include rewrites.
+3. Bring the qmake project files up to Qt5.5.1:
+- `src/QtWeb.pro` must use `widgets`, `webkitwidgets`, and `printsupport`
+- `src/torrent/torrent.pro` must stay compatible with Qt `5.5.1` qmake and must not depend on `requires(qtConfig(filedialog))`
+4. Replay the relevant Qt5 source-port work from `qt5`:
+- Qt5 include/module split across browser UI, WebKit, and print code
+- `QStandardPaths` for storage paths
+- `QUrlQuery` for query parsing
+- Torrent networking migration from `QHttp` to `QNetworkAccessManager`
+5. Adapt donor-branch code back down to Qt `5.5.1` where it assumes newer Qt:
+- replace `QDateTime::currentSecsSinceEpoch()`
+- replace `QRandomGenerator`
+- replace `QOverload` connect syntax
+6. Restore and keep both legacy feature areas:
+- torrent remains built into the application
+- FTP remains supported in `webview` for directory listing and file download
+7. Validate the main browser inside Docker on top of the existing smoke-test/toolchain work, using the repository helper scripts instead of direct container or compiler invocations.
 
-## Main Blockers
-- Qt4 platform macros: `Q_WS_WIN`, `Q_WS_MAC`.
-- Qt4-only APIs:
-  - `Qt::escape`.
-  - `qVariantValue<T>`.
-  - `QDesktopServices::storageLocation`.
-  - `QUrl::queryItems()`.
-  - `QFtp` (removed in Qt5).
-- Qt4-style module/header usage throughout browser UI and networking layers.
+## Public and Internal Interfaces
+- No new user-facing CLI or configuration layer is added.
+- Internal build interfaces change to Qt5-aware qmake module usage in:
+- `src/QtWeb.pro`
+- `src/torrent/torrent.pro`
+- Torrent internal types move from `QHttp`-based APIs to `QNetworkAccessManager` / `QNetworkReply`.
+- Storage path handling moves to `QStandardPaths`.
+- Query parsing moves from deprecated Qt4 APIs to `QUrlQuery`.
 
-## Migration Phases
-1. Baseline freeze
-- Create and keep a manual smoke checklist before code changes.
+## Required Behavior
+- The browser must launch and render pages under Qt5.
+- Tabs, windows, and navigation behavior must remain functional.
+- Downloads must continue to work.
+- Torrent support must build and reach tracker communication under Qt5.
+- `ftp://` directory browsing must still work.
+- FTP file downloads must still work.
+- Portable and non-portable settings/data paths must continue to resolve correctly.
 
-2. Build split
-- Keep `build.sh` for Qt4.
-- Add a Qt5 build entry script and Qt-version conditionals in `src/QtWeb.pro`.
-- Document dependency audit expectations (for example `ldd` on Linux artifacts).
+## Validation
+- Documentation reflects the chosen implementation path and constraints.
+- qmake generation succeeds inside Docker when invoked through `build-browser-docker.sh`.
+- A clean out-of-tree browser build succeeds inside Docker through the helper scripts, with outputs kept in repository-local `build-docker-*` directories.
+- Validate changed Bash / POSIX shell scripts with `shellcheck` when script changes are part of the work.
+- Browser smoke validation covers page loading, tabs, windows, downloads, and print-related actions.
+- Torrent validation covers successful build and tracker communication after the networking port.
+- FTP validation covers directory listing and file download.
+- Regression checks cover settings/data paths and autocomplete/password/query parsing after API replacements.
 
-3. Mechanical compatibility
-- Replace `Q_WS_*` macros with `Q_OS_*`.
-- Update includes/module usage for Qt5.
-
-4. API and WebKit boundary fixes
-- Replace:
-  - `Qt::escape(x)` -> `x.toHtmlEscaped()`.
-  - `qVariantValue<T>(v)` -> `v.value<T>()`.
-  - `QDesktopServices::storageLocation(...)` -> `QStandardPaths::writableLocation(...)`.
-  - `QUrl::queryItems()` -> `QUrlQuery`.
-- Fix Qt5 QtWebKit/PrintSupport compile boundaries (`webview`, `webpage`, `tabwidget`, print flow).
-
-5. FTP and parity stabilization
-- Decide Qt5 `ftp://` behavior (disable path or reimplement backend).
-- Run smoke validation and resolve behavior regressions.
-
-## High-Risk Areas
-- Browser behavior in `webview/webpage/tabwidget` (tab/window/navigation semantics).
-- `QSettings` key stability (silent compatibility regressions if keys drift).
-- Runtime dependency creep during static-toolchain work.
-
-## Known Issues to Track During Migration
-- SSL approval logic bug in `src/networkaccessmanager.cpp` (`QMessageBox::YesToAll` constant misuse in condition).
-- Locking misuse in `src/browserapplication.cpp` (`QReadLocker` used while mutating `s_hostIcons`).
-- Proxy exceptions key mismatch in `src/settings.cpp` (`exceptions` vs `Exceptions`).
-- Build script jobs/default mismatch in `build.sh` and `MAKE_COMMAND` initialization timing.
-- Stale artifact: `src/webpage.cpp.bak`.
-
-## Validation Checklist
-- qmake generation works under Qt5.
-- Core UI opens and pages load.
-- New tab/new window behavior matches baseline.
-- Downloads and save dialogs function.
-- SSL warning flow behaves correctly.
-- Proxy/adblock settings work.
-- Session restore works.
-- No unintended settings-key renames.
-- Runtime dependency set is documented and minimized.
-
-## Immediate Next Tasks
-- Add Qt-version conditionals in `src/QtWeb.pro`.
-- Add `build-qt5.sh` (separate from legacy `build.sh`).
-- Apply `Q_WS_*` -> `Q_OS_*` replacements in core files.
-- Migrate first-pass API breakers (`escape`, `qVariantValue`, `storageLocation`, `queryItems`).
-- Define and document Qt5 dependency gates.
-
-## Repository Reference (Condensed)
-- Entry point: `src/main.cpp` -> `BrowserApplication`.
-- Core shell: `browserapplication.*`, `browsermainwindow.*`.
-- Tab/navigation: `tabwidget.*`, `webview.*`, `webpage.*`.
-- Networking/data: `networkaccessmanager.*`, `cookiejar.*`, `downloadmanager.*`, bookmarks/history/password/search managers.
-- Build system is qmake-based and intentionally legacy/static-oriented.
-- Preserve existing Qt4 signal/slot style in touched areas unless a full migration edit requires otherwise.
+## Known Risks
+- The `qt5` donor branch was written against newer Qt and contains incompatible APIs for `5.5.1`.
+- FTP was partially disabled in the donor branch and must be reintroduced without regressing navigation behavior.
+- Settings-path or key drift can create silent compatibility regressions.
+- Static-build constraints may surface additional link/runtime issues after compilation succeeds.
+- Host-native builds can hide or invent problems relative to the intended toolchain, so the Docker helper-script path is the source of truth for Qt5 validation.

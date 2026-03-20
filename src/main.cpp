@@ -39,18 +39,6 @@
 
 #include "browserapplication.h"
 
-#ifndef QT_SHARED
-    #include <QtPlugin>
-
-    Q_IMPORT_PLUGIN(qico)
-    Q_IMPORT_PLUGIN(qcncodecs)
-    Q_IMPORT_PLUGIN(qjpcodecs)
-    Q_IMPORT_PLUGIN(qkrcodecs)
-    Q_IMPORT_PLUGIN(qtwcodecs)
-#endif
-
-
-
 int main(int argc, char **argv)
 {
     Q_INIT_RESOURCE(data);
@@ -60,7 +48,7 @@ int main(int argc, char **argv)
     Q_INIT_RESOURCE(WebCore);
     Q_INIT_RESOURCE(WebKit);
 
-# ifdef QTWEBKIT_23
+# if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
     Q_INIT_RESOURCE(InspectorBackendCommands);
 # else
     Q_INIT_RESOURCE(InspectorBackendStub);
@@ -75,4 +63,3 @@ int main(int argc, char **argv)
 
     return application.exec();
 }
-
