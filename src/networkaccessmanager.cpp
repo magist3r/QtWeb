@@ -75,8 +75,8 @@ NetworkAccessManager::NetworkAccessManager(QObject *parent)
     : QNetworkAccessManager(parent)
     , m_useProxy(false)
     , m_proxyExceptions(0)
-    , m_adBlockEx(0)
     , m_adBlock(0)
+    , m_adBlockEx(0)
 {
     connect(this, SIGNAL(authenticationRequired(QNetworkReply*, QAuthenticator*)),
             SLOT(authenticationRequired(QNetworkReply*,QAuthenticator*)));
@@ -424,4 +424,4 @@ bool NetworkAccessManager::isUrlProxyException(const QUrl& url)
     return false;
 }
 
-//HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Internet Settings\
+// HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Internet Settings

@@ -729,6 +729,8 @@ void SettingsDialog::warnLangChange(int)
 
 void SettingsDialog::setAppStyle(int index)
 {
+    Q_UNUSED(index);
+
     QString style = comboBoxStyle->currentText();
     QApplication::setStyle(QStyleFactory::create(style));
 }
@@ -869,7 +871,9 @@ void SettingsDialog::removeBlockAdEx()
 void SettingsDialog::addBlockItems(const QLatin1String& filename, QListWidget* listview)
 {
     QFile file(filename);
-    bool isOpened = file.open(QIODevice::ReadOnly | QIODevice::Text);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        return;
+
     QString all = QString(QLatin1String(file.readAll()));
     file.close();
     QStringList lst = all.split("\n");

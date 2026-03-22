@@ -195,7 +195,7 @@ void BrowserApplication::CheckSetTranslator()
 
 bool removeDir(const QString &dirName)
 {
-    bool result;
+    bool result = true;
     QDir dir(dirName);
 
     if (dir.exists()) {
@@ -241,9 +241,10 @@ void BrowserApplication::definePortableRunMode()
             {
                 // Copy settings from base template to temporary storage
                 QDir temp_dir(QDir::temp());
-                bool res = temp_dir.mkdir(settings.organizationName());
-                res = temp_dir.cd(settings.organizationName());
-                res = QFile::copy(  settings.fileName(), temp_dir.absolutePath() + QDir::separator() + settings.applicationName() + ".ini" );
+                temp_dir.mkdir(settings.organizationName());
+                temp_dir.cd(settings.organizationName());
+                QFile::copy(settings.fileName(),
+                            temp_dir.absolutePath() + QDir::separator() + settings.applicationName() + ".ini");
                 // Change path to settings to the temp storage
                 QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, QDir::temp().tempPath());
             }

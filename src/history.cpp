@@ -69,10 +69,10 @@ HistoryManager::HistoryManager(QObject *parent)
     : QWebHistoryInterface(parent)
     , m_saveTimer(new AutoSaver(this))
     , m_historyLimit(7)
+    , m_historyCleaned(false)
     , m_historyModel(0)
     , m_historyFilterModel(0)
     , m_historyTreeModel(0)
-    , m_historyCleaned(false)
 {
     m_expiredTimer.setSingleShot(true);
     connect(&m_expiredTimer, SIGNAL(timeout()),
@@ -534,7 +534,7 @@ int HistoryMenuModel::rowCount(const QModelIndex &parent) const
         return bumpedItems + folders;
     }
 
-    if (parent.internalId() == -1) {
+    if (parent.internalId() == quintptr(-1)) {
         if (parent.row() < bumpedRows())
             return 0;
     }
@@ -559,7 +559,7 @@ QModelIndex HistoryMenuModel::mapToSource(const QModelIndex &proxyIndex) const
     if (!proxyIndex.isValid())
         return QModelIndex();
 
-    if (proxyIndex.internalId() == -1) {
+    if (proxyIndex.internalId() == quintptr(-1)) {
         int bumpedItems = bumpedRows();
         if (proxyIndex.row() < bumpedItems)
             return m_treeModel->index(proxyIndex.row(), proxyIndex.column(), m_treeModel->index(0, 0));

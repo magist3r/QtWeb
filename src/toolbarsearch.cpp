@@ -360,7 +360,7 @@ void ToolbarSearch::addSearches()
         settings.endGroup();
     }
 
-    QAction* searches = m->addAction(tr("Add..."), this, SLOT(addSearch()));
+    m->addAction(tr("Add..."), this, SLOT(addSearch()));
  }
 
 void ToolbarSearch::addSearch()
@@ -411,4 +411,3 @@ void ToolbarSearch::clear()
     m_stringListModel->setStringList(QStringList());
     save();
 }
-
