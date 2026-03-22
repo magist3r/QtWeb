@@ -87,9 +87,9 @@ QString DefaultDownloadPath(bool create_dir)
 DownloadItem::DownloadItem(QNetworkReply *reply, bool requestFileName, QWidget *parent)
     : QWidget(parent)
     , m_reply(reply)
+    , m_to_delete(false)
     , m_requestFileName(requestFileName)
     , m_bytesReceived(0)
-    , m_to_delete(false)
     , m_finished(false)
 {
     setupUi(this);
@@ -246,6 +246,7 @@ void DownloadItem::stop()
 
 void DownloadItem::mouseDoubleClickEvent ( QMouseEvent * event )
 {
+    Q_UNUSED(event);
     open();
 }
 
@@ -502,6 +503,7 @@ DownloadManager::~DownloadManager()
 
 void DownloadManager::openItem(const QModelIndex& index)
 {
+    Q_UNUSED(index);
 }
 
 int DownloadManager::activeDownloads() const
@@ -838,4 +840,3 @@ bool DownloadModel::removeRows(int row, int count, const QModelIndex &parent)
     m_downloadManager->save();
     return true;
 }
-

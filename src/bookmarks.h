@@ -180,7 +180,7 @@ public:
 
     BookmarkNode *node(const QModelIndex &index) const;
     QModelIndex index(BookmarkNode *node) const;
-    void sort ( int column, Qt::SortOrder order = Qt::AscendingOrder ) {;} 
+    void sort ( int column, Qt::SortOrder order = Qt::AscendingOrder ) { Q_UNUSED(column); Q_UNUSED(order); }
 
 private:
 

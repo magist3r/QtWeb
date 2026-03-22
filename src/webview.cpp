@@ -66,10 +66,10 @@
 WebView::WebView(QWidget* parent)   
     : QWebView(parent)
     , m_progress(0)
-    , m_page(new WebPage(this))
-    , m_font_resizing(false)
     , m_is_loading(false)
     , m_gestureStarted(false)
+    , m_page(new WebPage(this))
+    , m_font_resizing(false)
     , m_encoding_in_progress(false)
     , m_ssl_errors_detected(false)
     , m_linkUnderCursor(false)
@@ -748,6 +748,8 @@ void WebView::loadFtpUrl(const QUrl &url)
 
 void WebView::ftpDownloadFile(const QUrl &url, QString fileName )
 {
+    Q_UNUSED(url);
+
     if (!m_ftp)
         return;
 

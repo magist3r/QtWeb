@@ -1261,6 +1261,8 @@ void BookmarksToolBar::build()
 
 void BookmarksToolBar::deleteBookmark(const QUrl &url, const QString &title)
 {
+    Q_UNUSED(url);
+
     for (int i = 0; i < m_bookmarksModel->rowCount(m_root); ++i) 
     {
         QModelIndex idx = m_bookmarksModel->index(i, 0, m_root);
@@ -1280,6 +1282,8 @@ void BookmarksToolBar::deleteBookmark(const QUrl &url, const QString &title)
 
 void BookmarksToolBar::renameBookmark(const QUrl &url, const QString &title, const QString &new_title)
 {
+    Q_UNUSED(url);
+
     for (int i = 0; i < m_bookmarksModel->rowCount(m_root); ++i) 
     {
         QModelIndex idx = m_bookmarksModel->index(i, 0, m_root);
@@ -1378,7 +1382,7 @@ void BookmarkToolButton::mouseMoveEvent(QMouseEvent *event)
      mimeData->setProperty( "move", QVariant(true));
      drag->setMimeData(mimeData);
 
-    Qt::DropAction dropAction = drag->exec(Qt::CopyAction | Qt::MoveAction);
+    drag->exec(Qt::CopyAction | Qt::MoveAction);
     QToolButton::mousePressEvent(event);
 }
 
@@ -1406,6 +1410,8 @@ QUrl BookmarkToolButton::url() const
 
 void BookmarkToolButton::contextMenuRequested(const QPoint &pt)
 {
+    Q_UNUSED(pt);
+
     QMenu menu;
     menu.addAction(tr("Open"), this, SLOT(openBookmark()));
     menu.addAction(tr("Open New Tab"), this, SLOT(openBookmarkNewTab()));
