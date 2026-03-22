@@ -446,8 +446,7 @@ WebView *TabWidget::newTab(bool makeCurrent, bool empty)
         case 0: // welcome page
         {
             QFile file(QLatin1String(":/Welcome.html"));
-            bool isOpened = file.open(QIODevice::ReadOnly | QIODevice::Text);
-            Q_ASSERT(isOpened);
+            Q_ASSERT(file.open(QIODevice::ReadOnly | QIODevice::Text));
             QString html = QString(QLatin1String(file.readAll()));
 
             QPixmap pix= style()->standardIcon(QStyle::SP_MessageBoxInformation).pixmap(32,32);

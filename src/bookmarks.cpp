@@ -656,14 +656,16 @@ int BookmarksModel::columnCount(const QModelIndex &parent) const
 
 int BookmarksModel::rowCount(const QModelIndex &parent) const
 {
+    BookmarkNode *bookmarksRoot = m_bookmarksManager ? m_bookmarksManager->bookmarks() : 0;
+
     if (parent.column() > 0)
         return 0;
 
     if (!parent.isValid())
-        return m_bookmarksManager->bookmarks()->children().count();
+        return bookmarksRoot ? bookmarksRoot->children().count() : 0;
 
     const BookmarkNode *item = static_cast<BookmarkNode*>(parent.internalPointer());
-    return item->children().count();
+    return item ? item->children().count() : 0;
 }
 
 QModelIndex BookmarksModel::index(int row, int column, const QModelIndex &parent) const
@@ -836,7 +838,7 @@ BookmarkNode *BookmarksModel::node(const QModelIndex &index) const
 {
     BookmarkNode *itemNode = static_cast<BookmarkNode*>(index.internalPointer());
     if (!itemNode)
-        return m_bookmarksManager->bookmarks();
+        return m_bookmarksManager ? m_bookmarksManager->bookmarks() : 0;
     return itemNode;
 }
 

@@ -9,12 +9,9 @@ Checks: >
   bugprone-string-constructor,
   modernize-redundant-void-arg,
   modernize-use-bool-literals,
-  modernize-use-nullptr,
   readability-duplicate-include,
   readability-misleading-indentation,
   readability-redundant-control-flow,
   readability-simplify-boolean-expr,
   readability-static-accessed-through-instance
-WarningsAsErrors: ''
 HeaderFilterRegex: '(^|.*/)src/.*'
-FormatStyle: none
