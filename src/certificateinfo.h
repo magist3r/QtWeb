@@ -34,7 +34,7 @@ class CertificateInfo : public QDialog
 {
     Q_OBJECT
 public:
-    CertificateInfo(QString host, QWidget *parent = 0);
+    CertificateInfo(QString host, QWidget *parent = nullptr);
     ~CertificateInfo();
 
     void setCertificateChain(const QList<QSslCertificate> &chain);

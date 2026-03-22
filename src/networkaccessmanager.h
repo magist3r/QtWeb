@@ -51,12 +51,12 @@ class NetworkAccessManager : public QNetworkAccessManager
     Q_OBJECT
 
 public:
-    NetworkAccessManager(QObject *parent = 0);
+    NetworkAccessManager(QObject *parent = nullptr);
     ~NetworkAccessManager();
     void blockAd(QString ad);
 
 protected:
-    QNetworkReply * createRequest ( Operation op, const QNetworkRequest & req, QIODevice * outgoingData = 0 );
+    QNetworkReply * createRequest ( Operation op, const QNetworkRequest & req, QIODevice * outgoingData = nullptr );
     bool useProxy() {return m_useProxy; }
     bool isUrlProxyException(const QUrl&);
 

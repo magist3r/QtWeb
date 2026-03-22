@@ -82,7 +82,7 @@ public:
     bool isTheOnlyBrowser() const;
     BrowserMainWindow *mainWindow();
     QList<BrowserMainWindow*> mainWindows();
-    QIcon icon(const QUrl &url, const WebView *webView = 0) const;
+    QIcon icon(const QUrl &url, const WebView *webView = nullptr) const;
 
     void CheckSetTranslator();
 
@@ -115,7 +115,7 @@ public:
     static void resetSettings( bool reload);
     static QString dataLocation();
     static QString downloadsLocation(bool create_dir);
-    static bool existDownloadManager() {return s_downloadManager != NULL;}
+    static bool existDownloadManager() {return s_downloadManager != nullptr;}
 public slots:
     BrowserMainWindow *newMainWindow();
     void restoreLastSession();

@@ -70,9 +70,9 @@ HistoryManager::HistoryManager(QObject *parent)
     , m_saveTimer(new AutoSaver(this))
     , m_historyLimit(7)
     , m_historyCleaned(false)
-    , m_historyModel(0)
-    , m_historyFilterModel(0)
-    , m_historyTreeModel(0)
+    , m_historyModel(nullptr)
+    , m_historyFilterModel(nullptr)
+    , m_historyTreeModel(nullptr)
 {
     m_expiredTimer.setSingleShot(true);
     connect(&m_expiredTimer, SIGNAL(timeout()),
@@ -615,7 +615,7 @@ QModelIndex HistoryMenuModel::parent(const QModelIndex &index) const
 
 HistoryMenu::HistoryMenu(QWidget *parent)
     : ModelMenu(parent)
-    , m_history(0)
+    , m_history(nullptr)
 {
     connect(this, SIGNAL(activated(const QModelIndex &)),
             this, SLOT(activated(const QModelIndex &)));

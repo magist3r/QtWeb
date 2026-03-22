@@ -48,7 +48,7 @@ class SqueezeLabel : public QLabel
     Q_OBJECT
 
 public:
-    SqueezeLabel(QWidget *parent = 0);
+    SqueezeLabel(QWidget *parent = nullptr);
 
 protected:
     void paintEvent(QPaintEvent *event);

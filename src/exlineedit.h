@@ -54,7 +54,7 @@ class ClearButton : public QAbstractButton
     Q_OBJECT
 
 public:
-    ClearButton(QWidget *parent = 0);
+    ClearButton(QWidget *parent = nullptr);
     void paintEvent(QPaintEvent *event);
 
 public slots:
@@ -71,7 +71,7 @@ class LineEdit : public QLineEdit
 
 
 public:
-    LineEdit(QWidget *parent = 0, bool fix_url = false);
+    LineEdit(QWidget *parent = nullptr, bool fix_url = false);
 
 protected:
     void focusInEvent(QFocusEvent *);
@@ -91,7 +91,7 @@ class ExLineEdit : public QWidget
     Q_OBJECT
 
 public:
-    ExLineEdit(QWidget *parent = 0, bool fix_url = false);
+    ExLineEdit(QWidget *parent = nullptr, bool fix_url = false);
 
     inline QLineEdit *lineEdit() const { return m_lineEdit; }
 

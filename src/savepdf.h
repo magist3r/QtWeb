@@ -11,7 +11,7 @@ class SavePDF : public QDialog
     Q_OBJECT
 
 public:
-    SavePDF(const QString& title, QWebFrame* frame, QWidget *parent = 0);
+    SavePDF(const QString& title, QWebFrame* frame, QWidget *parent = nullptr);
     ~SavePDF();
 
 protected slots:

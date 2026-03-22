@@ -9,6 +9,7 @@ Checks: >
   bugprone-string-constructor,
   modernize-redundant-void-arg,
   modernize-use-bool-literals,
+  modernize-use-nullptr,
   readability-duplicate-include,
   readability-misleading-indentation,
   readability-redundant-control-flow,

@@ -50,7 +50,7 @@ ModelMenu::ModelMenu(QWidget * parent)
     , m_maxWidth(-1)
     , m_hoverRole(0)
     , m_separatorRole(0)
-    , m_model(0)
+    , m_model(nullptr)
 {
     connect(this, SIGNAL(aboutToShow()), this, SLOT(aboutToShow()));
 }

@@ -27,7 +27,7 @@ class CloseApp : public QDialog
     Q_OBJECT
 
 public:
-    CloseApp(QWidget *parent = 0);
+    CloseApp(QWidget *parent = nullptr);
     ~CloseApp();
 
 private:

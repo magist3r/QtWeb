@@ -49,7 +49,7 @@ class SettingsDialog : public QDialog, public Ui_Settings
     Q_OBJECT
 
 public:
-    SettingsDialog(QWidget *parent = 0);
+    SettingsDialog(QWidget *parent = nullptr);
     void accept();
     void reject();
 

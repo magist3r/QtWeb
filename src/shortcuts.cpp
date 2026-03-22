@@ -98,7 +98,7 @@ bool Shortcuts::save()
         {
             if (!m_data.SetShortcuts(i, shorts->text().trimmed()))
             {
-                QMessageBox::warning(0, tr("Invalid shortcut assigned"),
+                QMessageBox::warning(nullptr, tr("Invalid shortcut assigned"),
                     tr("Error assigning shortcut(s) for the menu command: %1.\n\nPlease check the shortcut(s): %2"
                ).arg(menu->text()).arg(shorts->text().trimmed()));
                 return false;

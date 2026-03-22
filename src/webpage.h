@@ -66,7 +66,7 @@ signals:
     void errorLoadingUrl();
 
 public:
-    WebPage(QObject *parent = 0);
+    WebPage(QObject *parent = nullptr);
     BrowserMainWindow *mainWindow();
 
     static void setUserAgent(QString agent = "default");

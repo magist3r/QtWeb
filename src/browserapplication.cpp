@@ -80,14 +80,14 @@
 #include "torrent/torrentwindow.h"
 
 
-DownloadManager *BrowserApplication::s_downloadManager = 0;
-TorrentWindow *BrowserApplication::s_torrents = 0;
-HistoryManager *BrowserApplication::s_historyManager = 0;
-NetworkAccessManager *BrowserApplication::s_networkAccessManager = 0;
-BookmarksManager *BrowserApplication::s_bookmarksManager = 0;
+DownloadManager *BrowserApplication::s_downloadManager = nullptr;
+TorrentWindow *BrowserApplication::s_torrents = nullptr;
+HistoryManager *BrowserApplication::s_historyManager = nullptr;
+NetworkAccessManager *BrowserApplication::s_networkAccessManager = nullptr;
+BookmarksManager *BrowserApplication::s_bookmarksManager = nullptr;
 QMap<QString, QIcon> BrowserApplication::s_hostIcons;
 bool BrowserApplication::s_resetOnQuit = false;
-AutoComplete* BrowserApplication::s_autoCompleter = 0;
+AutoComplete* BrowserApplication::s_autoCompleter = nullptr;
 bool BrowserApplication::s_portableRunMode = false;
 bool BrowserApplication::s_startResizeOnMouseweelClick = true;
 QReadWriteLock lockIcons;
@@ -99,7 +99,7 @@ int BrowserApplication::getApplicationBuild()
 
 BrowserApplication::BrowserApplication(int &argc, char **argv)
     : QApplication(argc, argv)
-    , m_localServer(0)
+    , m_localServer(nullptr)
     , quiting(false)
 {
     QCoreApplication::setOrganizationName(QLatin1String("QtWeb.NET"));
@@ -524,7 +524,7 @@ void BrowserApplication::restoreLastSession()
         settings.beginGroup(QLatin1String("MainWindow"));
         if (settings.value(QLatin1String("restoring"), false).toBool()) 
         {
-            QMessageBox::information(0, tr("Session restore failed"),
+            QMessageBox::information(nullptr, tr("Session restore failed"),
                 tr("The saved session will not be restored because QtWeb crashed before while trying to restore this session."));
             return;
         }
@@ -554,7 +554,7 @@ void BrowserApplication::restoreLastSession()
         windows.append(windowState);
     }
     for (int i = 0; i < windows.count(); ++i) {
-        BrowserMainWindow *newWindow = 0;
+        BrowserMainWindow *newWindow = nullptr;
         if (i == 0 && m_mainWindows.count() >= 1) {
             newWindow = mainWindow();
         } else {
@@ -566,7 +566,7 @@ void BrowserApplication::restoreLastSession()
 
 bool BrowserApplication::isTheOnlyBrowser() const
 {
-    return (m_localServer != 0);
+    return (m_localServer != nullptr);
 }
 
 void BrowserApplication::installTranslator(const QString &name)

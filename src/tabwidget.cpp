@@ -68,15 +68,15 @@
 
 TabWidget::TabWidget(QWidget *parent)
     : QTabWidget(parent)
-    , m_recentlyClosedTabsAction(0)
-    , m_newTabAction(0)
-    , m_closeTabAction(0)
-    , m_nextTabAction(0)
-    , m_previousTabAction(0)
-    , m_recentlyClosedTabsMenu(0)
+    , m_recentlyClosedTabsAction(nullptr)
+    , m_newTabAction(nullptr)
+    , m_closeTabAction(nullptr)
+    , m_nextTabAction(nullptr)
+    , m_previousTabAction(nullptr)
+    , m_recentlyClosedTabsMenu(nullptr)
     , m_prevSelectedTab(-1)
     , m_prevSelectedTabMark(-1)
-    , m_lineEdits(0)
+    , m_lineEdits(nullptr)
     , m_tabBar(new TabBar(this))
 {
     setElideMode(Qt::ElideRight);
@@ -305,7 +305,7 @@ QLineEdit *TabWidget::lineEdit(int index) const
     UrlLineEdit *urlLineEdit = qobject_cast<UrlLineEdit*>(m_lineEdits->widget(index));
     if (urlLineEdit)
         return urlLineEdit->lineEdit();
-    return 0;
+    return nullptr;
 }
 
 WebView *TabWidget::webView(int index) const
@@ -343,7 +343,7 @@ WebView *TabWidget::webView(int index) const
             return currentWebView();
         }
     }
-    return 0;
+    return nullptr;
 }
 
 int TabWidget::webViewIndex(WebView *webView) const
@@ -390,7 +390,7 @@ WebView *TabWidget::newTab(bool makeCurrent, bool empty)
         addTab(emptyWidget, tr("Blank Tab"));
         connect(this, SIGNAL(currentChanged(int)),
             this, SLOT(currentChanged(int)));
-        return 0;
+        return nullptr;
     }
 
     // webview
@@ -597,7 +597,7 @@ void TabWidget::closeTab(int index)
 QLabel *TabWidget::animationLabel(int index, bool addMovie)
 {
     if (-1 == index)
-        return 0;
+        return nullptr;
     QTabBar::ButtonPosition side = m_tabBar->freeSide();
     QLabel *loadingAnimation = qobject_cast<QLabel*>(m_tabBar->tabButton(index, side));
     if (!loadingAnimation) {
@@ -608,7 +608,7 @@ QLabel *TabWidget::animationLabel(int index, bool addMovie)
         loadingAnimation->setMovie(movie);
         movie->start();
     }
-    m_tabBar->setTabButton(index, side, 0);
+    m_tabBar->setTabButton(index, side, nullptr);
     m_tabBar->setTabButton(index, side, loadingAnimation);
     return loadingAnimation;
 }
@@ -634,7 +634,7 @@ void TabWidget::webViewIconChanged()
             QLabel *label = animationLabel(index, false);
             QMovie *movie = label->movie();
             delete movie;
-            label->setMovie(0);
+            label->setMovie(nullptr);
             label->setPixmap(icon.pixmap(16, 16));
             setElideMode(Qt::ElideRight);
         }

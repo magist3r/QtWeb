@@ -53,7 +53,7 @@
  */
 class SearchButton : public QAbstractButton {
 public:
-    SearchButton(QWidget *parent = 0);
+    SearchButton(QWidget *parent = nullptr);
     void paintEvent(QPaintEvent *event);
     QMenu *m_menu;
 
@@ -63,7 +63,7 @@ protected:
 
 SearchButton::SearchButton(QWidget *parent)
   : QAbstractButton(parent),
-    m_menu(0)
+    m_menu(nullptr)
 {
     setObjectName(QLatin1String("SearchButton"));
     setCursor(Qt::ArrowCursor);

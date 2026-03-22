@@ -45,7 +45,7 @@ signals:
     void entryChanged(BookmarkNode *item);
 
 public:
-    BookmarksManager(QObject *parent = 0);
+    BookmarksManager(QObject *parent = nullptr);
     ~BookmarksManager();
 
     void addBookmark(BookmarkNode *parent, BookmarkNode *node, int row = -1);
@@ -159,7 +159,7 @@ public:
         SeparatorRole = Qt::UserRole + 4
     };
 
-    BookmarksModel(BookmarksManager *bookmarkManager, QObject *parent = 0);
+    BookmarksModel(BookmarksManager *bookmarkManager, QObject *parent = nullptr);
     inline BookmarksManager *bookmarksManager() const { return m_bookmarksManager; }
 
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
@@ -198,7 +198,7 @@ signals:
     void openUrl(const QUrl &url);
 
 public:
-     BookmarksMenu(QWidget *parent = 0);
+     BookmarksMenu(QWidget *parent = nullptr);
      void setInitialActions(QList<QAction*> actions);
 
 protected:
@@ -221,7 +221,7 @@ class AddBookmarkProxyModel : public QSortFilterProxyModel
 {
     Q_OBJECT
 public:
-    AddBookmarkProxyModel(QObject * parent = 0);
+    AddBookmarkProxyModel(QObject * parent = nullptr);
     int columnCount(const QModelIndex & parent = QModelIndex()) const;
 
 protected:
@@ -237,7 +237,7 @@ class AddBookmarkDialog : public QDialog, public Ui_AddBookmarkDialog
     Q_OBJECT
 
 public:
-    AddBookmarkDialog(const QString &url, const QString &title, const QString& default_folder, QWidget *parent = 0, BookmarksManager *bookmarkManager = 0);
+    AddBookmarkDialog(const QString &url, const QString &title, const QString& default_folder, QWidget *parent = nullptr, BookmarksManager *bookmarkManager = nullptr);
     void acceptDefaultLocation();
 
 private slots:
@@ -260,7 +260,7 @@ signals:
     void openUrl(const QUrl &url);
 
 public:
-    BookmarksDialog(QWidget *parent = 0, BookmarksManager *manager = 0);
+    BookmarksDialog(QWidget *parent = nullptr, BookmarksManager *manager = nullptr);
     ~BookmarksDialog();
 
 private slots:
@@ -290,7 +290,7 @@ signals:
     void openUrl(const QUrl &url);
 
 public:
-    BookmarksToolBar(BookmarksModel *model, QWidget *parent = 0);
+    BookmarksToolBar(BookmarksModel *model, QWidget *parent = nullptr);
     void setRootIndex(const QModelIndex &index);
     QModelIndex rootIndex() const;
 
@@ -333,7 +333,7 @@ public slots:
     void addFolder();
 
 public:
-    BookmarkToolButton(QUrl url, QWidget *parent = 0);
+    BookmarkToolButton(QUrl url, QWidget *parent = nullptr);
     QUrl url() const;
 
 protected:

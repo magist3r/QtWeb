@@ -58,7 +58,7 @@ class ChaseWidget : public QWidget
 {
     Q_OBJECT
 public:
-    ChaseWidget(QWidget *parent = 0, QPixmap pixmap = QPixmap(), bool pixmapEnabled = false);
+    ChaseWidget(QWidget *parent = nullptr, QPixmap pixmap = QPixmap(), bool pixmapEnabled = false);
 
     void setAnimated(bool value);
     void setPixmapEnabled(bool enable);

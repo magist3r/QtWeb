@@ -171,9 +171,9 @@ void LineEdit::keyPressEvent ( QKeyEvent * event )
 ////////////////////////////////////////
 ExLineEdit::ExLineEdit(QWidget *parent, bool fix_url)
     : QWidget(parent)
-    , m_leftWidget(0)
+    , m_leftWidget(nullptr)
     , m_lineEdit(new LineEdit(this, fix_url))
-    , m_clearButton(0)
+    , m_clearButton(nullptr)
 {
     setFocusPolicy(m_lineEdit->focusPolicy());
     setAttribute(Qt::WA_InputMethodEnabled);
