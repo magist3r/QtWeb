@@ -152,19 +152,17 @@ bool GSuggestCompletion::eventFilter(QObject *obj, QEvent *ev)
     }
 
     if (ev->type() == QEvent::KeyPress) {
-
-        bool consumed = false;
         int key = static_cast<QKeyEvent*>(ev)->key();
         switch (key) {
         case Qt::Key_Enter:
         case Qt::Key_Return:
             doneCompletion();
-            consumed = true;
+            return true;
 
         case Qt::Key_Escape:
             editor->setFocus();
             popup->hide();
-            consumed = true;
+            return true;
 
         case Qt::Key_Up:
         case Qt::Key_Down:
@@ -181,7 +179,7 @@ bool GSuggestCompletion::eventFilter(QObject *obj, QEvent *ev)
             break;
         }
 
-        return consumed;
+        return false;
     }
 
     return false;

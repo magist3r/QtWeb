@@ -1174,9 +1174,7 @@ QModelIndex HistoryTreeModel::parent(const QModelIndex &index) const
 bool HistoryTreeModel::hasChildren(const QModelIndex &parent) const
 {
     QModelIndex grandparent = parent.parent();
-    if (!grandparent.isValid())
-        return true;
-    return false;
+    return !grandparent.isValid();
 }
 
 Qt::ItemFlags HistoryTreeModel::flags(const QModelIndex &index) const

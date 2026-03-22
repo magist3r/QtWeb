@@ -258,9 +258,6 @@ void  ParseHtmlBookmarks( QString& books , BookmarkNode* root)
 
 BookmarkNode *BookmarksImport::importFromHtml( QString path )
 {
-    BookmarkNode* root = new BookmarkNode();
-
-
     QFile f(path);
     if (!f.open(QIODevice::ReadOnly | QIODevice::Text) )
         return NULL;
@@ -288,6 +285,7 @@ BookmarkNode *BookmarksImport::importFromHtml( QString path )
         return NULL;
     }
 
+    BookmarkNode* root = new BookmarkNode();
     QString books;
     QByteArray ba;
     bool bUtf8 = false;
@@ -327,5 +325,4 @@ BookmarkNode *BookmarksImport::importFromHtml( QString path )
 
     return root;
 }
-
 

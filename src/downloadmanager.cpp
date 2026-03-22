@@ -826,8 +826,13 @@ bool DownloadModel::removeRows(int row, int count, const QModelIndex &parent)
             || m_downloadManager->m_downloads.at(i)->tryAgainButton->isEnabled()) {
             beginRemoveRows(parent, i, i);
             DownloadItem* item = m_downloadManager->m_downloads.takeAt(i);
-            
-            if (item && item->m_output.exists())
+
+            if (!item) {
+                endRemoveRows();
+                continue;
+            }
+
+            if (item->m_output.exists())
             {
                 if (item->m_must_be_deleted)
                     item->m_output.remove();

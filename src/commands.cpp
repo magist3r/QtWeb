@@ -21,12 +21,12 @@
 #include <QStringList>
 
 
-MenuCommands::MenuCommands(void)
+MenuCommands::MenuCommands()
 {
     m_data.beginGroup(QLatin1String("MenuCommands"));
 }
 
-MenuCommands::~MenuCommands(void)
+MenuCommands::~MenuCommands()
 {
     m_data.endGroup();
 }
