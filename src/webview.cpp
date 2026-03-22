@@ -50,13 +50,14 @@
 #include "commands.h"
 
 #include <QtGui/QClipboard>
-#include <QtGui/QMenu>
-#include <QtGui/QMessageBox>
+#include <QtWidgets/QMenu>
+#include <QtWidgets/QMessageBox>
 #include <QtGui/QMouseEvent>
 #include <QProgressDialog>
 #include <QFileDialog>
 #include <QtNetwork>
-#include <QtUiTools/QUiLoader>
+#include <private/qftp_p.h>
+//#include <QtUiTools/QUiLoader>
 
 #include <QtCore/QDebug>
 #include <QtCore/QBuffer>
@@ -71,6 +72,10 @@ WebView::WebView(QWidget* parent)
     , m_gestureStarted(false)
     , m_encoding_in_progress(false)
     , m_ssl_errors_detected(false)
+    , m_linkUnderCursor(false)
+    , m_ftp(nullptr)
+    , m_ftpFile(nullptr)
+    , m_ftpProgressDialog(new QProgressDialog(this))
 {
     setPage(m_page);
     connect(page(), SIGNAL(statusBarMessage(const QString&)),
@@ -89,16 +94,12 @@ WebView::WebView(QWidget* parent)
 
     connect(this, SIGNAL(linkClicked(const QUrl&)),
             this, SLOT(clickedUrl(const QUrl &)));
+    connect(page(), SIGNAL(linkHovered(const QString &, const QString &, const QString &)),
+            this, SLOT(linkHover(const QString &, const QString &, const QString &)));
 
     connect(page(), SIGNAL(downloadRequested(const QNetworkRequest &)),
             this, SLOT(downloadRequested(const QNetworkRequest &)));
     page()->setForwardUnsupportedContent(true);
-
-    ////////////////////////////////////////////////////////
-    // AC: FTP impl
-    m_ftp = NULL;
-    m_ftpFile = NULL;
-    m_ftpProgressDialog = new QProgressDialog(this);
     connect(m_ftpProgressDialog, SIGNAL(canceled()), this, SLOT(ftpCancelDownload()));
 
     QSettings settings;
@@ -242,13 +243,18 @@ void WebView::adBlock()
     }
 }
 
+void WebView::linkHover(const QString &link, const QString &title, const QString &textContent)
+{
+    m_linkUnderCursor = !(link.isEmpty() && title.isEmpty() && textContent.isEmpty());
+}
+
 
 void WebView::copyMailtoAddress()
 {
     if (!m_hitResult.isNull() && !m_hitResult.linkUrl().isEmpty())
     {
         if (m_hitResult.linkUrl().scheme() == "mailto")
-            QApplication::clipboard()->setText( m_hitResult.linkUrl().encodedPath() );
+            QApplication::clipboard()->setText( m_hitResult.linkUrl().path(QUrl::FullyEncoded).toLatin1());
         else
         {
             if (!m_hitResult.linkUrl().scheme().isEmpty())
@@ -331,7 +337,7 @@ void WebView::applyEncoding()
 
         QString html = mainframe->toHtml();
 
-        QTextCodec *codec = QTextCodec::codecForName( enc.toAscii() );
+        QTextCodec *codec = QTextCodec::codecForName( enc.toLatin1() );
         if (!codec)
             return;
 
@@ -342,14 +348,14 @@ void WebView::applyEncoding()
         m_encoding_in_progress = true;
         m_current_encoding = enc;
         m_current_encoding_url = url();
-        QString output = decoder->toUnicode(html.toAscii());
+        QString output = decoder->toUnicode(html.toLatin1());
         mainframe->setHtml(output, mainframe->url());
 
         QList<QWebFrame *> children = mainframe->childFrames();
         foreach(QWebFrame *frame, children)
         {
             html = frame->toHtml();
-            output = decoder->toUnicode(html.toAscii());
+            output = decoder->toUnicode(html.toLatin1());
             frame->setHtml(output, frame->url());
         }
         m_encoding_in_progress = false;
@@ -424,17 +430,13 @@ void WebView::loadUrl(const QUrl &url, const QString &title )
     else
         emit titleChanged(title);
 
-    if (url.toString().toLower().indexOf("ftp") == 0)
-    {
+    if (url.toString().toLower().indexOf("ftp") == 0) {
         webPage()->mainWindow()->tabWidget()->setTabText(webPage()->mainWindow()->tabWidget()->currentIndex(), url.toString() );
         loadFtpUrl(url);
         return;
     }
-    else
-    {
-        ftpCheckDisconnect();
-    }
 
+    ftpCheckDisconnect();
     load(url);
 }
 void WebView::clickedUrl(const QUrl &url)
@@ -595,7 +597,7 @@ void WebView::mouseReleaseEvent(QMouseEvent *event)
         }
     }
 
-    if (/*!event->isAccepted() &&*/ (m_page->m_pressedButtons & Qt::MidButton)) 
+    if (/*!event->isAccepted() &&*/ !m_linkUnderCursor && (m_page->m_pressedButtons & Qt::MidButton))
     {
         QUrl url(QApplication::clipboard()->text(QClipboard::Selection));
         if (!url.isEmpty() && url.isValid() && !url.scheme().isEmpty()) 
@@ -668,9 +670,6 @@ void WebView::downloadRequested(const QNetworkRequest &request)
     BrowserApplication::downloadManager()->download(request);
 }
 
-///////////////////////////////////////////////////////////////
-// AC: FTP impl
-
 void WebView::ftpCancelDownload()
 {
     if (m_ftp)
@@ -684,7 +683,7 @@ void WebView::ftpCheckDisconnect()
     {
         m_ftp->abort();
         m_ftp->deleteLater();
-        m_ftp = NULL;
+        m_ftp = nullptr;
         setCursor(Qt::ArrowCursor);
     }
 }
@@ -693,6 +692,7 @@ void WebView::loadFtpUrl(const QUrl &url)
 {
     m_is_loading = true;
 
+    ftpCheckDisconnect();
     m_ftpHtml.clear();
     setCursor(Qt::WaitCursor);
 
@@ -777,6 +777,7 @@ void WebView::ftpDownloadFile(const QUrl &url, QString fileName )
                                  tr("Unable to save the file %1: %2.")
                                  .arg(fn).arg(m_ftpFile->errorString()));
         delete m_ftpFile;
+        m_ftpFile = nullptr;
         return;
     }
 
@@ -785,11 +786,13 @@ void WebView::ftpDownloadFile(const QUrl &url, QString fileName )
     m_ftpProgressDialog->setLabelText(QString("&nbsp;<br>" + tr("Downloading <b>%1</b>")).arg(fn));
     m_ftpProgressDialog->setWindowTitle(tr("FTP Download"));
     m_ftpProgressDialog->setModal(true);
+    m_ftpProgressDialog->show();
 }
 
 
 void WebView::ftpCommandFinished(int res, bool error)
 {
+    Q_UNUSED(res);
     setCursor(Qt::ArrowCursor);
 
     if (!m_ftp)
@@ -824,8 +827,8 @@ void WebView::ftpCommandFinished(int res, bool error)
         if ( !m_initialUrl.hasQuery() )
         {
             //<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">
-            m_ftpHtml = "<html><body><PRE><H2>Contents of " + m_initialUrl.toString() + "</H2>" + 
-                (u.length() > 0 ? "<p> Go to <a href=\"" + u + "\">parent directory</a>" : QString(""))+
+            m_ftpHtml = "<html><body><PRE><H2>Contents of " + m_initialUrl.toString() + "</H2>" +
+                (u.length() > 0 ? "<p> Go to <a href=\"" + u + "\">parent directory</a>" : QString())+
                 "<p><table cellpadding=3 cellspacing=3><tr><td></td><td><b>Name</b></td><td width=70 align=right><b>Size</b></td><td width=110 align=center><b>Date/Time</b></td></tr><tr><td>&nbsp;</td><td></td></tr>";
             setCursor(Qt::WaitCursor);
             m_ftp->list();
@@ -859,6 +862,7 @@ void WebView::ftpCommandFinished(int res, bool error)
             dm->addItem(m_initialUrl, m_ftpFile->fileName(), true );
         }
         delete m_ftpFile;
+        m_ftpFile = nullptr;
         m_ftpProgressDialog->hide();
     } 
     else 

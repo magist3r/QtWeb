@@ -1,0 +1,21 @@
+# shellcheck disable=SC2034
+
+# This lock file is sourced by build-qt5-static.sh.
+# Every source must have at least one checksum (sha256 preferred, md5 fallback).
+
+LOCK_QT_VERSION="5.5.1"
+
+LOCK_QT5_SRC_FILE="qt-everywhere-opensource-src-5.5.1.tar.gz"
+LOCK_QT5_SRC_URL="https://download.qt.io/new_archive/qt/5.5/5.5.1/single/qt-everywhere-opensource-src-5.5.1.tar.gz"
+LOCK_QT5_SRC_SHA256="c7fad41a009af1996b62ec494e438aedcb072b3234b2ad3eeea6e6b1f64be3b3"
+LOCK_QT5_SRC_MD5="59f0216819152b77536cf660b015d784"
+
+LOCK_QT5_WEBKIT_FILE="qtwebkit-opensource-src-5.5.1.tar.gz"
+LOCK_QT5_WEBKIT_SRC_URL="https://download.qt.io/new_archive/qt/5.5/5.5.1/submodules/qtwebkit-opensource-src-5.5.1.tar.gz"
+LOCK_QT5_WEBKIT_SHA256="d7776b4f76aae5a495cf16879fed5fd8370342a33116d8f41c30ab4ffd0b9ffd"
+LOCK_QT5_WEBKIT_MD5="67ebccfbcd2bbb7eb24c8af6467a55dd"
+
+LOCK_ICU_SRC_FILE="icu4c-52_1-src.tgz"
+LOCK_ICU_SRC_URL="https://download.qt.io/development_releases/prebuilt/icu/src/icu4c-52_1-src.tgz"
+LOCK_ICU_SRC_SHA256="2f4d5e68d4698e87759dbdc1a586d053d96935787f79961d192c477b029d8092"
+LOCK_ICU_SRC_MD5="9e96ed4c1d99c0d14ac03c140f9f346c"

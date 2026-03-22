@@ -49,15 +49,15 @@
 #include "autocomplete.h"
 
 #include <QtGui/QClipboard>
-#include <QtGui/QMenu>
-#include <QtGui/QMessageBox>
+#include <QtWidgets/QMenu>
+#include <QtWidgets/QMessageBox>
 #include <QtGui/QMouseEvent>
 #include <QProgressDialog>
 #include <QFileDialog>
 #include <QtNetwork>
-#include <QtWebKit/QWebHitTestResult>
+#include <QWebHitTestResult>
 #include <qdesktopservices.h>
-#include <QtUiTools/QUiLoader>
+//#include <QtUiTools/QUiLoader>
 #include <QRegExp>
 
 #include <QtCore/QDebug>

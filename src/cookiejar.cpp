@@ -49,14 +49,15 @@
 #include <QtCore/QSettings>
 #include <QtCore/QUrl>
 
-#include <QtGui/QCompleter>
+#include <QtWidgets/QCompleter>
 #include <QtGui/QFont>
 #include <QtGui/QFontMetrics>
-#include <QtGui/QHeaderView>
+#include <QtWidgets/QHeaderView>
 #include <QtGui/QKeyEvent>
-#include <QtGui/QSortFilterProxyModel>
+#include <QtCore/QSortFilterProxyModel>
 
 #include <QtWebKit/QWebSettings>
+#include <QNetworkCookie>
 
 #include <QtCore/QDebug>
 
@@ -492,7 +493,8 @@ bool CookieModel::removeRows(int row, int count, const QModelIndex &parent)
 
 void CookieModel::cookiesChanged()
 {
-    reset();
+	beginResetModel();
+	endResetModel();
 }
 
 CookiesDialog::CookiesDialog(CookieJar *cookieJar, QWidget *parent) : QDialog(parent)
@@ -548,6 +550,15 @@ CookieExceptionsModel::CookieExceptionsModel(CookieJar *cookiejar, QObject *pare
     m_allowedCookies = m_cookieJar->allowedCookies();
     m_blockedCookies = m_cookieJar->blockedCookies();
     m_sessionCookies = m_cookieJar->allowForSessionCookies();
+}
+
+void CookieExceptionsModel::reload()
+{
+    beginResetModel();
+    m_allowedCookies = m_cookieJar->allowedCookies();
+    m_blockedCookies = m_cookieJar->blockedCookies();
+    m_sessionCookies = m_cookieJar->allowForSessionCookies();
+    endResetModel();
 }
 
 QVariant CookieExceptionsModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -720,28 +731,54 @@ void CookiesExceptionsDialog::textChanged(const QString &text)
 
 void CookiesExceptionsDialog::block()
 {
-    if (domainLineEdit->text().isEmpty())
+    QString domain = domainLineEdit->text().trimmed();
+    if (domain.isEmpty())
         return;
-    m_exceptionsModel->m_blockedCookies.append(domainLineEdit->text());
+
+    m_exceptionsModel->m_allowedCookies.removeAll(domain);
+    m_exceptionsModel->m_sessionCookies.removeAll(domain);
+    if (!m_exceptionsModel->m_blockedCookies.contains(domain))
+        m_exceptionsModel->m_blockedCookies.append(domain);
+
+    m_cookieJar->setAllowedCookies(m_exceptionsModel->m_allowedCookies);
     m_cookieJar->setBlockedCookies(m_exceptionsModel->m_blockedCookies);
-    m_exceptionsModel->reset();
+    m_cookieJar->setAllowForSessionCookies(m_exceptionsModel->m_sessionCookies);
+    m_exceptionsModel->reload();
+    domainLineEdit->clear();
 }
 
 void CookiesExceptionsDialog::allow()
 {
-    if (domainLineEdit->text().isEmpty())
+    QString domain = domainLineEdit->text().trimmed();
+    if (domain.isEmpty())
         return;
-    m_exceptionsModel->m_allowedCookies.append(domainLineEdit->text());
+
+    m_exceptionsModel->m_blockedCookies.removeAll(domain);
+    m_exceptionsModel->m_sessionCookies.removeAll(domain);
+    if (!m_exceptionsModel->m_allowedCookies.contains(domain))
+        m_exceptionsModel->m_allowedCookies.append(domain);
+
     m_cookieJar->setAllowedCookies(m_exceptionsModel->m_allowedCookies);
-    m_exceptionsModel->reset();
+    m_cookieJar->setBlockedCookies(m_exceptionsModel->m_blockedCookies);
+    m_cookieJar->setAllowForSessionCookies(m_exceptionsModel->m_sessionCookies);
+    m_exceptionsModel->reload();
+    domainLineEdit->clear();
 }
 
 void CookiesExceptionsDialog::allowForSession()
 {
-    if (domainLineEdit->text().isEmpty())
+    QString domain = domainLineEdit->text().trimmed();
+    if (domain.isEmpty())
         return;
-    m_exceptionsModel->m_sessionCookies.append(domainLineEdit->text());
-    m_cookieJar->setAllowForSessionCookies(m_exceptionsModel->m_sessionCookies);
-    m_exceptionsModel->reset();
-}
 
+    m_exceptionsModel->m_allowedCookies.removeAll(domain);
+    m_exceptionsModel->m_blockedCookies.removeAll(domain);
+    if (!m_exceptionsModel->m_sessionCookies.contains(domain))
+        m_exceptionsModel->m_sessionCookies.append(domain);
+
+    m_cookieJar->setAllowedCookies(m_exceptionsModel->m_allowedCookies);
+    m_cookieJar->setBlockedCookies(m_exceptionsModel->m_blockedCookies);
+    m_cookieJar->setAllowForSessionCookies(m_exceptionsModel->m_sessionCookies);
+    m_exceptionsModel->reload();
+    domainLineEdit->clear();
+}

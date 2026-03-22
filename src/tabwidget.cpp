@@ -49,14 +49,14 @@
 #include "commands.h"
 
 #include <QtGui/QClipboard>
-#include <QtGui/QCompleter>
-#include <QtGui/QListView>
-#include <QtGui/QMenu>
-#include <QtGui/QMessageBox>
+#include <QtWidgets/QCompleter>
+#include <QtWidgets/QListView>
+#include <QtWidgets/QMenu>
+#include <QtWidgets/QMessageBox>
 #include <QtGui/QMouseEvent>
-#include <QtGui/QStackedWidget>
-#include <QtGui/QStyle>
-#include <QtGui/QToolButton>
+#include <QtWidgets/QStackedWidget>
+#include <QtWidgets/QStyle>
+#include <QtWidgets/QToolButton>
 #include <QFile>
 #include <QtCore/QDebug>
 #include <QBuffer>
@@ -256,6 +256,7 @@ void TabWidget::currentChanged(int index)
     m_lineEdits->setCurrentIndex(index);
     emit loadProgress(webView->progress());
     emit showStatusBarMessage(webView->lastStatusBarText());
+    BrowserApplication::instance()->mainWindow()->setTabStop(lineEdit(index));
     webView->setFocus();
 }
 
@@ -419,6 +420,7 @@ WebView *TabWidget::newTab(bool makeCurrent, bool empty)
             this, SIGNAL(statusBarVisibilityChangeRequested(bool)));
     connect(webView->page(), SIGNAL(toolBarVisibilityChangeRequested(bool)),
             this, SIGNAL(toolBarVisibilityChangeRequested(bool)));
+    connect(urlLineEdit, SIGNAL(escapePressed()), webView, SLOT(setFocus()));
 
     addTab(webView, tr("about:blank"));
 

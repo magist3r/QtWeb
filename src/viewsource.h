@@ -6,6 +6,7 @@
 
 #include <QMainWindow>
 #include <QSyntaxHighlighter>
+#include <QTextEdit>
 
 class HtmlHighlighter : public QSyntaxHighlighter
 {

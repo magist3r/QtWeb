@@ -484,8 +484,12 @@ QList<QKeySequence> MenuCommands::CloseTabShortcuts() const
     QList<QKeySequence> keys = loadShortcuts( CloseTabKey() ); 
     if (keys.size() == 0)
     {
-        keys.append( QKeySequence(Qt::CTRL | Qt::Key_W) );
-        keys.append( QKeySequence::Close );
+        QKeySequence ctrlW(Qt::CTRL | Qt::Key_W);
+        keys.append(ctrlW);
+
+        QKeySequence ctrlClose(QKeySequence::Close);
+        if(ctrlW  != ctrlClose)
+            keys.append( QKeySequence::Close );
     }
     return  keys; 
 }

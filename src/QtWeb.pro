@@ -1,14 +1,15 @@
 TEMPLATE = app
 TARGET = QtWeb
-QT += network xml webkit
-CONFIG += static
-QTPLUGIN += qcncodecs qjpcodecs qkrcodecs qtwcodecs qico 
+QT += network xml webkitwidgets widgets printsupport
+CONFIG += static c++11
 DEFINES += QT_NO_UITOOLS
 
 INCLUDEPATH += moc \
     rcc \
     uic \
     .
+
+INCLUDEPATH += $$[QT_INSTALL_HEADERS]/QtNetwork/$$QT_VERSION/QtNetwork
     
 MOC_DIR = moc/
 OBJECTS_DIR = obj/

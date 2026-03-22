@@ -41,7 +41,7 @@
 #ifndef SQUEEZELABEL_H
 #define SQUEEZELABEL_H
 
-#include <QtGui/QLabel>
+#include <QtWidgets/QLabel>
 
 class SqueezeLabel : public QLabel
 {
