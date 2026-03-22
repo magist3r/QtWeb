@@ -466,7 +466,7 @@ bool DownloadItem::checkAddTorrent()
 DownloadManager::DownloadManager(QWidget *parent)
     : QDialog(parent, Qt::Window)
     , m_manager(BrowserApplication::networkAccessManager())
-    , m_iconProvider(0)
+    , m_iconProvider(nullptr)
     , m_removePolicy(Never)
 {
     setupUi(this);
@@ -635,7 +635,7 @@ void DownloadManager::save() const
 
 void DownloadManager::addItem(const QUrl& url, QString filename, bool done)
 {
-    DownloadItem *item = new DownloadItem(0, false, this);
+    DownloadItem *item = new DownloadItem(nullptr, false, this);
 
     item->m_output.setFileName(filename);
     item->setOutputTitle();
@@ -738,7 +738,7 @@ void DownloadManager::cleanup_list()
     updateItemCount();
     if (m_downloads.isEmpty() && m_iconProvider) {
         delete m_iconProvider;
-        m_iconProvider = 0;
+        m_iconProvider = nullptr;
     }
     save();
 }
@@ -783,7 +783,7 @@ void DownloadManager::cleanup_full()
     updateItemCount();
     if (m_downloads.isEmpty() && m_iconProvider) {
         delete m_iconProvider;
-        m_iconProvider = 0;
+        m_iconProvider = nullptr;
     }
     save();
 }

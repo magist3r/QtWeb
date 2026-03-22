@@ -66,7 +66,7 @@
 
 UrlIconLabel::UrlIconLabel(QWidget *parent)
     : QLabel(parent)
-    , m_webView(0)
+    , m_webView(nullptr)
 {
     setMinimumWidth(16);
     setMinimumHeight(16);
@@ -133,8 +133,8 @@ void UrlIconLabel::mouseMoveEvent(QMouseEvent *event)
 
 UrlLineEdit::UrlLineEdit(QWidget *parent)
     : ExLineEdit(parent, true)
-    , m_webView(0)
-    , m_iconLabel(0)
+    , m_webView(nullptr)
+    , m_iconLabel(nullptr)
 {
     // icon
     m_iconLabel = new UrlIconLabel(this);

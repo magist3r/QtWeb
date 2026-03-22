@@ -74,9 +74,9 @@
 NetworkAccessManager::NetworkAccessManager(QObject *parent)
     : QNetworkAccessManager(parent)
     , m_useProxy(false)
-    , m_proxyExceptions(0)
-    , m_adBlock(0)
-    , m_adBlockEx(0)
+    , m_proxyExceptions(nullptr)
+    , m_adBlock(nullptr)
+    , m_adBlockEx(nullptr)
 {
     connect(this, SIGNAL(authenticationRequired(QNetworkReply*, QAuthenticator*)),
             SLOT(authenticationRequired(QNetworkReply*,QAuthenticator*)));
@@ -108,7 +108,7 @@ void NetworkAccessManager::loadSettings()
     if (m_proxyExceptions)
     {
         delete m_proxyExceptions;
-        m_proxyExceptions = 0;
+        m_proxyExceptions = nullptr;
     }
 
     QSettings settings;
@@ -189,13 +189,13 @@ void NetworkAccessManager::loadSettings()
     if (m_adBlock)
     {
         delete m_adBlock;
-        m_adBlock = 0;
+        m_adBlock = nullptr;
     }
 
     if (m_adBlockEx)
     {
         delete m_adBlockEx;
-        m_adBlockEx = 0;
+        m_adBlockEx = nullptr;
     }
 
     settings.beginGroup(QLatin1String("AdBlock"));
@@ -231,7 +231,7 @@ void NetworkAccessManager::loadSettings()
     if (!settings.value(QLatin1String("enableDiskCache"), false).toBool() && cache())
     {
         cache()->clear();
-        setCache(0);
+        setCache(nullptr);
     }
 }
 
@@ -246,7 +246,7 @@ void NetworkAccessManager::authenticationRequired(QNetworkReply *reply, QAuthent
     passwordDialog.setupUi(&dialog);
 
     passwordDialog.iconLabel->setText(QString());
-    passwordDialog.iconLabel->setPixmap(mainWindow->style()->standardIcon(QStyle::SP_MessageBoxQuestion, 0, mainWindow).pixmap(32, 32));
+    passwordDialog.iconLabel->setPixmap(mainWindow->style()->standardIcon(QStyle::SP_MessageBoxQuestion, nullptr, mainWindow).pixmap(32, 32));
 
     QString introMessage = tr("<qt>Enter username and password for \"%1\" at %2</qt>");
     introMessage = introMessage.arg(reply->url().toString().toHtmlEscaped()).arg(reply->url().toString().toHtmlEscaped());
@@ -270,7 +270,7 @@ void NetworkAccessManager::proxyAuthenticationRequired(const QNetworkProxy &prox
     proxyDialog.setupUi(&dialog);
 
     proxyDialog.iconLabel->setText(QString());
-    proxyDialog.iconLabel->setPixmap(mainWindow->style()->standardIcon(QStyle::SP_MessageBoxQuestion, 0, mainWindow).pixmap(32, 32));
+    proxyDialog.iconLabel->setPixmap(mainWindow->style()->standardIcon(QStyle::SP_MessageBoxQuestion, nullptr, mainWindow).pixmap(32, 32));
 
     QString introMessage = tr("<qt>Connect to proxy \"%1\" using:</qt>");
     introMessage = introMessage.arg(proxy.hostName().toHtmlEscaped());

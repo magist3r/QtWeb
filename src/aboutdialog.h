@@ -54,7 +54,7 @@ class AboutDialog : public QDialog, private Ui_AboutDialog
     Q_OBJECT
 
 public:
-    AboutDialog(QWidget *parent = 0);
+    AboutDialog(QWidget *parent = nullptr);
 
 protected slots:
     void credits();

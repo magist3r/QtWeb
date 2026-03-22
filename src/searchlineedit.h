@@ -60,7 +60,7 @@ signals:
     void textChanged(const QString &text);
 
 public:
-    SearchLineEdit(QWidget *parent = 0);
+    SearchLineEdit(QWidget *parent = nullptr);
 
     QString inactiveText() const;
     void setInactiveText(const QString &text);

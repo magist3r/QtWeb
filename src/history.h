@@ -90,7 +90,7 @@ signals:
     void entryUpdated(int offset);
 
 public:
-    HistoryManager(QObject *parent = 0);
+    HistoryManager(QObject *parent = nullptr);
     ~HistoryManager();
 
     bool historyContains(const QString &url) const;
@@ -152,7 +152,7 @@ public:
         UrlStringRole = Qt::UserRole + 4
     };
 
-    HistoryModel(HistoryManager *history, QObject *parent = 0);
+    HistoryModel(HistoryManager *history, QObject *parent = nullptr);
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
@@ -173,7 +173,7 @@ class HistoryFilterModel : public QAbstractProxyModel
     Q_OBJECT
 
 public:
-    HistoryFilterModel(QAbstractItemModel *sourceModel, QObject *parent = 0);
+    HistoryFilterModel(QAbstractItemModel *sourceModel, QObject *parent = nullptr);
 
     inline bool historyContains(const QString &url) const
         { load(); return m_historyHash.contains(url); }
@@ -217,7 +217,7 @@ class HistoryMenuModel : public QAbstractProxyModel
     Q_OBJECT
 
 public:
-    HistoryMenuModel(HistoryTreeModel *sourceModel, QObject *parent = 0);
+    HistoryMenuModel(HistoryTreeModel *sourceModel, QObject *parent = nullptr);
     int columnCount(const QModelIndex &parent) const;
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
     QModelIndex mapFromSource(const QModelIndex & sourceIndex) const;
@@ -240,7 +240,7 @@ signals:
     void openUrl(const QUrl &url);
 
 public:
-     HistoryMenu(QWidget *parent = 0);
+     HistoryMenu(QWidget *parent = nullptr);
      void setInitialActions(QList<QAction*> actions);
 
 protected:
@@ -264,7 +264,7 @@ class HistoryCompletionModel : public QAbstractProxyModel
     Q_OBJECT
 
 public:
-    HistoryCompletionModel(QObject *parent = 0);
+    HistoryCompletionModel(QObject *parent = nullptr);
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
@@ -287,7 +287,7 @@ class HistoryTreeModel : public QAbstractProxyModel
     Q_OBJECT
 
 public:
-    HistoryTreeModel(QAbstractItemModel *sourceModel, QObject *parent = 0);
+    HistoryTreeModel(QAbstractItemModel *sourceModel, QObject *parent = nullptr);
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     int columnCount(const QModelIndex &parent) const;
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
@@ -321,7 +321,7 @@ class TreeProxyModel : public QSortFilterProxyModel
     Q_OBJECT
 
 public:
-    TreeProxyModel(QObject *parent = 0);
+    TreeProxyModel(QObject *parent = nullptr);
 
 protected:
     bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const;
@@ -337,7 +337,7 @@ signals:
     void openUrl(const QUrl &url);
 
 public:
-    HistoryDialog(QWidget *parent = 0, HistoryManager *history = 0);
+    HistoryDialog(QWidget *parent = nullptr, HistoryManager *history = nullptr);
 
 private slots:
     void customContextMenuRequested(const QPoint &pos);

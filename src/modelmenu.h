@@ -54,7 +54,7 @@ signals:
     void hovered(const QString &text);
 
 public:
-    ModelMenu(QWidget *parent = 0);
+    ModelMenu(QWidget *parent = nullptr);
 
     void setModel(QAbstractItemModel *model);
     QAbstractItemModel *model() const;
@@ -82,7 +82,7 @@ protected:
     // add any actions after the tree
     virtual void postPopulated();
     // put all of the children of parent into menu up to max
-    void createMenu(const QModelIndex &parent, int max, QMenu *parentMenu = 0, QMenu *menu = 0);
+    void createMenu(const QModelIndex &parent, int max, QMenu *parentMenu = nullptr, QMenu *menu = nullptr);
 
 private slots:
     void aboutToShow();

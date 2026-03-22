@@ -57,7 +57,7 @@ class WebView : public QWebView {
     Q_OBJECT
 
 public:
-    WebView(QWidget *parent = 0);
+    WebView(QWidget *parent = nullptr);
     WebPage *webPage() const { return m_page; }
 
     void loadUrl(const QUrl &url, const QString &title = QString());

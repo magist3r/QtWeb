@@ -584,7 +584,7 @@ void TorrentClient::sendToPeer(int readId, int pieceIndex, int begin, const QByt
     // still exists; otherwise do nothing. This slot is called by the
     // file manager after it has read a block of data.
     QMap<int, PeerWireClient *>::const_iterator it = d->readIds.constFind(readId);
-    PeerWireClient *client = (it != d->readIds.constEnd()) ? it.value() : 0;
+    PeerWireClient *client = (it != d->readIds.constEnd()) ? it.value() : nullptr;
     if (client) {
         if ((client->peerWireState() & PeerWireClient::ChokingPeer) == 0)
             client->sendBlock(pieceIndex, begin, data);
@@ -640,7 +640,7 @@ void TorrentClient::fullVerificationDone()
 void TorrentClient::pieceVerified(int pieceIndex, bool ok)
 {
     QMap<int, TorrentPiece *>::const_iterator pieceIt = d->pendingPieces.constFind(pieceIndex);
-    TorrentPiece *piece = (pieceIt != d->pendingPieces.constEnd()) ? pieceIt.value() : 0;
+    TorrentPiece *piece = (pieceIt != d->pendingPieces.constEnd()) ? pieceIt.value() : nullptr;
 
     // Remove this piece from all payloads
     QMultiMap<PeerWireClient *, TorrentPiece *>::Iterator it = d->payloads.begin();

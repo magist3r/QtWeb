@@ -83,7 +83,7 @@ public:
         NewTab
     };
 
-    TabWidget(QWidget *parent = 0);
+    TabWidget(QWidget *parent = nullptr);
     TabBar *tabBar() { return m_tabBar; }
     void clear();
     void addWebAction(QAction *action, QWebPage::WebAction webAction);

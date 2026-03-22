@@ -59,7 +59,7 @@ signals:
     void search(const QUrl &url);
 
 public:
-    ToolbarSearch(QWidget *parent = 0);
+    ToolbarSearch(QWidget *parent = nullptr);
     ~ToolbarSearch();
 
 public slots:
