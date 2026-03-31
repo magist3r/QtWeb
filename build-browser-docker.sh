@@ -9,6 +9,9 @@ fail() {
     exit 1
 }
 
+# shellcheck disable=SC1090
+source "${REPO_ROOT}/toolchains/qt5-static/common.sh"
+
 usage() {
     cat <<'EOF'
 Usage: ./build-browser-docker.sh [options]
@@ -22,7 +25,7 @@ Options:
 EOF
 }
 
-IMAGE_TAG="${IMAGE_TAG:-qtweb-qt5-static-poc:5.5.1}"
+IMAGE_TAG="${IMAGE_TAG:-$QT5_STATIC_IMAGE_TAG}"
 JOBS="${JOBS:-$(nproc 2>/dev/null || echo 4)}"
 BUILD_TYPE="release"
 RUN_ANALYSIS=0
@@ -56,7 +59,7 @@ done
 
 case "$BUILD_TYPE" in
     release|debug)
-        QT_PREFIX_IN_CONTAINER="${REPO_ROOT}/artifacts/qt5-static-5.5.1-${BUILD_TYPE}/install"
+        QT_PREFIX_IN_CONTAINER="${REPO_ROOT}/artifacts/qt5-static-${QT_VERSION}-${BUILD_TYPE}/install"
         BUILD_DIR="${REPO_ROOT}/build-docker-${BUILD_TYPE}"
         if [[ "$BUILD_TYPE" == "release" ]]; then
             QMAKE_CONFIG_ARGS="CONFIG+=release CONFIG-=debug"

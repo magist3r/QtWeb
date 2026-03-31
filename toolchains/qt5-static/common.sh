@@ -1,0 +1,2 @@
+QT_VERSION="5.5.1"
+QT5_STATIC_IMAGE_TAG="qtweb-qt5-static-poc:${QT_VERSION}"

@@ -1,28 +1,31 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-QT_VERSION="5.5.1"
-DEFAULT_JOBS="$(nproc 2>/dev/null || echo 8)"
-JOBS="${COMPILE_JOBS:-$DEFAULT_JOBS}"
-OUTPUT_DIR=""
-RUNTIME="auto"
-CLEAN=false
-BUILD_TYPE="release"
-IMAGE_TAG="qtweb-qt5-static-poc:${QT_VERSION}"
-
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$SCRIPT_DIR"
 LOCK_FILE="${REPO_ROOT}/toolchains/qt5-static/sources.lock"
 DOCKERFILE="${REPO_ROOT}/toolchains/qt5-static/Dockerfile"
 INNER_SCRIPT="/workspace/toolchains/qt5-static/build-inside-container.sh"
 
+# shellcheck disable=SC1090
+source "${REPO_ROOT}/toolchains/qt5-static/common.sh"
+
+DEFAULT_JOBS="$(nproc 2>/dev/null || echo 8)"
+JOBS="${COMPILE_JOBS:-$DEFAULT_JOBS}"
+OUTPUT_DIR=""
+RUNTIME="auto"
+CLEAN=false
+BUILD_TYPE="release"
+IMAGE_TAG="${IMAGE_TAG:-$QT5_STATIC_IMAGE_TAG}"
+
+
 usage() {
-    cat <<'EOF'
+    cat <<EOF
 Usage: ./build-qt5-static.sh [options]
 
 Options:
   --jobs <N>                 Parallel build jobs (default: nproc)
-  --output-dir <path>        Output directory inside repo (default: artifacts/qt5-static-5.5.1-<release|debug>)
+  --output-dir <path>        Output directory inside repo (default: artifacts/qt5-static-${QT_VERSION}-<release|debug>)
   --runtime <auto|podman|docker>
                              Container runtime selector (default: auto)
   --debug                    Build debug Qt libraries
