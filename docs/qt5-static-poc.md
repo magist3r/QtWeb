@@ -44,7 +44,7 @@ Checksum policy:
 ## Output Layout
 Default root: `artifacts/qt5-static-5.5.1`
 
-- `src-cache/`: downloaded archives
+- `artifacts/src-cache/`: shared downloaded archives for all build flavors
 - `build/`: extracted/build tree
 - `install/`: static Qt install prefix
 - `icu-static/`: static ICU install prefix

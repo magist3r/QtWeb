@@ -249,7 +249,8 @@ OUTPUT_ABS="$(cd "$OUTPUT_RAW" && pwd -P)"
 
 ensure_output_in_repo "$OUTPUT_ABS" "--output-dir resolves outside repo: $OUTPUT_ABS"
 
-SRC_CACHE_DIR="${OUTPUT_ABS}/src-cache"
+SRC_CACHE_DIR="${REPO_ABS}/artifacts/src-cache"
+ensure_output_in_repo "$SRC_CACHE_DIR" "source cache resolves outside repo: $SRC_CACHE_DIR"
 mkdir -p "$SRC_CACHE_DIR" "${OUTPUT_ABS}/logs" "${OUTPUT_ABS}/build"
 
 QT5_SRC_ARCHIVE="${SRC_CACHE_DIR}/${QT5_SRC_FILE}"
