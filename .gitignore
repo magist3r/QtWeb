@@ -3,6 +3,7 @@ src/qt/.*
 temp-src
 build
 artifacts
+.codex
 
 # C++ objects and libs
 

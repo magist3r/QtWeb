@@ -1,0 +1,12 @@
+{
+  "files.watcherExclude": {
+    "**/artifacts/**": true,
+    "**/build-*/**": true,
+    "**/src/qt/**": true
+  },
+  "search.exclude": {
+    "**/artifacts/**": true,
+    "**/build-*/**": true,
+    "**/src/qt/**": true
+  }
+}
