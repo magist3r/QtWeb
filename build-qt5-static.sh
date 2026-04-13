@@ -10,6 +10,8 @@ INNER_SCRIPT="/workspace/toolchains/qt5-static/build-inside-container.sh"
 # shellcheck disable=SC1090
 source "${REPO_ROOT}/toolchains/qt5-static/common.sh"
 
+SCRIPT_NAME="$(basename "$0")"
+
 DEFAULT_JOBS="$(nproc 2>/dev/null || echo 8)"
 JOBS="${COMPILE_JOBS:-$DEFAULT_JOBS}"
 OUTPUT_DIR=""
@@ -18,6 +20,7 @@ CLEAN=false
 BUILD_TYPE="release"
 IMAGE_TAG="${IMAGE_TAG:-$QT5_STATIC_IMAGE_TAG}"
 
+BUILD_SCOPE="${BUILD_SCOPE:-all}"
 
 usage() {
     cat <<EOF
@@ -29,10 +32,13 @@ Options:
   --runtime <auto|podman|docker>
                              Container runtime selector (default: auto)
   --debug                    Build debug Qt libraries
+  --qt-only                  Build only the static Qt toolchain
+  --qtwebkit-only            Build only QtWebKit against an existing Qt install
   --clean                    Remove output directory before running
   --help                     Show this help message
 
 Environment overrides:
+  IMAGE_TAG
   QT5_SRC_URL
   QT5_SRC_SHA256
   QT5_WEBKIT_SRC_URL
@@ -110,6 +116,33 @@ pick_runtime() {
     echo "$RUNTIME"
 }
 
+RUN_CONTAINER_NAME=""
+
+cleanup_run_container() {
+    if [[ -n "${RUN_CONTAINER_NAME:-}" && -n "${CONTAINER_RUNTIME:-}" ]]; then
+        echo "cleaning up interrupted build container: $RUN_CONTAINER_NAME"
+        "$CONTAINER_RUNTIME" rm -f "$RUN_CONTAINER_NAME" >/dev/null 2>&1 || true
+    fi
+}
+
+report_run_duration() {
+    local exit_code="$1"
+    local outcome="failed"
+
+    if [[ "$exit_code" -eq 0 ]]; then
+        outcome="completed"
+    fi
+
+    echo "${SCRIPT_NAME} ${outcome} in $(format_duration "${SECONDS}")"
+}
+
+cleanup_and_report() {
+    local exit_code="$1"
+
+    cleanup_run_container
+    report_run_duration "$exit_code"
+}
+
 download_file() {
     local url="$1"
     local dst="$2"
@@ -182,6 +215,14 @@ while [[ $# -gt 0 ]]; do
             BUILD_TYPE="debug"
             shift
             ;;
+        --qt-only)
+            BUILD_SCOPE="qt"
+            shift
+            ;;
+        --qtwebkit-only)
+            BUILD_SCOPE="qtwebkit"
+            shift
+            ;;
         --clean)
             CLEAN=true
             shift
@@ -198,6 +239,17 @@ done
 
 if [[ "$BUILD_TYPE" != "release" && "$BUILD_TYPE" != "debug" ]]; then
     fail "unsupported build type: $BUILD_TYPE"
+fi
+
+if [[ "$BUILD_SCOPE" != "all" && "$BUILD_SCOPE" != "qt" && "$BUILD_SCOPE" != "qtwebkit" ]]; then
+    fail "unsupported build scope: $BUILD_SCOPE"
+fi
+
+SECONDS=0
+trap 'cleanup_and_report "$?"' EXIT
+
+if [[ "$BUILD_SCOPE" == "qtwebkit" && "$CLEAN" == true ]]; then
+    fail "--qtwebkit-only cannot be combined with --clean because it requires an existing Qt install in the output directory"
 fi
 
 if [[ -z "$OUTPUT_DIR" ]]; then
@@ -274,11 +326,16 @@ echo "using container runtime: $CONTAINER_RUNTIME"
 
 "$CONTAINER_RUNTIME" build -f "$DOCKERFILE" -t "$IMAGE_TAG" "$REPO_ROOT"
 
+RUN_CONTAINER_NAME="qt5-static-build-$$-$(date +%s)"
+trap cleanup_run_container INT TERM HUP
+
 "$CONTAINER_RUNTIME" run --rm \
+    --name "$RUN_CONTAINER_NAME" \
     --user "$(id -u):$(id -g)" \
     -e JOBS="$JOBS" \
     -e CLEAN="$CLEAN" \
     -e BUILD_TYPE="$BUILD_TYPE" \
+    -e BUILD_SCOPE="$BUILD_SCOPE" \
     -e QT_VERSION="$QT_VERSION" \
     -e OUTPUT_DIR="${OUTPUT_ABS}" \
     -e QT_SRC_ARCHIVE="${QT5_SRC_ARCHIVE}" \
@@ -299,4 +356,17 @@ echo "using container runtime: $CONTAINER_RUNTIME"
     "$IMAGE_TAG" \
     "$INNER_SCRIPT"
 
-echo "static Qt5 POC completed: ${OUTPUT_ABS}"
+RUN_CONTAINER_NAME=""
+trap - INT TERM HUP
+
+case "$BUILD_SCOPE" in
+    all)
+        echo "static Qt5 toolchain completed: ${OUTPUT_ABS}"
+        ;;
+    qt)
+        echo "static Qt build completed: ${OUTPUT_ABS}"
+        ;;
+    qtwebkit)
+        echo "static QtWebKit build completed: ${OUTPUT_ABS}"
+        ;;
+esac

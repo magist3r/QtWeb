@@ -1,5 +1,5 @@
 # Base image is version-tagged; switch to a digest-pinned reference when refreshed online.
-FROM ubuntu:16.04
+FROM ubuntu:20.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV LANG=C.UTF-8
@@ -12,13 +12,26 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     clang \
     clang-tidy \
+    cmake \
     curl \
     file \
     flex \
+    fonts-dejavu-core \
+    git \
     gperf \
-    # libdbus-1-dev \
+    libdbus-1-dev \
+    libegl1-mesa-dev \
+    libfontconfig1-dev \
+    libfreetype6-dev \
     libglib2.0-dev \
-    # libsqlite3-dev \
+    libgl1-mesa-dev \
+    libgles2-mesa-dev \
+    libhyphen-dev \
+    libicu-dev \
+    libjpeg-dev \
+    liblzma-dev \
+    libpng-dev \
+    libsqlite3-dev \
     libssl-dev \
     libx11-dev \
     libx11-xcb-dev \
@@ -28,15 +41,30 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libxext-dev \
     libxfixes-dev \
     libxi-dev \
-    # libxml2-dev \
+    libxml2-dev \
     libxrandr-dev \
     libxrender-dev \
-    # libxslt1-dev \
+    libxslt1-dev \
     libxcb1-dev \
+    libxcb-icccm4-dev \
+    libxcb-image0-dev \
+    libxcb-keysyms1-dev \
+    libxcb-randr0-dev \
+    libxcb-render-util0-dev \
+    libxcb-shape0-dev \
+    libxcb-shm0-dev \
+    libxcb-sync-dev \
+    libxcb-util-dev \
+    libxcb-xfixes0-dev \
+    libxcb-xinerama0-dev \
+    libxkbcommon-dev \
+    libxkbcommon-x11-dev \
+    ninja-build \
     patch \
     perl \
     pkg-config \
-    python \
+    python3 \
+    python-is-python3 \
     ruby \
     && rm -rf /var/lib/apt/lists/*
 

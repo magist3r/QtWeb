@@ -7,7 +7,7 @@ The first milestone is reproducible Docker-backed analysis plus a conservative c
 
 ## Decisions
 - Docker is the canonical build environment and the source of truth for the compilation database.
-- Docker also runs `clang-tidy` so it stays on a toolchain version compatible with the Qt `5.5.1` headers in this repository.
+- Docker also runs `clang-tidy` so it stays on a toolchain version compatible with the Qt `5.15.17` headers in this repository.
 - Host-installed `clazy-standalone` consumes the Docker-produced `compile_commands.json`.
 - `build-browser-docker.sh` is the main entrypoint for Dockerized analysis.
 - The initial scope is application code only:
@@ -27,7 +27,7 @@ The host environment running `build-browser-docker.sh --analyze` must provide:
 
 This keeps the build path aligned with Docker while avoiding two compatibility problems:
 - Ubuntu `16.04` does not provide `clazy` from the default package repositories.
-- the host `clang-tidy` available in this environment is too new for the Qt `5.5.1` headers used by this codebase.
+- the host `clang-tidy` available in this environment can diverge from the Qt `5.15.17` headers used by this codebase.
 
 ## Implementation Changes
 Extend [`build-browser-docker.sh`](/home/magist3r/code/QtWeb/build-browser-docker.sh) with explicit analysis modes while preserving its current build behavior.
@@ -112,7 +112,7 @@ Representative validation files:
 
 ## Risks
 - Ubuntu `16.04` does not provide `clazy` from the default package repositories, so full in-image analyzer installation is not viable in the current base image.
-- A host `clang-tidy` that is much newer than Qt `5.5.1` can fail inside Qt headers before project diagnostics are produced.
-- Legacy Qt `5.5.1` code and its headers may produce noisy diagnostics if the enabled check set is too broad.
+- A host `clang-tidy` that is much newer than Qt `5.15.17` can fail inside Qt headers before project diagnostics are produced.
+- Legacy QtWeb code and its headers may produce noisy diagnostics if the enabled check set is too broad.
 - Generated Qt sources can easily pollute analyzer output if the source list is not explicitly scoped.
 - A zero-warning target is likely unrealistic for the first pass and would create unnecessary churn.

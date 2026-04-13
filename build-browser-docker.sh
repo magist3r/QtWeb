@@ -12,6 +12,19 @@ fail() {
 # shellcheck disable=SC1090
 source "${REPO_ROOT}/toolchains/qt5-static/common.sh"
 
+SCRIPT_NAME="$(basename "$0")"
+
+report_run_duration() {
+    local exit_code="$1"
+    local outcome="failed"
+
+    if [[ "$exit_code" -eq 0 ]]; then
+        outcome="completed"
+    fi
+
+    echo "${SCRIPT_NAME} ${outcome} in $(format_duration "${SECONDS}")"
+}
+
 usage() {
     cat <<'EOF'
 Usage: ./build-browser-docker.sh [options]
@@ -56,6 +69,9 @@ while [[ $# -gt 0 ]]; do
             ;;
     esac
 done
+
+SECONDS=0
+trap 'report_run_duration "$?"' EXIT
 
 case "$BUILD_TYPE" in
     release|debug)

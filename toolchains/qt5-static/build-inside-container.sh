@@ -7,44 +7,49 @@ set -euo pipefail
 : "${QTWEBKIT_ARCHIVE:?QTWEBKIT_ARCHIVE is required}"
 : "${ICU_SRC_ARCHIVE:?ICU_SRC_ARCHIVE is required}"
 
-JOBS="${JOBS:-8}"
+JOBS="${JOBS:-$(nproc 2>/dev/null || echo 8)}"
 CLEAN="${CLEAN:-false}"
 BUILD_TYPE="${BUILD_TYPE:-release}"
+BUILD_SCOPE="${BUILD_SCOPE:-all}"
 WORK_DIR="${OUTPUT_DIR}/build"
 LOG_DIR="${OUTPUT_DIR}/logs"
 INSTALL_DIR="${OUTPUT_DIR}/install"
 ICU_INSTALL_DIR="${OUTPUT_DIR}/icu-static"
 OPENSSL_INCLUDE_DIR="/usr/include"
 OPENSSL_LIB_DIR="/usr/lib/x86_64-linux-gnu"
+SYSTEM_LIB_DIR="/usr/lib/x86_64-linux-gnu"
+DEJAVU_FONT_DIR="/usr/share/fonts/truetype/dejavu"
 MANIFEST_FILE="${OUTPUT_DIR}/build-manifest.txt"
-QT_SRC_DIR="${WORK_DIR}/qt-everywhere-opensource-src-${QT_VERSION}"
 PATCH_DIR="/workspace/toolchains/qt5-static/patches"
+QT_SRC_DIR=""
+QTWEBKIT_SOURCE_DIR=""
+QTWEBKIT_BUILD_DIR="${WORK_DIR}/qtwebkit-build-${BUILD_TYPE}"
+SMOKE_DIR="/workspace/smoke-tests/qtwebkit-smoke"
+SMOKE_BUILD_DIR="${SMOKE_DIR}/build-docker-${BUILD_TYPE}"
 
 fail() {
     echo "error: $*" >&2
     exit 1
 }
 
-MIN_DEP_CONFIGURE_FLAGS=(
-    -no-dbus
-    -no-gtkstyle
-    -no-fontconfig
-    -xkb-config-root /usr/share/X11/xkb
-    -icu
-    -qt-pcre
-    -qt-freetype
-    -qt-xcb
-    -qt-xkbcommon-x11
-)
 case "$BUILD_TYPE" in
     release)
         BUILD_CONFIGURE_FLAG="-release"
+        CMAKE_BUILD_TYPE="Release"
         ;;
     debug)
         BUILD_CONFIGURE_FLAG="-debug"
+        CMAKE_BUILD_TYPE="Debug"
         ;;
     *)
         fail "BUILD_TYPE must be release or debug, got: $BUILD_TYPE"
+        ;;
+esac
+
+case "$BUILD_SCOPE" in
+    all|qt|qtwebkit) ;;
+    *)
+        fail "BUILD_SCOPE must be all, qt, or qtwebkit; got: $BUILD_SCOPE"
         ;;
 esac
 
@@ -54,17 +59,23 @@ CONFIGURE_FLAGS=(
     "$BUILD_CONFIGURE_FLAG"
     -static
     -prefix "$INSTALL_DIR"
+    -skip qtwebengine
     -nomake tests
     -nomake examples
     -nomake tools
+    -no-dbus
+    -no-gtk
+    -no-fontconfig
+    -qt-pcre
+    -qt-freetype
     -qt-zlib
     -qt-libpng
     -qt-libjpeg
+    -icu
     -I "${ICU_INSTALL_DIR}/include"
     -L "${ICU_INSTALL_DIR}/lib"
-    -L "${OPENSSL_LIB_DIR}"
     -openssl-linked
-    "${MIN_DEP_CONFIGURE_FLAGS[@]}"
+    -L "${OPENSSL_LIB_DIR}"
 )
 
 require_file() {
@@ -77,45 +88,46 @@ require_dir() {
     [[ -d "$path" ]] || fail "missing directory: $path"
 }
 
+is_thin_archive() {
+    local path="$1"
+    file "$path" 2>/dev/null | grep -q 'thin archive'
+}
+
 log_verify() {
     local message="$1"
     echo "$message"
     echo "$message" >> "${LOG_DIR}/verify.log"
 }
 
-apply_patches() {
+locate_qt_source_dir() {
+    find "$WORK_DIR" -maxdepth 1 -mindepth 1 -type d -name "qt-everywhere*-${QT_VERSION}" | head -n 1
+}
+
+apply_matching_patches() {
+    local tree_name="$1"
+    local tree_patch_dir="${PATCH_DIR}/${tree_name}"
     local patch_files=()
     local patch_file
 
-    if [[ ! -d "$PATCH_DIR" ]]; then
+    if [[ ! -d "$tree_patch_dir" ]]; then
         return 0
     fi
 
-    mapfile -t patch_files < <(find "$PATCH_DIR" -maxdepth 1 -type f -name '*.patch' | sort)
+    mapfile -t patch_files < <(find "$tree_patch_dir" -maxdepth 1 -type f -name '*.patch' | sort)
     if [[ "${#patch_files[@]}" -eq 0 ]]; then
         return 0
     fi
 
     for patch_file in "${patch_files[@]}"; do
         if patch --dry-run -p1 < "$patch_file" >/dev/null 2>&1; then
+            echo "==> apply ${tree_name} patch: $(basename "$patch_file")"
             patch -p1 < "$patch_file"
         elif patch --dry-run -R -p1 < "$patch_file" >/dev/null 2>&1; then
-            echo "==> patch already applied: $(basename "$patch_file")"
+            echo "==> ${tree_name} patch already applied: $(basename "$patch_file")"
         else
-            fail "could not apply patch: $patch_file"
+            fail "${tree_name} patch does not apply cleanly: $(basename "$patch_file")"
         fi
     done
-}
-
-configure_qt() {
-    local log_file="$1"
-    echo "==> configure Qt"
-    ./configure -v "${CONFIGURE_FLAGS[@]}" >"$log_file" 2>&1
-}
-
-webkit_disabled_by_static_notice() {
-    local log_file="$1"
-    grep -q "Using static linking will disable the WebKit module." "$log_file"
 }
 
 build_static_icu() {
@@ -174,6 +186,11 @@ configure_build_env_for_qt() {
     export OPENSSL_LIBS="-Wl,-Bstatic ${OPENSSL_LIB_DIR}/libssl.a ${OPENSSL_LIB_DIR}/libcrypto.a -Wl,-Bdynamic -ldl -lpthread -lz"
 }
 
+configure_qt() {
+    echo "==> configure Qt"
+    ./configure -v "${CONFIGURE_FLAGS[@]}" >"${LOG_DIR}/configure.log" 2>&1
+}
+
 sync_installed_qmake_metadata() {
     local qtbase_build_dir="${QT_SRC_DIR}/qtbase"
     local build_qconfig="${qtbase_build_dir}/mkspecs/qconfig.pri"
@@ -195,6 +212,123 @@ sync_installed_qmake_metadata() {
     sed "s|${qtbase_build_dir}/lib|${install_lib_expr}|g" "$build_network_prl" > "$install_network_prl"
 }
 
+install_qt_runtime_fonts() {
+    local font_dir="${INSTALL_DIR}/lib/fonts"
+    local font_files=("${DEJAVU_FONT_DIR}"/*.ttf)
+
+    require_dir "${INSTALL_DIR}/lib"
+    require_dir "$DEJAVU_FONT_DIR"
+    [[ -e "${font_files[0]}" ]] || fail "no DejaVu TTF fonts found in ${DEJAVU_FONT_DIR}"
+
+    mkdir -p "$font_dir"
+    cp -f "${font_files[@]}" "$font_dir"/
+}
+
+sync_installed_qtwebkit_metadata() {
+    local webkit_module_pri="${INSTALL_DIR}/mkspecs/modules/qt_lib_webkit.pri"
+    local webkitwidgets_module_pri="${INSTALL_DIR}/mkspecs/modules/qt_lib_webkitwidgets.pri"
+    local install_lib_expr='$$QT_MODULE_LIB_BASE'
+    local webkit_private_libs="-L${install_lib_expr} -lWebCore -lANGLESupport -lJavaScriptCore -lWTF ${SYSTEM_LIB_DIR}/libxml2.a ${SYSTEM_LIB_DIR}/liblzma.a ${SYSTEM_LIB_DIR}/libicui18n.a ${SYSTEM_LIB_DIR}/libicuuc.a ${SYSTEM_LIB_DIR}/libicudata.a ${SYSTEM_LIB_DIR}/libsqlite3.a -lz -lbmalloc -lxslt ${SYSTEM_LIB_DIR}/libhyphen.a -lwoff2 -lbrotli"
+
+    require_file "$webkit_module_pri"
+
+    if ! grep -Fq -- "-L${install_lib_expr}" "$webkit_module_pri"; then
+        sed -i "s|^QMAKE_LIBS_PRIVATE += |QMAKE_LIBS_PRIVATE += -L${install_lib_expr} |" "$webkit_module_pri"
+    fi
+
+    if ! grep -Fq -- "-lANGLESupport" "$webkit_module_pri"; then
+        sed -i 's/-lWebCore /-lWebCore -lANGLESupport /' "$webkit_module_pri"
+    fi
+
+    sed -i "s|^QMAKE_LIBS_PRIVATE += .*|QMAKE_LIBS_PRIVATE += ${webkit_private_libs}|" "$webkit_module_pri"
+
+    if [[ -f "$webkitwidgets_module_pri" ]]; then
+        sed -i 's/\(QT\.webkitwidgets\.module_config = .*v2\)\s*$/\1 staticlib/' "$webkitwidgets_module_pri"
+    fi
+}
+
+build_qtwebkit() {
+    local extract_dir source_root
+
+    require_file "$QTWEBKIT_ARCHIVE"
+    if [[ -f "${INSTALL_DIR}/lib/libQt5WebKit.a" && -f "${INSTALL_DIR}/lib/libQt5WebKitWidgets.a" ]]; then
+        if is_thin_archive "${INSTALL_DIR}/lib/libQt5WebKit.a" || is_thin_archive "${INSTALL_DIR}/lib/libQt5WebKitWidgets.a"; then
+            fail "installed QtWebKit archives are thin; remove the installed QtWebKit artifacts and rerun so they can be rebuilt as normal archives"
+        fi
+        sync_installed_qtwebkit_metadata
+        echo "==> reusing installed QtWebKit from ${INSTALL_DIR}"
+        return
+    fi
+
+    echo "==> extract QtWebKit"
+    extract_dir="${WORK_DIR}/_qtwebkit_extract"
+    rm -rf "$extract_dir" "$QTWEBKIT_BUILD_DIR"
+    mkdir -p "$extract_dir" "$QTWEBKIT_BUILD_DIR"
+    tar -xf "$QTWEBKIT_ARCHIVE" -C "$extract_dir"
+
+    source_root="$(find "$extract_dir" -mindepth 1 -maxdepth 1 -type d | head -n 1)"
+    [[ -n "$source_root" ]] || fail "could not identify extracted QtWebKit source directory"
+    QTWEBKIT_SOURCE_DIR="${WORK_DIR}/$(basename "$source_root")"
+    rm -rf "$QTWEBKIT_SOURCE_DIR"
+    mv "$source_root" "$QTWEBKIT_SOURCE_DIR"
+    rm -rf "$extract_dir"
+
+    pushd "$QTWEBKIT_SOURCE_DIR" >/dev/null
+    apply_matching_patches "qtwebkit"
+    popd >/dev/null
+
+    pushd "$QTWEBKIT_BUILD_DIR" >/dev/null
+    echo "==> configure QtWebKit"
+    cmake -G Ninja \
+        -DPORT=Qt \
+        -DCMAKE_BUILD_TYPE="${CMAKE_BUILD_TYPE}" \
+        -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" \
+        -DCMAKE_PREFIX_PATH="${INSTALL_DIR};${ICU_INSTALL_DIR}" \
+        -DQt5_DIR="${INSTALL_DIR}/lib/cmake/Qt5" \
+        -DICU_ROOT="${ICU_INSTALL_DIR}" \
+        -DENABLE_API_TESTS=OFF \
+        -DENABLE_TOOLS=OFF \
+        -DENABLE_GEOLOCATION=OFF \
+        -DENABLE_PRINT_SUPPORT=ON \
+        -DENABLE_VIDEO=OFF \
+        -DENABLE_WEBKIT2=OFF \
+        -DUSE_THIN_ARCHIVES=OFF \
+        -DUSE_GSTREAMER=OFF \
+        -DUSE_LD_GOLD=OFF \
+        "${QTWEBKIT_SOURCE_DIR}" >"${LOG_DIR}/qtwebkit-configure.log" 2>&1
+    echo "==> build QtWebKit"
+    ninja -j"$JOBS" >"${LOG_DIR}/qtwebkit-build.log" 2>&1
+    echo "==> install QtWebKit"
+    ninja install >"${LOG_DIR}/qtwebkit-install.log" 2>&1
+    sync_installed_qtwebkit_metadata
+    popd >/dev/null
+}
+
+build_smoke_test() {
+    local qmake_config_args
+
+    require_file "${INSTALL_DIR}/bin/qmake"
+    require_file "${SMOKE_DIR}/qtwebkit-smoke.pro"
+
+    echo "==> build QtWebKit smoke test"
+    rm -rf "${SMOKE_BUILD_DIR}"
+    mkdir -p "${SMOKE_BUILD_DIR}"
+    pushd "${SMOKE_BUILD_DIR}" >/dev/null
+    if [[ "${BUILD_TYPE}" == "release" ]]; then
+        qmake_config_args="CONFIG+=release CONFIG-=debug"
+    else
+        qmake_config_args="CONFIG+=debug CONFIG-=release"
+    fi
+    "${INSTALL_DIR}/bin/qmake" ../qtwebkit-smoke.pro ${qmake_config_args} >"${LOG_DIR}/smoke-build.log" 2>&1
+    make -j"$JOBS" >>"${LOG_DIR}/smoke-build.log" 2>&1
+    if [[ -f /etc/ssl/certs/ca-certificates.crt ]]; then
+        cp /etc/ssl/certs/ca-certificates.crt ./ca-certificates.crt
+    fi
+    popd >/dev/null
+
+    require_file "${SMOKE_BUILD_DIR}/qtwebkit-smoke"
+}
+
 mkdir -p "$WORK_DIR" "$LOG_DIR"
 require_file "$QT_SRC_ARCHIVE"
 require_file "$QTWEBKIT_ARCHIVE"
@@ -202,46 +336,46 @@ require_file "$ICU_SRC_ARCHIVE"
 
 case "${CLEAN,,}" in
     1|true|yes|on)
-        rm -rf "$QT_SRC_DIR" "$INSTALL_DIR" "$ICU_INSTALL_DIR"
+        find "$WORK_DIR" -maxdepth 1 -mindepth 1 -type d -name "qt-everywhere*-${QT_VERSION}" -exec rm -rf {} +
+        rm -rf "$QTWEBKIT_BUILD_DIR" "$INSTALL_DIR" "$ICU_INSTALL_DIR"
         ;;
 esac
 
-build_static_icu
-configure_build_env_for_qt
+if [[ "$BUILD_SCOPE" == "all" || "$BUILD_SCOPE" == "qt" ]]; then
+    build_static_icu
+    configure_build_env_for_qt
 
-if [[ ! -d "$QT_SRC_DIR" ]]; then
-    tar -xf "$QT_SRC_ARCHIVE" -C "$WORK_DIR"
-fi
-[[ -d "$QT_SRC_DIR" ]] || fail "expected source directory not found: $QT_SRC_DIR"
+    if [[ ! -x "${INSTALL_DIR}/bin/qmake" ]]; then
+        find "$WORK_DIR" -maxdepth 1 -mindepth 1 -type d -name "qt-everywhere*-${QT_VERSION}" -exec rm -rf {} +
+    fi
 
-if [[ ! -d "${QT_SRC_DIR}/qtwebkit" ]]; then
-    EXTRACT_DIR="${WORK_DIR}/_qtwebkit_extract"
-    rm -rf "$EXTRACT_DIR"
-    mkdir -p "$EXTRACT_DIR"
-    tar -xf "$QTWEBKIT_ARCHIVE" -C "$EXTRACT_DIR"
+    QT_SRC_DIR="$(locate_qt_source_dir)"
+    if [[ -z "$QT_SRC_DIR" ]]; then
+        tar -xf "$QT_SRC_ARCHIVE" -C "$WORK_DIR"
+    fi
+    QT_SRC_DIR="$(locate_qt_source_dir)"
+    [[ -d "$QT_SRC_DIR" ]] || fail "expected source directory not found: $QT_SRC_DIR"
 
-    QTWEBKIT_SRC_DIR="$(find "$EXTRACT_DIR" -mindepth 1 -maxdepth 1 -type d | head -n 1)"
-    [[ -n "$QTWEBKIT_SRC_DIR" ]] || fail "could not identify extracted QtWebKit source directory"
-
-    mv "$QTWEBKIT_SRC_DIR" "${QT_SRC_DIR}/qtwebkit"
-    rm -rf "$EXTRACT_DIR"
-fi
-
-pushd "$QT_SRC_DIR" >/dev/null
-log_verify "configure minimal-deps flags: ${MIN_DEP_CONFIGURE_FLAGS[*]}"
-apply_patches
-configure_qt "${LOG_DIR}/configure.log"
-
-if webkit_disabled_by_static_notice "${LOG_DIR}/configure.log"; then
-    log_verify "warning: configure still reports static WebKit disable notice; continuing to build and validating via installed libraries"
+    pushd "$QT_SRC_DIR" >/dev/null
+    apply_matching_patches "qt"
+    configure_qt
+    echo "==> build Qt (make -j${JOBS})"
+    make -j"$JOBS" >"${LOG_DIR}/build.log" 2>&1
+    echo "==> install Qt"
+    make install >"${LOG_DIR}/install.log" 2>&1
+    sync_installed_qmake_metadata
+    install_qt_runtime_fonts
+    popd >/dev/null
 fi
 
-echo "==> build Qt (make -j${JOBS})"
-make -j"$JOBS" >"${LOG_DIR}/build.log" 2>&1
-echo "==> install Qt"
-make install >"${LOG_DIR}/install.log" 2>&1
-sync_installed_qmake_metadata
-popd >/dev/null
+if [[ "$BUILD_SCOPE" == "all" || "$BUILD_SCOPE" == "qtwebkit" ]]; then
+    build_static_icu
+    configure_build_env_for_qt
+    require_file "${INSTALL_DIR}/bin/qmake"
+    install_qt_runtime_fonts
+    build_qtwebkit
+    build_smoke_test
+fi
 
 QMAKE_BIN="${INSTALL_DIR}/bin/qmake"
 require_file "$QMAKE_BIN"
@@ -268,10 +402,15 @@ required_libs=(
     "libQt5Widgets.a"
     "libQt5Network.a"
     "libQt5Xml.a"
-    "libQt5PrintSupport.a"
-    "libQt5WebKit.a"
-    "libQt5WebKitWidgets.a"
 )
+
+if [[ "$BUILD_SCOPE" == "all" || "$BUILD_SCOPE" == "qtwebkit" ]]; then
+    required_libs+=(
+        "libQt5PrintSupport.a"
+        "libQt5WebKit.a"
+        "libQt5WebKitWidgets.a"
+    )
+fi
 
 required_icu_libs=(
     "libicuuc.a"
@@ -303,8 +442,8 @@ for lib in "${required_ssl_libs[@]}"; do
         missing=1
     fi
 done
-if ! grep -q 'openssl-linked' "${INSTALL_DIR}/mkspecs/qconfig.pri"; then
-    log_verify "missing openssl-linked in: ${INSTALL_DIR}/mkspecs/qconfig.pri"
+if ! grep -q 'openssl-linked' "${INSTALL_DIR}/mkspecs/modules/qt_lib_network_private.pri"; then
+    log_verify "missing openssl-linked in: ${INSTALL_DIR}/mkspecs/modules/qt_lib_network_private.pri"
     missing=1
 fi
 if ! grep -q 'libssl\.a' "${INSTALL_DIR}/lib/libQt5Network.prl" \
@@ -321,7 +460,7 @@ fi
     echo "jobs=${JOBS}"
     echo "clean=${CLEAN}"
     echo "build_type=${BUILD_TYPE}"
-    echo "minimal_dep_configure_flags=${MIN_DEP_CONFIGURE_FLAGS[*]}"
+    echo "build_scope=${BUILD_SCOPE}"
     echo "qt_src_archive=${QT_SRC_ARCHIVE}"
     echo "qtwebkit_archive=${QTWEBKIT_ARCHIVE}"
     echo "icu_src_archive=${ICU_SRC_ARCHIVE}"
@@ -340,6 +479,9 @@ fi
     echo "verified_libs=${required_libs[*]}"
     echo "verified_icu_libs=${required_icu_libs[*]}"
     echo "verified_ssl_libs=${required_ssl_libs[*]}"
+    if [[ "$BUILD_SCOPE" == "all" || "$BUILD_SCOPE" == "qtwebkit" ]]; then
+        echo "smoke_binary=${SMOKE_BUILD_DIR}/qtwebkit-smoke"
+    fi
 } > "$MANIFEST_FILE"
 
 log_verify "verification passed"

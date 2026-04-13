@@ -4,22 +4,24 @@
 Build a reproducible static Qt5 toolchain for QtWeb migration on Linux `x86_64`.
 
 Target versions:
-- Qt `5.5.1`
-- QtWebKit `5.5.1`
+- Qt `5.15.17`
+- QtWebKit `5.212.0-alpha4`
 
-This POC validates the toolchain pipeline only (not the QtWeb app build).
+This POC validates the toolchain pipeline and the QtWebKit smoke-build gate.
 Primary portability target: static linking plus minimal runtime dependencies.
 
 ## Non-Goals
-- Migrating QtWeb application sources.
+- Running the QtWeb browser UI or other runtime smoke tests on the agent.
 - Windows/macOS support.
 - Modifying legacy Qt4 flow in `build.sh`.
+- Migrating the browser engine to Qt WebEngine.
 
 ## Fixed Baseline
-- Qt version is locked to `5.5.1`.
+- Qt version is locked to `5.15.17`.
+- QtWebKit version is locked to `5.212.0-alpha4`.
 - Containerized build is required (`podman` or `docker`).
 - ICU support is required for Qt5 + QtWebKit in this path.
-- Outputs stay inside the repository (default: `artifacts/qt5-static-5.5.1`).
+- Outputs stay inside the repository (default: `artifacts/qt5-static-5.15.17`).
 
 ## Inputs
 - Wrapper script: `build-qt5-static.sh`
@@ -38,22 +40,22 @@ Supported source override env vars:
 
 Checksum policy:
 1. Prefer `sha256`.
-2. Allow `md5` fallback only when `sha256` is unavailable in legacy metadata.
+2. Allow `md5` fallback only when `sha256` is unavailable in locked metadata.
 3. Abort immediately on mismatch.
 
 ## Output Layout
-Default root: `artifacts/qt5-static-5.5.1`
+Default build roots: `artifacts/qt5-static-5.15.17-release` and `artifacts/qt5-static-5.15.17-debug`
 
 - `artifacts/src-cache/`: shared downloaded archives for all build flavors
 - `build/`: extracted/build tree
 - `install/`: static Qt install prefix
 - `icu-static/`: static ICU install prefix
-- `logs/`: `icu-configure.log`, `icu-build.log`, `icu-install.log`, `configure.log`, `build.log`, `install.log`, `verify.log`
+- `logs/`: `icu-configure.log`, `icu-build.log`, `icu-install.log`, `configure.log`, `build.log`, `install.log`, `qtwebkit-configure.log`, `qtwebkit-build.log`, `qtwebkit-install.log`, `smoke-build.log`, `verify.log`
 - `build-manifest.txt`: runtime, source URLs/checksums, configure flags, verification summary
 
 ## Verification Gates
 A successful run must satisfy:
-1. `qmake -query QT_VERSION` is `5.5.1`.
+1. `qmake -query QT_VERSION` is `5.15.17`.
 2. Install is static (`QT_CONFIG` contains `static` or static libs prove it).
 3. Required static libs exist in `install/lib`:
    - `libQt5Core.a`
@@ -64,24 +66,24 @@ A successful run must satisfy:
    - `libQt5PrintSupport.a`
    - `libQt5WebKit.a`
    - `libQt5WebKitWidgets.a`
-4. Verification log ends with `verification passed`.
-5. Required static ICU libs exist in `icu-static/lib`:
+4. Required static ICU libs exist in `icu-static/lib`:
    - `libicuuc.a`
    - `libicui18n.a`
    - `libicudata.a`
+5. The QtWebKit smoke app compiles and links against the produced toolchain.
+6. Verification log ends with `verification passed`.
 
-## Current Status vs Planned Gates
-Implemented now:
+## Current Status
+Implemented target behavior:
 - Containerized build pipeline.
 - Source lock + checksum verification.
 - In-container static ICU build from locked source archive.
+- Static Qt build.
+- Standalone QtWebKit build against installed Qt.
 - Static Qt + QtWebKit library verification.
 - Static ICU library verification.
+- QtWebKit smoke test compile/link gate.
 - Manifest/log generation.
-
-Planned (not yet enforced by scripts):
-- QtWebKit smoke test binary compile/link gate against produced toolchain.
-- Digest-pinned container base image (currently tag-pinned `ubuntu:16.04`).
 
 ## Run Examples
 Default run:
@@ -89,9 +91,9 @@ Default run:
 ./build-qt5-static.sh
 ```
 
-Clean rebuild with explicit runtime and jobs:
+Clean rebuild:
 ```bash
-./build-qt5-static.sh --clean --runtime podman --jobs 8
+./build-qt5-static.sh --clean
 ```
 
 Custom output directory inside repo:
@@ -100,13 +102,13 @@ Custom output directory inside repo:
 ```
 
 ## Risks
-- Legacy Qt/QtWebKit code may fail under newer host toolchains.
-- Static WebKit can still be rejected by configure constraints.
+- Legacy Qt/QtWebKit code may fail under newer host and container toolchains.
+- Static QtWebKit can still require follow-up patches for newer compilers or linkers.
 - Archive URLs may become unavailable over time.
-- Over-aggressive dependency reduction can break TLS/cert/platform behavior.
+- Over-aggressive dependency reduction can break TLS, certificate handling, or module detection.
+- Runtime browser validation remains user-owned.
 
-## Next POC Tasks
-1. Add and enforce the QtWebKit smoke-test build gate.
-2. Add SSL/TLS support in the Qt5 static build and validate it with an HTTPS smoke test.
-3. Move Docker base image from tag pinning to digest pinning.
-4. Define explicit dependency-audit output for produced artifacts (for example `ldd` policy and exceptions).
+## Next Tasks
+1. Build the main browser with `build-browser-docker.sh` against the produced toolchain.
+2. Fix Qt `5.15.17` or QtWebKit `5.212` source incompatibilities exposed by that build.
+3. Move the Docker base image from tag pinning to digest pinning when refreshed online.

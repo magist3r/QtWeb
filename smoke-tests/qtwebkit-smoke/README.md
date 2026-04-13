@@ -1,6 +1,6 @@
 # QtWebKit Smoke Test
 
-Minimal Qt 5.5.1 QtWebKitWidgets app used to verify that the custom Qt build
+Minimal Qt 5.15.17 QtWebKitWidgets app used to verify that the custom Qt build
 can compile and link a `QWebView` application.
 
 ## Files

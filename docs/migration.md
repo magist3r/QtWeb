@@ -1,69 +1,44 @@
-# Qt5 Browser Port Implementation Plan
+# Save Migration Plan In `docs` First, Then Execute Qt 5.15.17 Static Migration
 
 ## Summary
-Port QtWeb to the existing static Qt `5.5.1` toolchain on Linux while keeping the legacy Qt4 flow intact. The implementation base stays on `qt5-migration`, and the existing `qt5` branch is used as the donor for already-solved Qt5 application changes. The first source mutation is the automated Qt4-to-Qt5 header rewrite, followed by targeted manual integration until the full browser builds and runs with torrent and FTP support preserved. All Qt5 browser validation builds must run inside Docker against the repository's containerized toolchain environment rather than on the host, and they must be invoked through the repository helper scripts rather than direct `docker` or ad hoc build commands. Host-local `qmake`/`make`/compiler validation runs are explicitly out of policy for this repository.
+- The first step is documentation: save the migration plan in `docs` before any implementation work starts, so the repo has a single agreed source of truth for the Qt `5.15.17` + QtWebKit `5.212` migration.
+- After that, migrate the current `qt5-migration` branch from Qt `5.5.1` to Qt `5.15.17` while keeping QtWebKit `5.212`.
+- Do not use the `qt5` branch as a donor or reference baseline. All porting work is done in place from the current `qt5-migration` tree.
+- Replace the current Qt `5.5.1` static toolchain flow in place rather than adding a parallel Qt `5.15` path.
 
-## Decisions
-- Delivery branch: `qt5-migration`
-- Donor branch for application porting work: `qt5`
-- Target runtime/build baseline: Qt `5.5.1` static Linux `x86_64`
-- Required build environment for Qt5 validation: Docker container using the repository image/toolchain
-- Required invocation path for Qt5 validation: repository helper scripts such as `build-browser-docker.sh` and `run-broswer.sh`, not direct `docker` commands
-- Keep the existing Qt4 `build.sh` path unchanged
-- Preserve torrent support in the first Qt5 browser milestone
-- Preserve FTP browsing and FTP downloads in the first Qt5 browser milestone
+## Key Changes
+- Save this plan first in `docs/migration.md`, replacing the current Qt `5.5.1` / donor-branch-oriented plan before any code or script changes begin.
+- Retarget the existing toolchain flow in `build-qt5-static.sh`, `toolchains/qt5-static/sources.lock`, and `toolchains/qt5-static/build-inside-container.sh`:
+- update locked sources from Qt `5.5.1` to Qt `5.15.17`
+- replace the current "unpack `qtwebkit` into the Qt source tree" flow with a standalone QtWebKit `5.212` build against the installed Qt `5.15.17` prefix
+- keep static ICU and OpenSSL handling, and continue verifying `libQt5WebKit.a` and `libQt5WebKitWidgets.a`
+- Retarget `build-browser-docker.sh` and the QtWebKit smoke build to the new install prefix, image tag, artifact naming, and verification gates.
+- Keep `src/QtWeb.pro` on `webkitwidgets`; do not introduce `webenginewidgets` or any engine-switch abstraction.
+- Port the application code directly from current `qt5-migration` sources:
+- fix compile and link issues caused by Qt `5.15.17` API tightening
+- fix any QtWebKit `5.212` API or behavior differences
+- preserve existing browser behavior, torrent support, FTP support, downloads, printing, and settings behavior unless a concrete incompatibility forces a narrow adjustment
 
-## Implementation Order
-1. Update this document with the concrete execution plan.
-2. Run `/home/magist3r/code/qtbase/bin/fixqt4headers.pl` against `src/` and review the generated include rewrites.
-3. Bring the qmake project files up to Qt5.5.1:
-- `src/QtWeb.pro` must use `widgets`, `webkitwidgets`, and `printsupport`
-- `src/torrent/torrent.pro` must stay compatible with Qt `5.5.1` qmake and must not depend on `requires(qtConfig(filedialog))`
-4. Replay the relevant Qt5 source-port work from `qt5`:
-- Qt5 include/module split across browser UI, WebKit, and print code
-- `QStandardPaths` for storage paths
-- `QUrlQuery` for query parsing
-- Torrent networking migration from `QHttp` to `QNetworkAccessManager`
-5. Adapt donor-branch code back down to Qt `5.5.1` where it assumes newer Qt:
-- replace `QDateTime::currentSecsSinceEpoch()`
-- replace `QRandomGenerator`
-- replace `QOverload` connect syntax
-6. Restore and keep both legacy feature areas:
-- torrent remains built into the application
-- FTP remains supported in `webview` for directory listing and file download
-7. Validate the main browser inside Docker on top of the existing smoke-test/toolchain work, using the repository helper scripts instead of direct container or compiler invocations.
-
-## Public and Internal Interfaces
-- No new user-facing CLI or configuration layer is added.
-- Internal build interfaces change to Qt5-aware qmake module usage in:
-- `src/QtWeb.pro`
-- `src/torrent/torrent.pro`
-- Torrent internal types move from `QHttp`-based APIs to `QNetworkAccessManager` / `QNetworkReply`.
-- Storage path handling moves to `QStandardPaths`.
-- Query parsing moves from deprecated Qt4 APIs to `QUrlQuery`.
-
-## Required Behavior
-- The browser must launch and render pages under Qt5.
-- Tabs, windows, and navigation behavior must remain functional.
-- Downloads must continue to work.
-- Torrent support must build and reach tracker communication under Qt5.
-- `ftp://` directory browsing must still work.
-- FTP file downloads must still work.
-- Portable and non-portable settings/data paths must continue to resolve correctly.
+## Execution Order
+1. Replace `docs/migration.md` with the Qt `5.15.17` + QtWebKit `5.212` migration plan and treat that document as the implementation baseline.
+2. Replace the current Qt `5.5.1` toolchain lock, artifact names, and verification assumptions with Qt `5.15.17`.
+3. Implement the standalone QtWebKit `5.212` build/install step and prove the static libraries install into the Qt prefix.
+4. Update the QtWebKit smoke build and require it to compile/link successfully inside Docker before proceeding.
+5. Retarget the main browser Docker build helper to the new prefix and compile the current app as-is to expose the real Qt `5.15.17` breakage list.
+6. Fix the browser code in place on `qt5-migration`, starting with WebKit-facing code and then any remaining Qt `5.15.17` compatibility issues.
+7. Validate build success through the sanctioned helper scripts and update the remaining Qt5 toolchain docs to match the implemented flow.
 
 ## Validation
-- Documentation reflects the chosen implementation path and constraints.
-- qmake generation succeeds inside Docker when invoked through `build-browser-docker.sh`.
-- A clean out-of-tree browser build succeeds inside Docker through the helper scripts, with outputs kept in repository-local `build-docker-*` directories.
-- Validate changed Bash / POSIX shell scripts with `shellcheck` when script changes are part of the work.
-- Browser smoke validation covers page loading, tabs, windows, downloads, and print-related actions.
-- Torrent validation covers successful build and tracker communication after the networking port.
-- FTP validation covers directory listing and file download.
-- Regression checks cover settings/data paths and autocomplete/password/query parsing after API replacements.
+- Documentation gate: `docs/migration.md` is updated first and accurately describes the chosen migration strategy.
+- Toolchain gate: `build-qt5-static.sh` produces a static Qt `5.15.17` install and static QtWebKit `5.212` libraries.
+- Smoke gate: `smoke-tests/qtwebkit-smoke` builds and links against the produced prefix in Docker.
+- Browser gate: `build-browser-docker.sh` completes for release; debug is secondary after release passes.
+- Runtime regression testing is explicitly user-owned and out of scope for agent execution.
 
-## Known Risks
-- The `qt5` donor branch was written against newer Qt and contains incompatible APIs for `5.5.1`.
-- FTP was partially disabled in the donor branch and must be reintroduced without regressing navigation behavior.
-- Settings-path or key drift can create silent compatibility regressions.
-- Static-build constraints may surface additional link/runtime issues after compilation succeeds.
-- Host-native builds can hide or invent problems relative to the intended toolchain, so the Docker helper-script path is the source of truth for Qt5 validation.
+## Assumptions And Defaults
+- Work starts from current `qt5-migration` head only; the `qt5` branch is explicitly out of scope.
+- Qt baseline is pinned to `5.15.17`.
+- Linux `x86_64` only.
+- Existing Qt4 flow stays untouched.
+- QtWebKit `5.212` is accepted despite its age and security risk; this migration plan does not include an engine replacement track.
+- If the static QtWebKit smoke gate fails and cannot be resolved cleanly, the migration stops with a documented blocker rather than pivoting to Qt WebEngine.
