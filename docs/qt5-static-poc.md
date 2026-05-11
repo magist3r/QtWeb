@@ -35,8 +35,6 @@ Supported source override env vars:
 - `QT5_SRC_SHA256`
 - `QT5_WEBKIT_SRC_URL`
 - `QT5_WEBKIT_SHA256`
-- `ICU_SRC_URL`
-- `ICU_SRC_SHA256`
 
 Checksum policy:
 1. Prefer `sha256`.
@@ -49,8 +47,7 @@ Default build roots: `artifacts/qt5-static-5.15.17-release` and `artifacts/qt5-s
 - `artifacts/src-cache/`: shared downloaded archives for all build flavors
 - `build/`: extracted/build tree
 - `install/`: static Qt install prefix
-- `icu-static/`: static ICU install prefix
-- `logs/`: `icu-configure.log`, `icu-build.log`, `icu-install.log`, `configure.log`, `build.log`, `install.log`, `qtwebkit-configure.log`, `qtwebkit-build.log`, `qtwebkit-install.log`, `smoke-build.log`, `verify.log`
+- `logs/`: `configure.log`, `build.log`, `install.log`, `qtwebkit-configure.log`, `qtwebkit-build.log`, `qtwebkit-install.log`, `smoke-build.log`, `verify.log`
 - `build-manifest.txt`: runtime, source URLs/checksums, configure flags, verification summary
 
 ## Verification Gates
@@ -66,7 +63,7 @@ A successful run must satisfy:
    - `libQt5PrintSupport.a`
    - `libQt5WebKit.a`
    - `libQt5WebKitWidgets.a`
-4. Required static ICU libs exist in `icu-static/lib`:
+4. Required static ICU libs exist in the container image:
    - `libicuuc.a`
    - `libicui18n.a`
    - `libicudata.a`
@@ -77,7 +74,7 @@ A successful run must satisfy:
 Implemented target behavior:
 - Containerized build pipeline.
 - Source lock + checksum verification.
-- In-container static ICU build from locked source archive.
+- Static ICU from the container image.
 - Static Qt build.
 - Standalone QtWebKit build against installed Qt.
 - Static Qt + QtWebKit library verification.

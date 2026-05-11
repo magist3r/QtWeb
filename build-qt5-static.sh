@@ -42,8 +42,6 @@ Environment overrides:
   QT5_SRC_SHA256
   QT5_WEBKIT_SRC_URL
   QT5_WEBKIT_SHA256
-  ICU_SRC_URL
-  ICU_SRC_SHA256
 EOF
 }
 
@@ -262,17 +260,12 @@ QT5_WEBKIT_SRC_URL="${QT5_WEBKIT_SRC_URL:-${LOCK_QT5_WEBKIT_SRC_URL}}"
 QT5_WEBKIT_SHA256="${QT5_WEBKIT_SHA256:-${LOCK_QT5_WEBKIT_SHA256:-}}"
 QT5_WEBKIT_MD5="${LOCK_QT5_WEBKIT_MD5:-}"
 
-ICU_SRC_URL="${ICU_SRC_URL:-${LOCK_ICU_SRC_URL}}"
-ICU_SRC_SHA256="${ICU_SRC_SHA256:-${LOCK_ICU_SRC_SHA256:-}}"
-ICU_SRC_MD5="${LOCK_ICU_SRC_MD5:-}"
-
-if [[ -z "$QT5_SRC_URL" || -z "$QT5_WEBKIT_SRC_URL" || -z "$ICU_SRC_URL" ]]; then
+if [[ -z "$QT5_SRC_URL" || -z "$QT5_WEBKIT_SRC_URL" ]]; then
     fail "source URLs are empty in lock file"
 fi
 
 QT5_SRC_FILE="$(source_file_name "$QT5_SRC_URL" "$LOCK_QT5_SRC_URL" "${LOCK_QT5_SRC_FILE:-}")"
 QT5_WEBKIT_FILE="$(source_file_name "$QT5_WEBKIT_SRC_URL" "$LOCK_QT5_WEBKIT_SRC_URL" "${LOCK_QT5_WEBKIT_FILE:-}")"
-ICU_SRC_FILE="$(source_file_name "$ICU_SRC_URL" "$LOCK_ICU_SRC_URL" "${LOCK_ICU_SRC_FILE:-}")"
 
 REPO_ABS="$(cd "$REPO_ROOT" && pwd -P)"
 OUTPUT_RAW="$(cd "$REPO_ROOT" && realpath -m -- "$OUTPUT_DIR")"
@@ -285,7 +278,6 @@ if $CLEAN && [[ -d "$OUTPUT_RAW" ]]; then
     rm -rf \
         "${OUTPUT_RAW}/build" \
         "${OUTPUT_RAW}/install" \
-        "${OUTPUT_RAW}/icu-static" \
         "${OUTPUT_RAW}/xkb-config-root" \
         "${OUTPUT_RAW}/logs" \
         "${OUTPUT_RAW}/build-manifest.txt"
@@ -302,16 +294,12 @@ mkdir -p "$SRC_CACHE_DIR" "${OUTPUT_ABS}/logs" "${OUTPUT_ABS}/build"
 
 QT5_SRC_ARCHIVE="${SRC_CACHE_DIR}/${QT5_SRC_FILE}"
 QT5_WEBKIT_ARCHIVE="${SRC_CACHE_DIR}/${QT5_WEBKIT_FILE}"
-ICU_SRC_ARCHIVE="${SRC_CACHE_DIR}/${ICU_SRC_FILE}"
 
 download_file "$QT5_SRC_URL" "$QT5_SRC_ARCHIVE"
 verify_checksum "$QT5_SRC_ARCHIVE" "$QT5_SRC_SHA256" "$QT5_SRC_MD5" "$QT5_SRC_FILE"
 
 download_file "$QT5_WEBKIT_SRC_URL" "$QT5_WEBKIT_ARCHIVE"
 verify_checksum "$QT5_WEBKIT_ARCHIVE" "$QT5_WEBKIT_SHA256" "$QT5_WEBKIT_MD5" "$QT5_WEBKIT_FILE"
-
-download_file "$ICU_SRC_URL" "$ICU_SRC_ARCHIVE"
-verify_checksum "$ICU_SRC_ARCHIVE" "$ICU_SRC_SHA256" "$ICU_SRC_MD5" "$ICU_SRC_FILE"
 
 CONTAINER_RUNTIME="$(pick_runtime)"
 echo "using container runtime: $CONTAINER_RUNTIME"
@@ -332,16 +320,12 @@ trap cleanup_run_container INT TERM HUP
     -e OUTPUT_DIR="${OUTPUT_ABS}" \
     -e QT_SRC_ARCHIVE="${QT5_SRC_ARCHIVE}" \
     -e QTWEBKIT_ARCHIVE="${QT5_WEBKIT_ARCHIVE}" \
-    -e ICU_SRC_ARCHIVE="${ICU_SRC_ARCHIVE}" \
     -e QT_SRC_URL="$QT5_SRC_URL" \
     -e QTWEBKIT_URL="$QT5_WEBKIT_SRC_URL" \
-    -e ICU_SRC_URL="$ICU_SRC_URL" \
     -e QT_SRC_SHA256="$QT5_SRC_SHA256" \
     -e QTWEBKIT_SHA256="$QT5_WEBKIT_SHA256" \
-    -e ICU_SRC_SHA256="$ICU_SRC_SHA256" \
     -e QT_SRC_MD5="$QT5_SRC_MD5" \
     -e QTWEBKIT_MD5="$QT5_WEBKIT_MD5" \
-    -e ICU_SRC_MD5="$ICU_SRC_MD5" \
     -v "${REPO_ROOT}:/workspace" \
     -v "${REPO_ROOT}:${REPO_ROOT}" \
     -w /workspace \

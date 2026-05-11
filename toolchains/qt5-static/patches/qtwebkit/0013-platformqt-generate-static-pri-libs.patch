@@ -1,0 +1,24 @@
+diff --git a/Source/WebKitLegacy/PlatformQt.cmake b/Source/WebKitLegacy/PlatformQt.cmake
+--- a/Source/WebKitLegacy/PlatformQt.cmake
++++ b/Source/WebKitLegacy/PlatformQt.cmake
+@@ -357,6 +357,9 @@ if (QT_STATIC_BUILD)
+         set(WEBKIT_PKGCONFIG_DEPS "${WEBKIT_PKGCONFIG_DEPS} ${LIB_PREFIX}${LIB_NAME}")
+         set(WEBKIT_PRI_EXTRA_LIBS "${WEBKIT_PRI_EXTRA_LIBS} -l${LIB_PREFIX}${LIB_NAME}")
+     endforeach ()
++    if (QTWEBKIT_SYSTEM_LIB_DIR)
++        set(WEBKIT_PRI_EXTRA_LIBS "-L\$\$QT_MODULE_LIB_BASE -lWebCore -lPAL -lJavaScriptCore -lWTF ${QTWEBKIT_SYSTEM_LIB_DIR}/libxml2.a ${QTWEBKIT_SYSTEM_LIB_DIR}/liblzma.a ${QTWEBKIT_SYSTEM_LIB_DIR}/libharfbuzz-icu.a ${QTWEBKIT_SYSTEM_LIB_DIR}/libicui18n.a ${QTWEBKIT_SYSTEM_LIB_DIR}/libicuuc.a ${QTWEBKIT_SYSTEM_LIB_DIR}/libicudata.a ${QTWEBKIT_SYSTEM_LIB_DIR}/libsqlite3.a -lz -lbmalloc ${QTWEBKIT_SYSTEM_LIB_DIR}/libhyphen.a -latomic")
++    endif ()
+ endif ()
+ 
+ if (NOT MACOS_BUILD_FRAMEWORKS)
+@@ -687,6 +690,10 @@ else ()
+     endif ()
+ endif ()
+ 
++if (QT_STATIC_BUILD)
++    list(APPEND WebKitWidgets_PRI_ARGUMENTS MODULE_CONFIG "staticlib")
++endif ()
++
+ list(APPEND WebKitWidgets_Private_PRI_ARGUMENTS MODULE_CONFIG "internal_module no_link")
+ 
+ if (MACOS_BUILD_FRAMEWORKS)

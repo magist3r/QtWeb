@@ -6,8 +6,3 @@ LOCK_QT5_SRC_FILE="qt-everywhere-opensource-src-5.15.17.tar.xz"
 LOCK_QT5_SRC_URL="https://download.qt.io/archive/qt/5.15/5.15.17/single/qt-everywhere-opensource-src-5.15.17.tar.xz"
 LOCK_QT5_SRC_SHA256="85eb566333d6ba59be3a97c9445a6e52f2af1b52fc3c54b8a2e7f9ea040a7de4"
 LOCK_QT5_SRC_MD5="5f212232bbc41f2eabbdee4fcbc4040e"
-
-LOCK_ICU_SRC_FILE="icu4c-65_1-src.tgz"
-LOCK_ICU_SRC_URL="https://github.com/unicode-org/icu/releases/download/release-65-1/icu4c-65_1-src.tgz"
-LOCK_ICU_SRC_SHA256="53e37466b3d6d6d01ead029e3567d873a43a5d1c668ed2278e253b683136d948"
-LOCK_ICU_SRC_MD5="d1ff436e26cabcb28e6cb383d32d1339"
