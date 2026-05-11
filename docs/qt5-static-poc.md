@@ -25,7 +25,7 @@ Primary portability target: static linking plus minimal runtime dependencies.
 
 ## Inputs
 - Wrapper script: `build-qt5-static.sh`
-- In-container script: `toolchains/qt5-static/build-inside-container.sh`
+- In-container script: `toolchains/qt5-static/qt5-static-build-entrypoint.sh`
 - Container definition: `toolchains/qt5-static/Dockerfile`
 - Source lock and checksums: `toolchains/qt5-static/sources.lock`
 - Optional patch hook: `toolchains/qt5-static/patches/*.patch`

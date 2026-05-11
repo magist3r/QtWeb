@@ -5,15 +5,14 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$SCRIPT_DIR"
 LOCK_FILE="${REPO_ROOT}/toolchains/qt5-static/sources.lock"
 DOCKERFILE="${REPO_ROOT}/toolchains/qt5-static/Dockerfile"
-INNER_SCRIPT="/workspace/toolchains/qt5-static/build-inside-container.sh"
+INNER_SCRIPT="/workspace/toolchains/qt5-static/qt5-static-build-entrypoint.sh"
 
 # shellcheck disable=SC1090
 source "${REPO_ROOT}/toolchains/qt5-static/common.sh"
 
 SCRIPT_NAME="$(basename "$0")"
 
-DEFAULT_JOBS="$(nproc 2>/dev/null || echo 8)"
-JOBS="${COMPILE_JOBS:-$DEFAULT_JOBS}"
+JOBS="${COMPILE_JOBS:-$(nproc 2>/dev/null || echo 8)}"
 OUTPUT_DIR=""
 RUNTIME="auto"
 CLEAN=false
@@ -51,13 +50,6 @@ EOF
 fail() {
     echo "error: $*" >&2
     exit 1
-}
-
-abs_path() {
-    case "$1" in
-        /*) printf '%s\n' "$1" ;;
-        *) printf '%s\n' "${REPO_ROOT}/$1" ;;
-    esac
 }
 
 basename_from_url() {
@@ -283,7 +275,7 @@ QT5_WEBKIT_FILE="$(source_file_name "$QT5_WEBKIT_SRC_URL" "$LOCK_QT5_WEBKIT_SRC_
 ICU_SRC_FILE="$(source_file_name "$ICU_SRC_URL" "$LOCK_ICU_SRC_URL" "${LOCK_ICU_SRC_FILE:-}")"
 
 REPO_ABS="$(cd "$REPO_ROOT" && pwd -P)"
-OUTPUT_RAW="$(abs_path "$OUTPUT_DIR")"
+OUTPUT_RAW="$(cd "$REPO_ROOT" && realpath -m -- "$OUTPUT_DIR")"
 
 [[ "$JOBS" =~ ^[1-9][0-9]*$ ]] || fail "--jobs must be a positive integer"
 

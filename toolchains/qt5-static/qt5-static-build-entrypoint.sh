@@ -308,31 +308,6 @@ build_qtwebkit() {
     popd >/dev/null
 }
 
-build_smoke_test() {
-    local qmake_config_args
-
-    require_file "${INSTALL_DIR}/bin/qmake"
-    require_file "${SMOKE_DIR}/qtwebkit-smoke.pro"
-
-    echo "==> build QtWebKit smoke test"
-    rm -rf "${SMOKE_BUILD_DIR}"
-    mkdir -p "${SMOKE_BUILD_DIR}"
-    pushd "${SMOKE_BUILD_DIR}" >/dev/null
-    if [[ "${BUILD_TYPE}" == "release" ]]; then
-        qmake_config_args="CONFIG+=release CONFIG-=debug"
-    else
-        qmake_config_args="CONFIG+=debug CONFIG-=release"
-    fi
-    "${INSTALL_DIR}/bin/qmake" ../qtwebkit-smoke.pro ${qmake_config_args} >"${LOG_DIR}/smoke-build.log" 2>&1
-    make -j"$JOBS" >>"${LOG_DIR}/smoke-build.log" 2>&1
-    if [[ -f /etc/ssl/certs/ca-certificates.crt ]]; then
-        cp /etc/ssl/certs/ca-certificates.crt ./ca-certificates.crt
-    fi
-    popd >/dev/null
-
-    require_file "${SMOKE_BUILD_DIR}/qtwebkit-smoke"
-}
-
 mkdir -p "$WORK_DIR" "$LOG_DIR"
 require_file "$QT_SRC_ARCHIVE"
 require_file "$QTWEBKIT_ARCHIVE"
@@ -378,7 +353,14 @@ if [[ "$BUILD_SCOPE" == "all" || "$BUILD_SCOPE" == "qtwebkit" ]]; then
     require_file "${INSTALL_DIR}/bin/qmake"
     install_qt_runtime_fonts
     build_qtwebkit
-    build_smoke_test
+    echo "==> build QtWebKit smoke test"
+    require_file "${SMOKE_DIR}/smoke-build-entrypoint.sh"
+    JOBS="$JOBS" \
+        QT_PREFIX_IN_CONTAINER="$INSTALL_DIR" \
+        BUILD_DIR_IN_CONTAINER="${SMOKE_BUILD_DIR#/workspace/}" \
+        BUILD_TYPE="$BUILD_TYPE" \
+        "${SMOKE_DIR}/smoke-build-entrypoint.sh" >"${LOG_DIR}/smoke-build.log" 2>&1
+    require_file "${SMOKE_BUILD_DIR}/qtwebkit-smoke"
 fi
 
 QMAKE_BIN="${INSTALL_DIR}/bin/qmake"

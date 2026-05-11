@@ -8,7 +8,7 @@
 
 ## Key Changes
 - Save this plan first in `docs/migration.md`, replacing the current Qt `5.5.1` / donor-branch-oriented plan before any code or script changes begin.
-- Retarget the existing toolchain flow in `build-qt5-static.sh`, `toolchains/qt5-static/sources.lock`, and `toolchains/qt5-static/build-inside-container.sh`:
+- Retarget the existing toolchain flow in `build-qt5-static.sh`, `toolchains/qt5-static/sources.lock`, and `toolchains/qt5-static/qt5-static-build-entrypoint.sh`:
 - update locked sources from Qt `5.5.1` to Qt `5.15.17`
 - replace the current "unpack `qtwebkit` into the Qt source tree" flow with a standalone QtWebKit `5.212` build against the installed Qt `5.15.17` prefix
 - keep static ICU and OpenSSL handling, and continue verifying `libQt5WebKit.a` and `libQt5WebKitWidgets.a`

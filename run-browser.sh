@@ -2,7 +2,6 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-BUILD_SCRIPT="${SCRIPT_DIR}/build-browser-docker.sh"
 
 BUILD_TYPE="release"
 RUN_WITH_GDB=0
@@ -42,22 +41,19 @@ esac
 
 BINARY="${SCRIPT_DIR}/build-docker-${BUILD_TYPE}/QtWeb"
 if [[ "${RUN_BUILD}" -eq 1 ]]; then
-    BUILD_ARGS=()
     if [[ "${BUILD_TYPE}" == "debug" ]]; then
-        BUILD_ARGS+=(--debug)
+        "${SCRIPT_DIR}/build-browser-docker.sh" --debug
+    else
+        "${SCRIPT_DIR}/build-browser-docker.sh"
     fi
-    "${BUILD_SCRIPT}" "${BUILD_ARGS[@]}"
 elif [[ ! -x "${BINARY}" ]]; then
     echo "error: browser binary not found: ${BINARY}" >&2
     echo "hint: rerun with --rebuild" >&2
     exit 1
 fi
 
-RUN_BINARY="${BINARY}"
 if [[ "${RUN_WITH_GDB}" -eq 1 ]]; then
-    CMD=(gdb -ex run --args "${RUN_BINARY}")
+    exec gdb -ex run --args "${BINARY}" "$@"
 else
-    CMD=("${RUN_BINARY}")
+    exec "${BINARY}" "$@"
 fi
-
-exec "${CMD[@]}" "$@"

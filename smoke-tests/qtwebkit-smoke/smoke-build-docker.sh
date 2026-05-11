@@ -32,11 +32,6 @@ case "$BUILD_TYPE" in
     release|debug)
         QT_PREFIX_IN_CONTAINER="/workspace/artifacts/qt5-static-${QT_VERSION}-${BUILD_TYPE}/install"
         BUILD_DIR_IN_CONTAINER="smoke-tests/qtwebkit-smoke/build-docker-${BUILD_TYPE}"
-        if [[ "$BUILD_TYPE" == "release" ]]; then
-            QMAKE_CONFIG_ARGS="CONFIG+=release CONFIG-=debug"
-        else
-            QMAKE_CONFIG_ARGS="CONFIG+=debug CONFIG-=release"
-        fi
         ;;
     *)
         fail "BUILD_TYPE must be release or debug, got: ${BUILD_TYPE}"
@@ -48,18 +43,9 @@ docker run --rm \
     -e JOBS="${JOBS}" \
     -e QT_PREFIX_IN_CONTAINER="${QT_PREFIX_IN_CONTAINER}" \
     -e BUILD_DIR_IN_CONTAINER="${BUILD_DIR_IN_CONTAINER}" \
-    -e QMAKE_CONFIG_ARGS="${QMAKE_CONFIG_ARGS}" \
+    -e BUILD_TYPE="${BUILD_TYPE}" \
     -v "${REPO_ROOT}:/workspace" \
     -v "${REPO_ROOT}:${REPO_ROOT}" \
     -w /workspace \
     "${IMAGE_TAG}" \
-    /bin/bash -lc '
-        set -euo pipefail
-        rm -rf "${BUILD_DIR_IN_CONTAINER}"
-        mkdir -p "${BUILD_DIR_IN_CONTAINER}"
-        cd "${BUILD_DIR_IN_CONTAINER}"
-        "${QT_PREFIX_IN_CONTAINER}/bin/qmake" ../qtwebkit-smoke.pro ${QMAKE_CONFIG_ARGS}
-        make -j"${JOBS}"
-        cp /etc/ssl/certs/ca-certificates.crt ./ca-certificates.crt
-        echo "built: /workspace/${BUILD_DIR_IN_CONTAINER}/qtwebkit-smoke"
-    '
+    /workspace/smoke-tests/qtwebkit-smoke/smoke-build-entrypoint.sh

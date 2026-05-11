@@ -3,7 +3,6 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SMOKE_DIR="${SCRIPT_DIR}/smoke-tests/qtwebkit-smoke"
-BUILD_SCRIPT="${SMOKE_DIR}/smoke-build-docker.sh"
 
 BUILD_TYPE="release"
 RUN_WITH_GDB=0
@@ -43,22 +42,19 @@ esac
 
 BINARY="${SMOKE_DIR}/build-docker-${BUILD_TYPE}/qtwebkit-smoke"
 if [[ "${RUN_BUILD}" -eq 1 ]]; then
-    BUILD_ARGS=()
     if [[ "${BUILD_TYPE}" == "debug" ]]; then
-        BUILD_ARGS+=(--debug)
+        "${SMOKE_DIR}/smoke-build-docker.sh" --debug
+    else
+        "${SMOKE_DIR}/smoke-build-docker.sh"
     fi
-    "${BUILD_SCRIPT}" "${BUILD_ARGS[@]}"
 elif [[ ! -x "${BINARY}" ]]; then
     echo "error: smoke binary not found: ${BINARY}" >&2
     echo "hint: rerun with --build" >&2
     exit 1
 fi
 
-RUN_BINARY="${BINARY}"
 if [[ "${RUN_WITH_GDB}" -eq 1 ]]; then
-    CMD=(gdb -ex run --args "${RUN_BINARY}")
+    exec gdb -ex run --args "${BINARY}" "$@"
 else
-    CMD=("${RUN_BINARY}")
+    exec "${BINARY}" "$@"
 fi
-
-exec "${CMD[@]}" "$@"
