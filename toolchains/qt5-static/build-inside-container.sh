@@ -8,6 +8,10 @@ set -euo pipefail
 : "${ICU_SRC_ARCHIVE:?ICU_SRC_ARCHIVE is required}"
 
 JOBS="${JOBS:-$(nproc 2>/dev/null || echo 8)}"
+QTWEBKIT_JOBS="$JOBS"
+if (( QTWEBKIT_JOBS > 16 )); then
+    QTWEBKIT_JOBS=16
+fi
 CLEAN="${CLEAN:-false}"
 BUILD_TYPE="${BUILD_TYPE:-release}"
 BUILD_SCOPE="${BUILD_SCOPE:-all}"
@@ -297,7 +301,7 @@ build_qtwebkit() {
         -DUSE_LD_GOLD=OFF \
         "${QTWEBKIT_SOURCE_DIR}" >"${LOG_DIR}/qtwebkit-configure.log" 2>&1
     echo "==> build QtWebKit"
-    ninja -j"$JOBS" >"${LOG_DIR}/qtwebkit-build.log" 2>&1
+    ninja -j"$QTWEBKIT_JOBS" >"${LOG_DIR}/qtwebkit-build.log" 2>&1
     echo "==> install QtWebKit"
     ninja install >"${LOG_DIR}/qtwebkit-install.log" 2>&1
     sync_installed_qtwebkit_metadata
