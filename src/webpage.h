@@ -84,10 +84,6 @@ protected:
     bool extension(Extension extension, const ExtensionOption *option, ExtensionReturn *output);
     bool supportsExtension(Extension extension) const;
 
-#if !defined(QT_NO_UITOOLS)
-    QObject *createPlugin(const QString &classId, const QUrl &url, const QStringList &paramNames, const QStringList &paramValues);
-#endif
-
 private slots:
     void handleUnsupportedContent(QNetworkReply *reply);
 

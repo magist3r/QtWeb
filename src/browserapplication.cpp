@@ -419,7 +419,6 @@ void BrowserApplication::loadSettings()
     defaultSettings->setAttribute(QWebSettings::ZoomTextOnly, zoom_text_only);
 
     defaultSettings->setAttribute(QWebSettings::JavascriptEnabled, settings.value(QLatin1String("enableJavascript"), true).toBool());
-    defaultSettings->setAttribute(QWebSettings::PluginsEnabled, settings.value(QLatin1String("enablePlugins"), true).toBool());
     defaultSettings->setAttribute(QWebSettings::AutoLoadImages, settings.value(QLatin1String("autoLoadImages"), true).toBool());
     defaultSettings->setAttribute(QWebSettings::JavascriptCanOpenWindows, ! (settings.value(QLatin1String("blockPopups"), true).toBool()));
 

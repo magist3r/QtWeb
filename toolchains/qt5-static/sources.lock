@@ -10,9 +10,9 @@ LOCK_QT5_SRC_URL="https://download.qt.io/archive/qt/5.15/5.15.17/single/qt-every
 LOCK_QT5_SRC_SHA256="85eb566333d6ba59be3a97c9445a6e52f2af1b52fc3c54b8a2e7f9ea040a7de4"
 LOCK_QT5_SRC_MD5="5f212232bbc41f2eabbdee4fcbc4040e"
 
-LOCK_QT5_WEBKIT_FILE="qtwebkit-5.212.0-alpha4.tar.xz"
-LOCK_QT5_WEBKIT_SRC_URL="https://github.com/qtwebkit/qtwebkit/releases/download/qtwebkit-5.212.0-alpha4/qtwebkit-5.212.0-alpha4.tar.xz"
-LOCK_QT5_WEBKIT_SHA256="9ca126da9273664dd23a3ccd0c9bebceb7bb534bddd743db31caf6a5a6d4a9e6"
+LOCK_QT5_WEBKIT_FILE="qtwebkit-2022-09-07-src.tar.xz"
+LOCK_QT5_WEBKIT_SRC_URL="https://github.com/movableink/webkit/releases/download/2022-09-07/qtwebkit-2022-09-07-src.tar.xz"
+LOCK_QT5_WEBKIT_SHA256="1a9f77c3f11a44d147cab6db0fd34aea803f149242e2c217683392aa2f572060"
 LOCK_QT5_WEBKIT_MD5=""
 
 LOCK_ICU_SRC_FILE="icu4c-65_1-src.tgz"

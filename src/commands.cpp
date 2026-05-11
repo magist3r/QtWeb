@@ -31,7 +31,7 @@ MenuCommands::~MenuCommands()
     m_data.endGroup();
 }
 
-#define MAX_COMMANDS 91
+#define MAX_COMMANDS 90
 
 int MenuCommands::GetCommandsCount() const
 {
@@ -220,9 +220,6 @@ QString MenuCommands::Get(int ind, What w) const
     
     if (cur++ == ind)
         return (w == Key ? CookiesKey() : (w == Title? CookiesTitle() : GetStr(CookiesShortcuts())));
-    
-    if (cur++ == ind)
-        return (w == Key ? PlugInsKey() : (w == Title? PlugInsTitle() : GetStr(PlugInsShortcuts())));
     
     if (cur++ == ind)
         return (w == Key ? AgentKey() : (w == Title? AgentTitle() : GetStr(AgentShortcuts())));

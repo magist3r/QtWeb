@@ -63,6 +63,7 @@ CONFIGURE_FLAGS=(
     "$BUILD_CONFIGURE_FLAG"
     -static
     -prefix "$INSTALL_DIR"
+    -skip qtdeclarative
     -skip qtwebengine
     -nomake tests
     -nomake examples
@@ -232,16 +233,13 @@ sync_installed_qtwebkit_metadata() {
     local webkit_module_pri="${INSTALL_DIR}/mkspecs/modules/qt_lib_webkit.pri"
     local webkitwidgets_module_pri="${INSTALL_DIR}/mkspecs/modules/qt_lib_webkitwidgets.pri"
     local install_lib_expr='$$QT_MODULE_LIB_BASE'
-    local webkit_private_libs="-L${install_lib_expr} -lWebCore -lANGLESupport -lJavaScriptCore -lWTF ${SYSTEM_LIB_DIR}/libxml2.a ${SYSTEM_LIB_DIR}/liblzma.a ${SYSTEM_LIB_DIR}/libicui18n.a ${SYSTEM_LIB_DIR}/libicuuc.a ${SYSTEM_LIB_DIR}/libicudata.a ${SYSTEM_LIB_DIR}/libsqlite3.a -lz -lbmalloc -lxslt ${SYSTEM_LIB_DIR}/libhyphen.a -lwoff2 -lbrotli"
+    local icu_lib_expr='$$[QT_INSTALL_PREFIX]/../icu-static/lib'
+    local webkit_private_libs="-L${install_lib_expr} -lWebCore -lPAL -lJavaScriptCore -lWTF ${SYSTEM_LIB_DIR}/libxml2.a ${SYSTEM_LIB_DIR}/liblzma.a ${icu_lib_expr}/libicui18n.a ${icu_lib_expr}/libicuuc.a ${icu_lib_expr}/libicudata.a ${SYSTEM_LIB_DIR}/libsqlite3.a -lz -lbmalloc ${SYSTEM_LIB_DIR}/libhyphen.a -lharfbuzz-icu -latomic"
 
     require_file "$webkit_module_pri"
 
     if ! grep -Fq -- "-L${install_lib_expr}" "$webkit_module_pri"; then
         sed -i "s|^QMAKE_LIBS_PRIVATE += |QMAKE_LIBS_PRIVATE += -L${install_lib_expr} |" "$webkit_module_pri"
-    fi
-
-    if ! grep -Fq -- "-lANGLESupport" "$webkit_module_pri"; then
-        sed -i 's/-lWebCore /-lWebCore -lANGLESupport /' "$webkit_module_pri"
     fi
 
     sed -i "s|^QMAKE_LIBS_PRIVATE += .*|QMAKE_LIBS_PRIVATE += ${webkit_private_libs}|" "$webkit_module_pri"
@@ -251,8 +249,17 @@ sync_installed_qtwebkit_metadata() {
     fi
 }
 
+sync_installed_qt_plugin_metadata() {
+    local qwebp_prl="${INSTALL_DIR}/plugins/imageformats/libqwebp.prl"
+
+    if [[ -f "$qwebp_prl" ]]; then
+        sed -i "s|-lwebpmux -lwebpdemux -lwebp|${SYSTEM_LIB_DIR}/libwebpmux.a ${SYSTEM_LIB_DIR}/libwebpdemux.a ${SYSTEM_LIB_DIR}/libwebp.a|g" "$qwebp_prl"
+    fi
+}
+
 build_qtwebkit() {
     local extract_dir source_root
+    local top_level_entries=()
 
     require_file "$QTWEBKIT_ARCHIVE"
     if [[ -f "${INSTALL_DIR}/lib/libQt5WebKit.a" && -f "${INSTALL_DIR}/lib/libQt5WebKitWidgets.a" ]]; then
@@ -270,12 +277,22 @@ build_qtwebkit() {
     mkdir -p "$extract_dir" "$QTWEBKIT_BUILD_DIR"
     tar -xf "$QTWEBKIT_ARCHIVE" -C "$extract_dir"
 
-    source_root="$(find "$extract_dir" -mindepth 1 -maxdepth 1 -type d | head -n 1)"
-    [[ -n "$source_root" ]] || fail "could not identify extracted QtWebKit source directory"
-    QTWEBKIT_SOURCE_DIR="${WORK_DIR}/$(basename "$source_root")"
+    mapfile -t top_level_entries < <(find "$extract_dir" -mindepth 1 -maxdepth 1 | sort)
+    if [[ "${#top_level_entries[@]}" -eq 1 && -d "${top_level_entries[0]}" ]]; then
+        source_root="${top_level_entries[0]}"
+        QTWEBKIT_SOURCE_DIR="${WORK_DIR}/$(basename "$source_root")"
+    else
+        require_file "${extract_dir}/CMakeLists.txt"
+        require_dir "${extract_dir}/Source"
+        source_root="$extract_dir"
+        QTWEBKIT_SOURCE_DIR="${WORK_DIR}/qtwebkit-source"
+    fi
+
     rm -rf "$QTWEBKIT_SOURCE_DIR"
     mv "$source_root" "$QTWEBKIT_SOURCE_DIR"
-    rm -rf "$extract_dir"
+    if [[ "$source_root" != "$extract_dir" ]]; then
+        rm -rf "$extract_dir"
+    fi
 
     pushd "$QTWEBKIT_SOURCE_DIR" >/dev/null
     apply_matching_patches "qtwebkit"
@@ -283,23 +300,29 @@ build_qtwebkit() {
 
     pushd "$QTWEBKIT_BUILD_DIR" >/dev/null
     echo "==> configure QtWebKit"
-    cmake -G Ninja \
-        -DPORT=Qt \
-        -DCMAKE_BUILD_TYPE="${CMAKE_BUILD_TYPE}" \
-        -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" \
-        -DCMAKE_PREFIX_PATH="${INSTALL_DIR};${ICU_INSTALL_DIR}" \
-        -DQt5_DIR="${INSTALL_DIR}/lib/cmake/Qt5" \
-        -DICU_ROOT="${ICU_INSTALL_DIR}" \
-        -DENABLE_API_TESTS=OFF \
-        -DENABLE_TOOLS=OFF \
-        -DENABLE_GEOLOCATION=OFF \
-        -DENABLE_PRINT_SUPPORT=ON \
-        -DENABLE_VIDEO=OFF \
-        -DENABLE_WEBKIT2=OFF \
-        -DUSE_THIN_ARCHIVES=OFF \
-        -DUSE_GSTREAMER=OFF \
-        -DUSE_LD_GOLD=OFF \
-        "${QTWEBKIT_SOURCE_DIR}" >"${LOG_DIR}/qtwebkit-configure.log" 2>&1
+    local cmake_args=(
+        -DPORT=Qt
+        -DCMAKE_BUILD_TYPE="${CMAKE_BUILD_TYPE}"
+        -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}"
+        -DCMAKE_PREFIX_PATH="${INSTALL_DIR};${ICU_INSTALL_DIR}"
+        -DQt5_DIR="${INSTALL_DIR}/lib/cmake/Qt5"
+        -DICU_ROOT="${ICU_INSTALL_DIR}"
+        -DENABLE_API_TESTS=OFF
+        -DENABLE_TOOLS=OFF
+        -DENABLE_GEOLOCATION=OFF
+        -DENABLE_PRINT_SUPPORT=ON
+        -DENABLE_VIDEO=OFF
+        -DENABLE_WEBKIT=OFF
+        -DENABLE_WEBKIT2=OFF
+        -DUSE_THIN_ARCHIVES=OFF
+        -DUSE_GSTREAMER=OFF
+        -DUSE_LD_GOLD=OFF
+        -DUSE_WOFF2=OFF # Avoid WOFF2/Brotli runtime deps; pages fall back to other fonts when available.
+        -DENABLE_WEB_CRYPTO=OFF # Avoid libgcrypt/libtasn1 deps; HTTPS still works, but window.crypto.subtle is unavailable.
+        -DENABLE_XSLT=OFF # Avoid libxslt dependency; legacy XML+XSLT pages will not transform client-side.
+        "${QTWEBKIT_SOURCE_DIR}"
+    )
+    cmake -G Ninja "${cmake_args[@]}" >"${LOG_DIR}/qtwebkit-configure.log" 2>&1
     echo "==> build QtWebKit"
     ninja -j"$QTWEBKIT_JOBS" >"${LOG_DIR}/qtwebkit-build.log" 2>&1
     echo "==> install QtWebKit"
@@ -352,6 +375,7 @@ if [[ "$BUILD_SCOPE" == "all" || "$BUILD_SCOPE" == "qtwebkit" ]]; then
     configure_build_env_for_qt
     require_file "${INSTALL_DIR}/bin/qmake"
     install_qt_runtime_fonts
+    sync_installed_qt_plugin_metadata
     build_qtwebkit
     echo "==> build QtWebKit smoke test"
     require_file "${SMOKE_DIR}/smoke-build-entrypoint.sh"

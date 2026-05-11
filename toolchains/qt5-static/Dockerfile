@@ -26,6 +26,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libglib2.0-dev \
     libgl1-mesa-dev \
     libgles2-mesa-dev \
+    libharfbuzz-dev \
     libhyphen-dev \
     libicu-dev \
     libjpeg-dev \
@@ -42,9 +43,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libxfixes-dev \
     libxi-dev \
     libxml2-dev \
+    libwebp-dev \
     libxrandr-dev \
     libxrender-dev \
-    libxslt1-dev \
     libxcb1-dev \
     libxcb-icccm4-dev \
     libxcb-image0-dev \

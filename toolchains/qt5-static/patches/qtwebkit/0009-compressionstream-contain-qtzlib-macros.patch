@@ -1,0 +1,122 @@
+diff --git a/Source/WebCore/Modules/compression/CompressionStreamEncoder.h b/Source/WebCore/Modules/compression/CompressionStreamEncoder.h
+--- a/Source/WebCore/Modules/compression/CompressionStreamEncoder.h
++++ b/Source/WebCore/Modules/compression/CompressionStreamEncoder.h
+@@ -33,6 +33,19 @@
+ #include <wtf/Vector.h>
+ #include <zlib.h>
+ 
++// Qt's static zlib build prefixes its API via preprocessor macros such as
++// inflate -> z_inflate. Keep those macros from leaking into the rest of the
++// unified WebCore translation unit.
++#ifdef deflate
++#undef deflate
++#endif
++#ifdef deflateEnd
++#undef deflateEnd
++#endif
++#ifdef deflateInit2
++#undef deflateInit2
++#endif
++
+ namespace WebCore {
+ 
+ class CompressionStreamEncoder : public RefCounted<CompressionStreamEncoder> {
+@@ -48,7 +61,7 @@
+     ~CompressionStreamEncoder()
+     {
+         if (m_initialized)
+-            deflateEnd(&m_zstream);
++            z_deflateEnd(&m_zstream);
+     }
+ 
+ private:
+diff --git a/Source/WebCore/Modules/compression/CompressionStreamEncoder.cpp b/Source/WebCore/Modules/compression/CompressionStreamEncoder.cpp
+--- a/Source/WebCore/Modules/compression/CompressionStreamEncoder.cpp
++++ b/Source/WebCore/Modules/compression/CompressionStreamEncoder.cpp
+@@ -76,13 +76,13 @@
+     // Values chosen here are based off
+     // https://developer.apple.com/documentation/compression/compression_algorithm/compression_zlib?language=objc
+     case Formats::CompressionFormat::Deflate:
+-        result = deflateInit2(&m_zstream, 5, Z_DEFLATED, -15, 8, Z_DEFAULT_STRATEGY);
++        result = z_deflateInit2(&m_zstream, 5, Z_DEFLATED, -15, 8, Z_DEFAULT_STRATEGY);
+         break;
+     case Formats::CompressionFormat::Zlib:
+-        result = deflateInit2(&m_zstream, 5, Z_DEFLATED, 15, 8, Z_DEFAULT_STRATEGY);
++        result = z_deflateInit2(&m_zstream, 5, Z_DEFLATED, 15, 8, Z_DEFAULT_STRATEGY);
+         break;
+     case Formats::CompressionFormat::Gzip:
+-        result = deflateInit2(&m_zstream, 5, Z_DEFLATED, 15 + 16, 8, Z_DEFAULT_STRATEGY);
++        result = z_deflateInit2(&m_zstream, 5, Z_DEFLATED, 15 + 16, 8, Z_DEFAULT_STRATEGY);
+         break;
+     default:
+         RELEASE_ASSERT_NOT_REACHED();
+@@ -129,7 +129,7 @@
+         m_zstream.next_out = output.data();
+         m_zstream.avail_out = output.size();
+ 
+-        result = deflate(&m_zstream, (m_finish) ? Z_FINISH : Z_NO_FLUSH);
++        result = z_deflate(&m_zstream, (m_finish) ? Z_FINISH : Z_NO_FLUSH);
+         if (result != Z_OK && result != Z_STREAM_END && result != Z_BUF_ERROR)
+             return Exception { TypeError, "Failed to compress data."_s };
+ 
+diff --git a/Source/WebCore/Modules/compression/DecompressionStreamDecoder.h b/Source/WebCore/Modules/compression/DecompressionStreamDecoder.h
+--- a/Source/WebCore/Modules/compression/DecompressionStreamDecoder.h
++++ b/Source/WebCore/Modules/compression/DecompressionStreamDecoder.h
+@@ -38,6 +38,19 @@
+ #include <wtf/RefPtr.h>
+ #include <zlib.h>
+ 
++// Qt's static zlib build prefixes its API via preprocessor macros such as
++// inflate -> z_inflate. Keep those macros from leaking into the rest of the
++// unified WebCore translation unit.
++#ifdef inflate
++#undef inflate
++#endif
++#ifdef inflateEnd
++#undef inflateEnd
++#endif
++#ifdef inflateInit2
++#undef inflateInit2
++#endif
++
+ namespace WebCore {
+ 
+ class DecompressionStreamDecoder : public RefCounted<DecompressionStreamDecoder> {
+@@ -58,7 +71,7 @@
+                 compression_stream_destroy(&m_stream);
+ #endif
+             } else
+-                deflateEnd(&m_zstream);
++                z_inflateEnd(&m_zstream);
+         }
+     }
+ 
+diff --git a/Source/WebCore/Modules/compression/DecompressionStreamDecoder.cpp b/Source/WebCore/Modules/compression/DecompressionStreamDecoder.cpp
+--- a/Source/WebCore/Modules/compression/DecompressionStreamDecoder.cpp
++++ b/Source/WebCore/Modules/compression/DecompressionStreamDecoder.cpp
+@@ -81,13 +81,13 @@
+ 
+     switch (m_format) {
+     case Formats::CompressionFormat::Deflate:
+-        result = inflateInit2(&m_zstream, -15);
++        result = z_inflateInit2(&m_zstream, -15);
+         break;
+     case Formats::CompressionFormat::Zlib:
+-        result = inflateInit2(&m_zstream, 15);
++        result = z_inflateInit2(&m_zstream, 15);
+         break;
+     case Formats::CompressionFormat::Gzip:
+-        result = inflateInit2(&m_zstream, 15 + 16);
++        result = z_inflateInit2(&m_zstream, 15 + 16);
+         break;
+     default:
+         RELEASE_ASSERT_NOT_REACHED();
+@@ -133,7 +133,7 @@
+         m_zstream.next_out = output.data();
+         m_zstream.avail_out = output.size();
+ 
+-        result = inflate(&m_zstream, (m_finish) ? Z_FINISH : Z_NO_FLUSH);
++        result = z_inflate(&m_zstream, (m_finish) ? Z_FINISH : Z_NO_FLUSH);
+         
+         if (result != Z_OK && result != Z_STREAM_END && result != Z_BUF_ERROR)
+             return Exception { TypeError, "Failed to Decode Data."_s };

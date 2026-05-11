@@ -57,7 +57,6 @@
 #include <QFileDialog>
 #include <QtNetwork>
 #include <private/qftp_p.h>
-//#include <QtUiTools/QUiLoader>
 
 #include <QtCore/QDebug>
 #include <QtCore/QBuffer>

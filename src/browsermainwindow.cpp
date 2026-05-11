@@ -848,14 +848,6 @@ void BrowserMainWindow::setupMenu()
     this->addAction(m_disableCookies);
     m_disableCookies->setCheckable(true);
 
-    // Disable Plug-Ins
-    m_disablePlugIns = new QAction( cmds.PlugInsTitle(), this);
-    m_disablePlugIns->setShortcuts(cmds.PlugInsShortcuts());
-    connect(m_disablePlugIns, SIGNAL(triggered()), this, SLOT(slotDisablePlugIns()));
-    privacyMenu->addAction(m_disablePlugIns);
-    this->addAction(m_disablePlugIns);
-    m_disablePlugIns->setCheckable(true);
-
     // Disable UserAgent
     m_disableUserAgent = new QAction( cmds.AgentTitle(), this);
     m_disableUserAgent->setShortcuts(cmds.AgentShortcuts());
@@ -2410,7 +2402,6 @@ void BrowserMainWindow::slotAboutToShowPrivacyMenu()
     QWebSettings* defaultSettings = QWebSettings::globalSettings();
     m_disableJavaScript->setChecked(!defaultSettings->testAttribute(QWebSettings::JavascriptEnabled));
     m_disableImages->setChecked(!defaultSettings->testAttribute(QWebSettings::AutoLoadImages));
-    m_disablePlugIns->setChecked(!defaultSettings->testAttribute(QWebSettings::PluginsEnabled));
     m_disablePopUps->setChecked(!defaultSettings->testAttribute(QWebSettings::JavascriptCanOpenWindows));
 
     
@@ -2449,16 +2440,6 @@ void BrowserMainWindow::slotDisableImages()
     settings.beginGroup(QLatin1String("websettings"));
     settings.setValue(QLatin1String("autoLoadImages"), enabled);
     checkToolBarButtons();
-}
-
-void BrowserMainWindow::slotDisablePlugIns()
-{
-    bool enabled = !m_disablePlugIns->isChecked();
-    QWebSettings* defaultSettings = QWebSettings::globalSettings();
-    defaultSettings->setAttribute(QWebSettings::PluginsEnabled, enabled);
-    QSettings settings;
-    settings.beginGroup(QLatin1String("websettings"));
-    settings.setValue(QLatin1String("enablePlugins"), enabled);
 }
 
 void BrowserMainWindow::slotDisableCookies()

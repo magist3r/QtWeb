@@ -291,10 +291,6 @@ public:
     QString             CookiesTitle() const            { return m_data.value( CookiesKey() , tr("Disable &Cookies")).toString(); }
     QList<QKeySequence> CookiesShortcuts() const        { return loadShortcuts( CookiesKey(), QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_C) ); }
 
-    QString             PlugInsKey() const          { return QLatin1String("PlugIns"); }
-    QString             PlugInsTitle() const            { return m_data.value( PlugInsKey() , tr("Disable Plu&g-Ins")).toString(); }
-    QList<QKeySequence> PlugInsShortcuts() const        { return loadShortcuts( PlugInsKey(), QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_G) ); }
-
     QString             AgentKey() const                { return QLatin1String("UserAgent"); }
     QString             AgentTitle() const          { return m_data.value( AgentKey() , tr("Disable User&Agent")).toString(); }
     QList<QKeySequence> AgentShortcuts() const      { return loadShortcuts( AgentKey(), QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_A) ); }

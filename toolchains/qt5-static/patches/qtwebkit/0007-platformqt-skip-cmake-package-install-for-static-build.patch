@@ -1,0 +1,16 @@
+diff --git a/Source/PlatformQt.cmake b/Source/PlatformQt.cmake
+--- a/Source/PlatformQt.cmake
++++ b/Source/PlatformQt.cmake
+@@ -192,6 +192,7 @@ write_basic_package_version_file("${CMAKE_CURRENT_BINARY_DIR}/Qt5WebKitConfigVer
+ write_basic_package_version_file("${CMAKE_CURRENT_BINARY_DIR}/Qt5WebKitWidgetsConfigVersion.cmake"
+     VERSION ${PROJECT_VERSION}
+     COMPATIBILITY AnyNewerVersion)
++if (NOT QT_STATIC_BUILD)
+ 
+ install(FILES
+     "${CMAKE_CURRENT_BINARY_DIR}/Qt5WebKitConfig.cmake"
+@@ -217,3 +218,4 @@ install(EXPORT Qt5WebKitWidgetsTargets
+     DESTINATION "${KDE_INSTALL_CMAKEPACKAGEDIR}/Qt5WebKitWidgets"
+     COMPONENT Code
+ )
++endif ()
