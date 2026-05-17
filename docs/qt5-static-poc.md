@@ -8,6 +8,8 @@ Target versions:
 - QtWebKit `5.212.0-alpha4`
 
 This POC validates the toolchain pipeline and the QtWebKit smoke-build gate.
+After rebuilding the browser, use `./run-browser.sh --check about:blank` from
+the host to runtime-check the Docker-built browser.
 Primary portability target: static linking plus minimal runtime dependencies.
 
 ## Non-Goals
@@ -103,7 +105,8 @@ Custom output directory inside repo:
 - Static QtWebKit can still require follow-up patches for newer compilers or linkers.
 - Archive URLs may become unavailable over time.
 - Over-aggressive dependency reduction can break TLS, certificate handling, or module detection.
-- Runtime browser validation remains user-owned.
+- Runtime browser validation must use the host-side `run-browser.sh --check`
+  helper for the Docker-built browser.
 
 ## Next Tasks
 1. Build the main browser with `build-browser-docker.sh` against the produced toolchain.

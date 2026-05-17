@@ -33,6 +33,18 @@ Debug output binary:
 
 `smoke-tests/qtwebkit-smoke/build-docker-debug/qtwebkit-smoke`
 
+## Host Check
+
+After the Docker build has produced the smoke binary, run the headless check
+from the repository root on the host:
+
+```bash
+./run-smoke.sh --check about:blank
+```
+
+This uses `xvfb-run` on the host. It does not build inside the host
+environment.
+
 ## Notes
 
 - Docker build is required because the smoke app must link against the SSL
