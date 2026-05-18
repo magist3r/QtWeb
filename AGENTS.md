@@ -17,3 +17,8 @@
 - Do not run `run-smoke.sh` or start GUI/runtime validation on the user's behalf unless the user explicitly asks for that exact execution.
 - Use `ldd ./smoke-tests/qtwebkit-smoke/build-docker-$(build-type)/qtwebkit-smoke` to check for remaining shared dependencies
 - When a build succeeds, report the output path or the command the user can run; leave execution to the user unless explicitly requested.
+
+## Documentation Policy
+- Keep `docs/migration-status.md` limited to behavior that is implemented in the repository.
+- Keep `docs/plan.md` limited to planned or pending work.
+- When implementing a planned change, update both docs in the same change: move completed points from `docs/plan.md` to `docs/migration-status.md` and remove stale planned items.

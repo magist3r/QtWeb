@@ -1,5 +1,5 @@
 QT_VERSION="5.15.17"
-QT5_STATIC_IMAGE_TAG="qtweb-qt5-static-poc:${QT_VERSION}"
+QT5_STATIC_IMAGE_TAG="qtweb-qt5-static:${QT_VERSION}"
 
 format_duration() {
     local total_seconds="$1"
