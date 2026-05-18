@@ -1,0 +1,246 @@
+name: Qt5 Static
+
+on:
+  push:
+    branches:
+      - "**"
+    tags:
+      - "**"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+env:
+  BUILD_TYPE: release
+  QT_VERSION: 5.15.17
+  QTWEBKIT_VERSION: "2022-09-07"
+  TOOLCHAIN_PLATFORM: ubuntu-20.04-x86_64
+
+jobs:
+  qt5:
+    name: Build Qt5 static
+    runs-on: ubuntu-24.04
+    timeout-minutes: 720
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Check Qt version consistency
+        run: |
+          set -euo pipefail
+
+          workflow_qt_version="${QT_VERSION}"
+          # shellcheck disable=SC1091
+          source toolchains/qt5-static/common.sh
+          if [[ "${QT_VERSION}" != "${workflow_qt_version}" ]]; then
+            echo "error: workflow QT_VERSION=${workflow_qt_version} does not match common.sh QT_VERSION=${QT_VERSION}" >&2
+            exit 1
+          fi
+
+      - name: Cache Qt5 build
+        id: qt5-cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            artifacts/qt5-static-${{ env.QT_VERSION }}-${{ env.BUILD_TYPE }}/install
+            artifacts/qt5-static-${{ env.QT_VERSION }}-${{ env.BUILD_TYPE }}/logs
+            artifacts/qt5-static-${{ env.QT_VERSION }}-${{ env.BUILD_TYPE }}/build-manifest.txt
+          key: qt5-static-${{ runner.os }}-${{ env.BUILD_TYPE }}-${{ hashFiles('toolchains/qt5-static/Dockerfile', 'toolchains/qt5-static/qt5-static-build-entrypoint.sh', 'toolchains/qt5-static/sources-qt.lock', 'toolchains/qt5-static/patches/qt/*.patch') }}
+
+      - name: Cache source archives
+        if: steps.qt5-cache.outputs.cache-hit != 'true'
+        uses: actions/cache@v4
+        with:
+          path: artifacts/src-cache
+          key: qt5-static-sources-${{ hashFiles('toolchains/qt5-static/sources.lock', 'toolchains/qt5-static/sources-qt.lock', 'toolchains/qt5-static/sources-qtwebkit.lock') }}
+
+      - name: Build static Qt5
+        if: steps.qt5-cache.outputs.cache-hit != 'true'
+        run: ./build-qt5-static.sh --runtime docker --qt-only
+
+  qtwebkit:
+    name: Build QtWebKit
+    runs-on: ubuntu-24.04
+    needs: qt5
+    timeout-minutes: 720
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Cache QtWebKit build
+        id: qtwebkit-cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            artifacts/qt5-static-${{ env.QT_VERSION }}-${{ env.BUILD_TYPE }}/install
+            artifacts/qt5-static-${{ env.QT_VERSION }}-${{ env.BUILD_TYPE }}/logs
+            artifacts/qt5-static-${{ env.QT_VERSION }}-${{ env.BUILD_TYPE }}/build-manifest.txt
+          key: qtwebkit-static-${{ runner.os }}-${{ env.BUILD_TYPE }}-${{ hashFiles('toolchains/qt5-static/Dockerfile', 'toolchains/qt5-static/qt5-static-build-entrypoint.sh', 'toolchains/qt5-static/sources-qt.lock', 'toolchains/qt5-static/patches/qt/*.patch', 'toolchains/qt5-static/sources-qtwebkit.lock', 'toolchains/qt5-static/patches/qtwebkit/*.patch') }}
+
+      - name: Cache source archives
+        if: steps.qtwebkit-cache.outputs.cache-hit != 'true'
+        uses: actions/cache@v4
+        with:
+          path: artifacts/src-cache
+          key: qt5-static-sources-${{ hashFiles('toolchains/qt5-static/sources.lock', 'toolchains/qt5-static/sources-qt.lock', 'toolchains/qt5-static/sources-qtwebkit.lock') }}
+
+      - name: Restore Qt5 build
+        if: steps.qtwebkit-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            artifacts/qt5-static-${{ env.QT_VERSION }}-${{ env.BUILD_TYPE }}/install
+            artifacts/qt5-static-${{ env.QT_VERSION }}-${{ env.BUILD_TYPE }}/logs
+            artifacts/qt5-static-${{ env.QT_VERSION }}-${{ env.BUILD_TYPE }}/build-manifest.txt
+          key: qt5-static-${{ runner.os }}-${{ env.BUILD_TYPE }}-${{ hashFiles('toolchains/qt5-static/Dockerfile', 'toolchains/qt5-static/qt5-static-build-entrypoint.sh', 'toolchains/qt5-static/sources-qt.lock', 'toolchains/qt5-static/patches/qt/*.patch') }}
+
+      - name: Build CI container image
+        run: docker build -f toolchains/qt5-static/Dockerfile -t qtweb-qt5-static:${QT_VERSION} .
+
+      - name: Build static QtWebKit
+        if: steps.qtwebkit-cache.outputs.cache-hit != 'true'
+        run: ./build-qt5-static.sh --runtime docker --qtwebkit-only
+
+      - name: Build QtWebKit smoke test
+        run: ./smoke-tests/qtwebkit-smoke/smoke-build-docker.sh
+
+      # - name: Smoke test QtWebKit app
+      #   run: ./run-smoke.sh --check about:blank
+
+      - name: Check QtWebKit shared dependencies
+        run: ldd ./smoke-tests/qtwebkit-smoke/build-docker-${BUILD_TYPE}/qtwebkit-smoke
+
+  qtweb:
+    name: Build QtWeb
+    runs-on: ubuntu-24.04
+    needs: qtwebkit
+    timeout-minutes: 120
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Restore QtWebKit build
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            artifacts/qt5-static-${{ env.QT_VERSION }}-${{ env.BUILD_TYPE }}/install
+            artifacts/qt5-static-${{ env.QT_VERSION }}-${{ env.BUILD_TYPE }}/logs
+            artifacts/qt5-static-${{ env.QT_VERSION }}-${{ env.BUILD_TYPE }}/build-manifest.txt
+          key: qtwebkit-static-${{ runner.os }}-${{ env.BUILD_TYPE }}-${{ hashFiles('toolchains/qt5-static/Dockerfile', 'toolchains/qt5-static/qt5-static-build-entrypoint.sh', 'toolchains/qt5-static/sources-qt.lock', 'toolchains/qt5-static/patches/qt/*.patch', 'toolchains/qt5-static/sources-qtwebkit.lock', 'toolchains/qt5-static/patches/qtwebkit/*.patch') }}
+
+      - name: Build CI container image
+        run: docker build -f toolchains/qt5-static/Dockerfile -t qtweb-qt5-static:${QT_VERSION} .
+
+      - name: Build QtWeb
+        run: ./build-browser-docker.sh
+
+      # - name: Smoke test QtWeb
+      #   run: ./run-browser.sh --check about:blank
+
+      - name: Check QtWeb shared dependencies
+        run: ldd ./build-docker-${BUILD_TYPE}/QtWeb
+
+  publish-qt-toolchain:
+    name: Publish Qt5 toolchain
+    runs-on: ubuntu-24.04
+    needs: qt5
+    if: startsWith(github.ref, 'refs/tags/')
+    permissions:
+      contents: write
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Restore Qt5 build
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            artifacts/qt5-static-${{ env.QT_VERSION }}-${{ env.BUILD_TYPE }}/install
+            artifacts/qt5-static-${{ env.QT_VERSION }}-${{ env.BUILD_TYPE }}/logs
+            artifacts/qt5-static-${{ env.QT_VERSION }}-${{ env.BUILD_TYPE }}/build-manifest.txt
+          key: qt5-static-${{ runner.os }}-${{ env.BUILD_TYPE }}-${{ hashFiles('toolchains/qt5-static/Dockerfile', 'toolchains/qt5-static/qt5-static-build-entrypoint.sh', 'toolchains/qt5-static/sources-qt.lock', 'toolchains/qt5-static/patches/qt/*.patch') }}
+
+      - name: Package Qt5 toolchain
+        run: |
+          set -euo pipefail
+
+          toolchain_dir="artifacts/qt5-static-${QT_VERSION}-${BUILD_TYPE}"
+          asset="qt5-static-${QT_VERSION}-${BUILD_TYPE}-${TOOLCHAIN_PLATFORM}.tar.zst"
+
+          test -d "${toolchain_dir}/install"
+          test -f "${toolchain_dir}/build-manifest.txt"
+
+          tar --zstd -cf "${asset}" \
+            -C "${toolchain_dir}" \
+            install \
+            build-manifest.txt
+
+      - name: Upload release asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          asset="qt5-static-${QT_VERSION}-${BUILD_TYPE}-${TOOLCHAIN_PLATFORM}.tar.zst"
+
+          if ! gh release view "${GITHUB_REF_NAME}" >/dev/null 2>&1; then
+            gh release create "${GITHUB_REF_NAME}" \
+              --title "${GITHUB_REF_NAME}" \
+              --notes "Static Qt5 and QtWebKit toolchains."
+          fi
+
+          gh release upload "${GITHUB_REF_NAME}" "${asset}" --clobber
+
+  publish-qtwebkit-toolchain:
+    name: Publish QtWebKit toolchain
+    runs-on: ubuntu-24.04
+    needs:
+      - qtwebkit
+      - publish-qt-toolchain
+    if: startsWith(github.ref, 'refs/tags/')
+    permissions:
+      contents: write
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Restore QtWebKit build
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            artifacts/qt5-static-${{ env.QT_VERSION }}-${{ env.BUILD_TYPE }}/install
+            artifacts/qt5-static-${{ env.QT_VERSION }}-${{ env.BUILD_TYPE }}/logs
+            artifacts/qt5-static-${{ env.QT_VERSION }}-${{ env.BUILD_TYPE }}/build-manifest.txt
+          key: qtwebkit-static-${{ runner.os }}-${{ env.BUILD_TYPE }}-${{ hashFiles('toolchains/qt5-static/Dockerfile', 'toolchains/qt5-static/qt5-static-build-entrypoint.sh', 'toolchains/qt5-static/sources-qt.lock', 'toolchains/qt5-static/patches/qt/*.patch', 'toolchains/qt5-static/sources-qtwebkit.lock', 'toolchains/qt5-static/patches/qtwebkit/*.patch') }}
+
+      - name: Package QtWebKit toolchain
+        run: |
+          set -euo pipefail
+
+          toolchain_dir="artifacts/qt5-static-${QT_VERSION}-${BUILD_TYPE}"
+          asset="qt5-static-${QT_VERSION}-qtwebkit-${QTWEBKIT_VERSION}-${BUILD_TYPE}-${TOOLCHAIN_PLATFORM}.tar.zst"
+
+          test -d "${toolchain_dir}/install"
+          test -f "${toolchain_dir}/build-manifest.txt"
+
+          tar --zstd -cf "${asset}" \
+            -C "${toolchain_dir}" \
+            install \
+            build-manifest.txt
+
+      - name: Upload release asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          asset="qt5-static-${QT_VERSION}-qtwebkit-${QTWEBKIT_VERSION}-${BUILD_TYPE}-${TOOLCHAIN_PLATFORM}.tar.zst"
+
+          gh release upload "${GITHUB_REF_NAME}" "${asset}" --clobber
