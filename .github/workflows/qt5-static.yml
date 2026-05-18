@@ -149,7 +149,6 @@ jobs:
     name: Publish Qt5 toolchain
     runs-on: ubuntu-24.04
     needs: qt5
-    if: startsWith(github.ref, 'refs/tags/')
     permissions:
       contents: write
 
@@ -181,7 +180,14 @@ jobs:
             install \
             build-manifest.txt
 
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: qt5-static-${{ env.QT_VERSION }}-${{ env.BUILD_TYPE }}-${{ env.TOOLCHAIN_PLATFORM }}
+          path: qt5-static-${{ env.QT_VERSION }}-${{ env.BUILD_TYPE }}-${{ env.TOOLCHAIN_PLATFORM }}.tar.zst
+
       - name: Upload release asset
+        if: startsWith(github.ref, 'refs/tags/')
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -203,7 +209,6 @@ jobs:
     needs:
       - qtwebkit
       - publish-qt-toolchain
-    if: startsWith(github.ref, 'refs/tags/')
     permissions:
       contents: write
 
@@ -235,7 +240,14 @@ jobs:
             install \
             build-manifest.txt
 
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: qt5-static-${{ env.QT_VERSION }}-qtwebkit-${{ env.QTWEBKIT_VERSION }}-${{ env.BUILD_TYPE }}-${{ env.TOOLCHAIN_PLATFORM }}
+          path: qt5-static-${{ env.QT_VERSION }}-qtwebkit-${{ env.QTWEBKIT_VERSION }}-${{ env.BUILD_TYPE }}-${{ env.TOOLCHAIN_PLATFORM }}.tar.zst
+
       - name: Upload release asset
+        if: startsWith(github.ref, 'refs/tags/')
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
