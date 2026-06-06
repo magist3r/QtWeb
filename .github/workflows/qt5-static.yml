@@ -108,11 +108,11 @@ jobs:
       - name: Build QtWebKit smoke test
         run: ./smoke-tests/qtwebkit-smoke/smoke-build-docker.sh
 
-      # - name: Smoke test QtWebKit app
-      #   run: ./run-smoke.sh --check about:blank
+      # - name: Runtime test QtWebKit app
+      #   run: ./run-smoke.sh --runtime-check about:blank
 
       - name: Check QtWebKit shared dependencies
-        run: ldd ./smoke-tests/qtwebkit-smoke/build-docker-${BUILD_TYPE}/qtwebkit-smoke
+        run: ./run-smoke.sh --check
 
   qtweb:
     name: Build QtWeb
@@ -139,11 +139,11 @@ jobs:
       - name: Build QtWeb
         run: ./build-browser-docker.sh
 
-      # - name: Smoke test QtWeb
-      #   run: ./run-browser.sh --check about:blank
+      # - name: Runtime test QtWeb
+      #   run: ./run-browser.sh --runtime-check about:blank
 
       - name: Check QtWeb shared dependencies
-        run: ldd ./build-docker-${BUILD_TYPE}/QtWeb
+        run: ./run-browser.sh --check
 
   publish-qt-toolchain:
     name: Publish Qt5 toolchain

@@ -39,11 +39,12 @@ After the Docker build has produced the smoke binary, run the headless check
 from the repository root on the host:
 
 ```bash
-./run-smoke.sh --check about:blank
+./run-smoke.sh --runtime-check about:blank
 ```
 
 This uses `xvfb-run` on the host. It does not build inside the host
-environment.
+environment. To check the binary for unexpected shared dependencies instead,
+run `./run-smoke.sh --check`.
 
 ## Notes
 
