@@ -1,7 +1,7 @@
 TEMPLATE = app
 TARGET = QtWeb
 QT += network network-private xml webkitwidgets widgets printsupport
-CONFIG += static c++11
+CONFIG += c++11
 DEFINES += QT_NO_UITOOLS
 
 INCLUDEPATH += moc \
