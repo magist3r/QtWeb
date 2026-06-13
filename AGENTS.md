@@ -15,8 +15,17 @@
 - If that sanctioned path is unavailable, blocked, or out of scope for the task, state that validation could not be run. Do not fall back to a local build.
 - Do not launch the built `QtWeb` binary or other produced executables as an agent.
 - Do not run `run-smoke.sh` or start GUI/runtime validation on the user's behalf unless the user explicitly asks for that exact execution.
-- Use `ldd ./smoke-tests/qtwebkit-smoke/build-docker-$(build-type)/qtwebkit-smoke` to check for remaining shared dependencies
+- Use `./run-smoke.sh --check` and `./run-browser.sh --check` to check existing Docker-built binaries for remaining shared dependencies.
 - When a build succeeds, report the output path or the command the user can run; leave execution to the user unless explicitly requested.
+
+## QtWeb Static Build Notes
+- Shared Qt build defaults live in `toolchains/qt5-static/common.sh`: Qt `5.15.17`, image tag `qtweb-qt5-static:5.15.17`.
+- Use `./build-qt5-static.sh --runtime docker --qt-only` for the static Qt stage and `./build-qt5-static.sh --runtime docker --qtwebkit-only` for the QtWebKit stage.
+- Use `./build-browser-docker.sh` for the QtWeb browser stage; add `--analyze` only when clang-tidy analysis is explicitly requested.
+- Use `./smoke-tests/qtwebkit-smoke/smoke-build-docker.sh` for the QtWebKit smoke-test build.
+- Runtime checks are host-side wrappers and must only be run on explicit request: `./run-smoke.sh --runtime-check about:blank` or `./run-browser.sh --runtime-check about:blank`.
+- The CI workflow is `.github/workflows/qt5-static.yml`; its main order is `qt5` -> `qtwebkit` -> `qtweb`, followed by publish jobs.
+- For build failures, classify the first real error as configure-time, compile-time, link-time, runtime/smoke-test, CI resource exhaustion, or missing static dependency before editing scripts.
 
 ## Documentation Policy
 - Keep `docs/migration-status.md` limited to behavior that is implemented in the repository.

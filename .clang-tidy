@@ -1,5 +1,6 @@
 Checks: >
   -*,
+  clang-analyzer-*,
   bugprone-assignment-in-if-condition,
   bugprone-branch-clone,
   bugprone-copy-constructor-init,
