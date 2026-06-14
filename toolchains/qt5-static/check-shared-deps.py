@@ -107,9 +107,13 @@ def main() -> int:
         stderr=subprocess.STDOUT,
         text=True,
     )
+    print(f"==> ldd output: {binary}")
     print(result.stdout, end="")
+    print()
+    print(f"==> dependency check: {binary}")
 
-    missing_libraries = []
+    missing_allowed_libraries = []
+    missing_unexpected_libraries = []
     unexpected_libraries = []
     matched_allowed_libraries = set()
     for line in result.stdout.splitlines():
@@ -121,31 +125,39 @@ def main() -> int:
         }
         matched_allowed_libraries.update(matching_allowed_libraries)
         if "not found" in line:
-            missing_libraries.append(library)
+            if matching_allowed_libraries:
+                missing_allowed_libraries.append(library)
+            else:
+                missing_unexpected_libraries.append(library)
         elif not matching_allowed_libraries:
             unexpected_libraries.append(library)
 
     failed = False
-    if missing_libraries:
-        print(f"error: missing shared dependencies for {binary}:", file=sys.stderr)
-        for library in sorted(set(missing_libraries)):
-            print(f"  {library}", file=sys.stderr)
+    if missing_unexpected_libraries:
+        print(f"error: missing shared dependencies for {binary}:")
+        for library in sorted(set(missing_unexpected_libraries)):
+            print(f"  {library}")
         failed = True
 
     if unexpected_libraries:
-        print(f"error: unexpected shared dependencies for {binary}:", file=sys.stderr)
+        print(f"error: unexpected shared dependencies for {binary}:")
         for library in sorted(set(unexpected_libraries)):
-            print(f"  {library}", file=sys.stderr)
+            print(f"  {library}")
         failed = True
 
     if failed:
         return 1
 
+    if missing_allowed_libraries:
+        print(f"warning: allowed shared dependencies not installed on check host for {binary}:")
+        for library in sorted(set(missing_allowed_libraries)):
+            print(f"  {library}")
+
     unused_allowed_libraries = sorted(ALLOWED_LIBRARIES - matched_allowed_libraries)
     if unused_allowed_libraries:
-        print(f"warning: allowed libraries not linked by {binary}:", file=sys.stderr)
+        print(f"warning: allowed libraries not linked by {binary}:")
         for library in unused_allowed_libraries:
-            print(f"  {library}", file=sys.stderr)
+            print(f"  {library}")
 
     print(f"shared dependencies allowed: {binary}")
     return 0

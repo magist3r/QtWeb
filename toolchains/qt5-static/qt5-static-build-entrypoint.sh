@@ -8,8 +8,8 @@ set -euo pipefail
 
 JOBS="${JOBS:-$(nproc 2>/dev/null || echo 8)}"
 QTWEBKIT_JOBS="$JOBS"
-if (( QTWEBKIT_JOBS > 16 )); then
-    QTWEBKIT_JOBS=16
+if (( QTWEBKIT_JOBS > 12 )); then
+    QTWEBKIT_JOBS=12
 fi
 CLEAN="${CLEAN:-false}"
 BUILD_TYPE="${BUILD_TYPE:-release}"
