@@ -12,6 +12,7 @@
 - Do not run host-local or ad hoc builds in this repository.
 - Do not invoke `qmake`, `make`, `cmake`, `ninja`, or compiler commands directly on the host for validation or debugging.
 - Use the repository's sanctioned helper-script flows instead, such as `build-browser-docker.sh`, `build-qt5-static.sh`, and `run-smoke.sh`, when a build or runtime validation is explicitly required.
+- For any `build-qt5-static.sh` request, including short requests like "clean rebuild", use the `.agents/build-static-qt5.toml` subagent instead of running the long build directly in the main agent.
 - If that sanctioned path is unavailable, blocked, or out of scope for the task, state that validation could not be run. Do not fall back to a local build.
 - Do not launch the built `QtWeb` binary or other produced executables as an agent.
 - Do not run `run-smoke.sh` or start GUI/runtime validation on the user's behalf unless the user explicitly asks for that exact execution.
@@ -20,6 +21,9 @@
 
 ## QtWeb Static Build Notes
 - Shared Qt build defaults live in `toolchains/qt5-static/common.sh`: Qt `5.15.17`, image tag `qtweb-qt5-static:5.15.17`.
+- Static-linking fixes must be applied in the Qt or QtWebKit build itself, such as configure inputs, source patches, or checked-in container-side build scripts. This keeps future Qt/QtWebKit upgrades honest: patches should fail early and be rebased deliberately instead of relying on post-build metadata rewrites or other broken hacks.
+- For local validation, check only debug builds to save time; release builds are validated by CI.
+- Use the `.agents/build-static-qt5.toml` subagent when running full or scoped `./build-qt5-static.sh` flows so long builds are monitored without unrelated edits or commands. The default clean rebuild command is `./build-qt5-static.sh --runtime docker --debug --clean`.
 - Use `./build-qt5-static.sh --runtime docker --qt-only` for the static Qt stage and `./build-qt5-static.sh --runtime docker --qtwebkit-only` for the QtWebKit stage.
 - Use `./build-browser-docker.sh` for the QtWeb browser stage; add `--analyze` only when clang-tidy analysis is explicitly requested.
 - Use `./smoke-tests/qtwebkit-smoke/smoke-build-docker.sh` for the QtWebKit smoke-test build.

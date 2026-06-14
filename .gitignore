@@ -27,3 +27,4 @@ Makefile*
 build-*
 !build-browser-docker.sh
 !build-qt5-static.sh
+!.agents/build-static-qt5.toml
