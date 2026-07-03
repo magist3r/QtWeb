@@ -57,7 +57,6 @@
 #include <QFileDialog>
 #include <QtNetwork>
 #include <private/qftp_p.h>
-//#include <QtUiTools/QUiLoader>
 
 #include <QtCore/QDebug>
 #include <QtCore/QBuffer>
@@ -66,10 +65,10 @@
 WebView::WebView(QWidget* parent)   
     : QWebView(parent)
     , m_progress(0)
-    , m_page(new WebPage(this))
-    , m_font_resizing(false)
     , m_is_loading(false)
     , m_gestureStarted(false)
+    , m_page(new WebPage(this))
+    , m_font_resizing(false)
     , m_encoding_in_progress(false)
     , m_ssl_errors_detected(false)
     , m_linkUnderCursor(false)
@@ -522,16 +521,16 @@ void WebView::mouseReleaseEvent(QMouseEvent *event)
             if (difY > 0 && (difX == 0 || abs(difY / difX) >= 2))
                 down = true;
             else
-            if (difX < 0 && difY < 0 && abs(difX / difY) < 2 && abs((float)difX / (float)difY) > 0.5)
+            if (difX < 0 && difY < 0 && abs(difX / difY) < 2 && qAbs((float)difX / (float)difY) > 0.5)
                 upper_left = true; 
             else
-            if (difX > 0 && difY < 0 && abs(difX / difY) < 2 && abs((float)difX / (float)difY) > 0.5)
+            if (difX > 0 && difY < 0 && abs(difX / difY) < 2 && qAbs((float)difX / (float)difY) > 0.5)
                 upper_right = true;
             else
-            if (difX > 0 && difY > 0 && abs(difX / difY) < 2 && abs((float)difX / (float)difY) > 0.5)
+            if (difX > 0 && difY > 0 && abs(difX / difY) < 2 && qAbs((float)difX / (float)difY) > 0.5)
                 down_right = true;
             else
-            if (difX < 0 && difY > 0 && abs(difX / difY) < 2 && abs((float)difX / (float)difY) > 0.5)
+            if (difX < 0 && difY > 0 && abs(difX / difY) < 2 && qAbs((float)difX / (float)difY) > 0.5)
                 down_left = true;
         
             if (left)
@@ -748,6 +747,8 @@ void WebView::loadFtpUrl(const QUrl &url)
 
 void WebView::ftpDownloadFile(const QUrl &url, QString fileName )
 {
+    Q_UNUSED(url);
+
     if (!m_ftp)
         return;
 
@@ -847,19 +848,26 @@ void WebView::ftpCommandFinished(int res, bool error)
 
     if (m_ftp->currentCommand() == QFtp::Get) 
     {
+        if (!m_ftpFile) {
+            m_ftpProgressDialog->hide();
+            urlChanged(m_initialUrl);
+            return;
+        }
+
+        const QString ftpFileName = m_ftpFile->fileName();
         if (error) 
         {
-            setStatusBarText(tr("Canceled download of %1").arg(m_ftpFile->fileName()));
+            setStatusBarText(tr("Canceled download of %1").arg(ftpFileName));
             m_ftpFile->close();
             m_ftpFile->remove();
         } 
         else 
         {
             DownloadManager* dm = BrowserApplication::downloadManager();
-            setStatusBarText(tr("Successfully downloaded file %1").arg(m_ftpFile->fileName()));
+            setStatusBarText(tr("Successfully downloaded file %1").arg(ftpFileName));
             m_ftpFile->close();
 
-            dm->addItem(m_initialUrl, m_ftpFile->fileName(), true );
+            dm->addItem(m_initialUrl, ftpFileName, true );
         }
         delete m_ftpFile;
         m_ftpFile = nullptr;

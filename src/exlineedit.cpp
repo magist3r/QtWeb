@@ -79,7 +79,6 @@ void ClearButton::paintEvent(QPaintEvent *event)
     int height = this->height();
 
     painter.setRenderHint(QPainter::Antialiasing, true);
-    QColor color = palette().color(QPalette::Midlight);
     painter.setBrush(isDown()
                      ? palette().color(QPalette::Mid)
                      : palette().color(QPalette::Midlight));
@@ -172,9 +171,9 @@ void LineEdit::keyPressEvent ( QKeyEvent * event )
 ////////////////////////////////////////
 ExLineEdit::ExLineEdit(QWidget *parent, bool fix_url)
     : QWidget(parent)
-    , m_leftWidget(0)
+    , m_leftWidget(nullptr)
     , m_lineEdit(new LineEdit(this, fix_url))
-    , m_clearButton(0)
+    , m_clearButton(nullptr)
 {
     setFocusPolicy(m_lineEdit->focusPolicy());
     setAttribute(Qt::WA_InputMethodEnabled);
@@ -327,5 +326,4 @@ void ExLineEdit::paintEvent(QPaintEvent *)
     initStyleOption(&panel);
     style()->drawPrimitive(QStyle::PE_PanelLineEdit, &panel, &p, this);
 }
-
 

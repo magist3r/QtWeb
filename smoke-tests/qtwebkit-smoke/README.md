@@ -1,6 +1,6 @@
 # QtWebKit Smoke Test
 
-Minimal Qt 5.5.1 QtWebKitWidgets app used to verify that the custom Qt build
+Minimal Qt 5.15.17 QtWebKitWidgets app used to verify that the custom Qt build
 can compile and link a `QWebView` application.
 
 ## Files
@@ -32,6 +32,19 @@ Output binary:
 Debug output binary:
 
 `smoke-tests/qtwebkit-smoke/build-docker-debug/qtwebkit-smoke`
+
+## Host Check
+
+After the Docker build has produced the smoke binary, run the headless check
+from the repository root on the host:
+
+```bash
+./run-smoke.sh --runtime-check about:blank
+```
+
+This uses `xvfb-run` on the host. It does not build inside the host
+environment. To check the binary for unexpected shared dependencies instead,
+run `./run-smoke.sh --check`.
 
 ## Notes
 

@@ -87,9 +87,9 @@ QString DefaultDownloadPath(bool create_dir)
 DownloadItem::DownloadItem(QNetworkReply *reply, bool requestFileName, QWidget *parent)
     : QWidget(parent)
     , m_reply(reply)
+    , m_to_delete(false)
     , m_requestFileName(requestFileName)
     , m_bytesReceived(0)
-    , m_to_delete(false)
     , m_finished(false)
 {
     setupUi(this);
@@ -246,6 +246,7 @@ void DownloadItem::stop()
 
 void DownloadItem::mouseDoubleClickEvent ( QMouseEvent * event )
 {
+    Q_UNUSED(event);
     open();
 }
 
@@ -465,7 +466,7 @@ bool DownloadItem::checkAddTorrent()
 DownloadManager::DownloadManager(QWidget *parent)
     : QDialog(parent, Qt::Window)
     , m_manager(BrowserApplication::networkAccessManager())
-    , m_iconProvider(0)
+    , m_iconProvider(nullptr)
     , m_removePolicy(Never)
 {
     setupUi(this);
@@ -502,6 +503,7 @@ DownloadManager::~DownloadManager()
 
 void DownloadManager::openItem(const QModelIndex& index)
 {
+    Q_UNUSED(index);
 }
 
 int DownloadManager::activeDownloads() const
@@ -633,7 +635,7 @@ void DownloadManager::save() const
 
 void DownloadManager::addItem(const QUrl& url, QString filename, bool done)
 {
-    DownloadItem *item = new DownloadItem(0, false, this);
+    DownloadItem *item = new DownloadItem(nullptr, false, this);
 
     item->m_output.setFileName(filename);
     item->setOutputTitle();
@@ -736,7 +738,7 @@ void DownloadManager::cleanup_list()
     updateItemCount();
     if (m_downloads.isEmpty() && m_iconProvider) {
         delete m_iconProvider;
-        m_iconProvider = 0;
+        m_iconProvider = nullptr;
     }
     save();
 }
@@ -781,7 +783,7 @@ void DownloadManager::cleanup_full()
     updateItemCount();
     if (m_downloads.isEmpty() && m_iconProvider) {
         delete m_iconProvider;
-        m_iconProvider = 0;
+        m_iconProvider = nullptr;
     }
     save();
 }
@@ -824,8 +826,13 @@ bool DownloadModel::removeRows(int row, int count, const QModelIndex &parent)
             || m_downloadManager->m_downloads.at(i)->tryAgainButton->isEnabled()) {
             beginRemoveRows(parent, i, i);
             DownloadItem* item = m_downloadManager->m_downloads.takeAt(i);
-            
-            if (item && item->m_output.exists())
+
+            if (!item) {
+                endRemoveRows();
+                continue;
+            }
+
+            if (item->m_output.exists())
             {
                 if (item->m_must_be_deleted)
                     item->m_output.remove();
@@ -838,4 +845,3 @@ bool DownloadModel::removeRows(int row, int count, const QModelIndex &parent)
     m_downloadManager->save();
     return true;
 }
-

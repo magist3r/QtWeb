@@ -35,7 +35,7 @@ class PasswordsModel : public QAbstractTableModel
     Q_OBJECT
 
 public:
-    PasswordsModel(QObject *parent = 0);
+    PasswordsModel(QObject *parent = nullptr);
     ~PasswordsModel();
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;

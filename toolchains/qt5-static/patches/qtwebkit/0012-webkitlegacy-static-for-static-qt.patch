@@ -1,0 +1,14 @@
+diff --git a/Source/WebKitLegacy/CMakeLists.txt b/Source/WebKitLegacy/CMakeLists.txt
+--- a/Source/WebKitLegacy/CMakeLists.txt
++++ b/Source/WebKitLegacy/CMakeLists.txt
+@@ -34,6 +34,10 @@ set(WebKitLegacy_PRIVATE_LIBRARIES
+     WebKit::WebCore
+ )
+ 
++if (${PORT} STREQUAL "Qt" AND QT_STATIC_BUILD)
++    set(WebKitLegacy_LIBRARY_TYPE STATIC)
++endif ()
++
+ WEBKIT_FRAMEWORK_DECLARE(WebKitLegacy)
+ WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
+ 

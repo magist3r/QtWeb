@@ -1044,22 +1044,6 @@
            <bool>true</bool>
           </property>
          </widget>
-         <widget class="QCheckBox" name="enablePlugins">
-          <property name="geometry">
-           <rect>
-            <x>11</x>
-            <y>90</y>
-            <width>289</width>
-            <height>19</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Enable Plug-Ins</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
          <widget class="QCheckBox" name="enableDiskCache">
           <property name="geometry">
            <rect>
@@ -1883,7 +1867,6 @@
   <tabstop>enableJavascript</tabstop>
   <tabstop>autoLoadImages</tabstop>
   <tabstop>blockPopups</tabstop>
-  <tabstop>enablePlugins</tabstop>
   <tabstop>enableDiskCache</tabstop>
   <tabstop>checkBoxDeleteDownloads</tabstop>
   <tabstop>chkSavePasswords</tabstop>

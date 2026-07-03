@@ -3,6 +3,7 @@ src/qt/.*
 temp-src
 build
 artifacts
+.codex
 
 # C++ objects and libs
 
@@ -26,4 +27,4 @@ Makefile*
 build-*
 !build-browser-docker.sh
 !build-qt5-static.sh
-!toolchains/qt5-static/build-inside-container.sh
+!.agents/build-static-qt5.toml

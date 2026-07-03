@@ -134,7 +134,7 @@ BookmarkNode *BookmarksImport::importFromIE()
 {
     QString path = ieFavoritesPath();
     if (path.isEmpty())
-        return NULL;
+        return nullptr;
 
         BookmarkNode* root = new BookmarkNode();
 
@@ -258,12 +258,9 @@ void  ParseHtmlBookmarks( QString& books , BookmarkNode* root)
 
 BookmarkNode *BookmarksImport::importFromHtml( QString path )
 {
-    BookmarkNode* root = new BookmarkNode();
-
-
     QFile f(path);
     if (!f.open(QIODevice::ReadOnly | QIODevice::Text) )
-        return NULL;
+        return nullptr;
 
     bool bIsNetscape = false;
     // check format
@@ -283,11 +280,12 @@ BookmarkNode *BookmarksImport::importFromHtml( QString path )
     {
         // Format not supported
         f.close();
-        QMessageBox::warning(0, QObject::tr("Importing Bookmarks"), 
+        QMessageBox::warning(nullptr, QObject::tr("Importing Bookmarks"), 
             QObject::tr("HTML format is not supported.<br>Please make sure that HTML file type is NETSCAPE-Bookmark-file-1."));
-        return NULL;
+        return nullptr;
     }
 
+    BookmarkNode* root = new BookmarkNode();
     QString books;
     QByteArray ba;
     bool bUtf8 = false;
@@ -327,5 +325,4 @@ BookmarkNode *BookmarksImport::importFromHtml( QString path )
 
     return root;
 }
-
 

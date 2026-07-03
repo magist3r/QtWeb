@@ -66,7 +66,7 @@ signals:
     void loadUrl(const QUrl &url);
 
 public:
-    TabBar(QWidget *parent = 0);
+    TabBar(QWidget *parent = nullptr);
 
     bool showTabBarWhenOneTab() const;
     void setShowTabBarWhenOneTab(bool enabled);

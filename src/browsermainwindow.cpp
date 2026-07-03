@@ -88,51 +88,50 @@ extern bool ShellExec(QString path);
 
 BrowserMainWindow::BrowserMainWindow(QWidget *parent, Qt::WindowFlags flags)
     : QMainWindow(parent, flags)
-    , m_tabWidget(new TabWidget(this))
-    , findWidget(0)
-    , m_navSplit(0)
-    , m_buttonsBar(0)
-    , m_historyBack(0)
-    , m_historyForward(0)
-    , m_stop(0)
-    , m_reload(0)
-    , m_stylesMenu(0)
-    , m_encodingMenu(0)
-    , m_styles(0)
-    , m_emptyDiskCache(0)
-    , m_viewZoomTextOnly(0)
-    , m_positionRestored(0)
-    , m_goBackAction(0)
-    , m_goForwardAction(0)
-    , m_addBookmarkAction(0)
-    , m_homeAction(0)
-    , m_prefsAction(0)
-    , m_imagesAction(0)
-    , m_proxyAction(0)
-    , m_restoreTabAction(0)
-    , m_resetAction(0)
-    , m_enableInspector(0)
-    , m_inspectElement(0)
-    , m_dumpActionQuit(false)
+    , findWidget(nullptr)
     , m_showMenuIcons(false)
-    , m_inspectAction(0) 
-    , m_keyboardAction(0)
-    , m_textSizeAction(0)
-    , m_bookmarksAction(0)
-    , m_sizesMenu(0)
-    , m_textSizeLarger(0)
-    , m_textSizeNormal(0) 
-    , m_textSizeSmaller(0)
-    , m_compMenu(0)
-//  , m_compatMenu(0)
-    , m_compatAction(0)
-    , m_compIE(0)
-    , m_compMozilla(0)
-    , m_compQtWeb(0)
-    , m_compOpera(0) 
-    , m_compSafari(0)
-    , m_compChrome(0)
-    , m_compCustom(0)
+    , m_buttonsBar(nullptr)
+    , m_tabWidget(new TabWidget(this))
+    , m_positionRestored(0)
+    , m_dumpActionQuit(false)
+    , m_navSplit(nullptr)
+    , m_historyBack(nullptr)
+    , m_historyForward(nullptr)
+    , m_styles(nullptr)
+    , m_stylesMenu(nullptr)
+    , m_encodingMenu(nullptr)
+    , m_sizesMenu(nullptr)
+    , m_compMenu(nullptr)
+    , m_stop(nullptr)
+    , m_reload(nullptr)
+    , m_viewZoomTextOnly(nullptr)
+    , m_emptyDiskCache(nullptr)
+    , m_goBackAction(nullptr)
+    , m_goForwardAction(nullptr)
+    , m_addBookmarkAction(nullptr)
+    , m_homeAction(nullptr)
+    , m_prefsAction(nullptr)
+    , m_imagesAction(nullptr)
+    , m_proxyAction(nullptr)
+    , m_restoreTabAction(nullptr)
+    , m_resetAction(nullptr)
+    , m_enableInspector(nullptr)
+    , m_inspectElement(nullptr)
+    , m_inspectAction(nullptr) 
+    , m_keyboardAction(nullptr)
+    , m_textSizeAction(nullptr)
+    , m_bookmarksAction(nullptr)
+    , m_compatAction(nullptr)
+    , m_compIE(nullptr)
+    , m_compMozilla(nullptr)
+    , m_compOpera(nullptr) 
+    , m_compSafari(nullptr)
+    , m_compQtWeb(nullptr)
+    , m_compChrome(nullptr)
+    , m_compCustom(nullptr)
+    , m_textSizeLarger(nullptr)
+    , m_textSizeNormal(nullptr) 
+    , m_textSizeSmaller(nullptr)
 {
     setAttribute(Qt::WA_DeleteOnClose, true);
     statusBar()->setSizeGripEnabled(true);
@@ -314,8 +313,6 @@ bool BrowserMainWindow::restoreState(const QByteArray &state)
     bool showStatusbar;
     bool showTabBarWhenOneTab;
     QByteArray splitterState1;//, splitterState2;
-    bool bMenu = true;
-
     stream >> tabState;
 
     stream >> showTabBarWhenOneTab;
@@ -850,14 +847,6 @@ void BrowserMainWindow::setupMenu()
     privacyMenu->addAction(m_disableCookies);
     this->addAction(m_disableCookies);
     m_disableCookies->setCheckable(true);
-
-    // Disable Plug-Ins
-    m_disablePlugIns = new QAction( cmds.PlugInsTitle(), this);
-    m_disablePlugIns->setShortcuts(cmds.PlugInsShortcuts());
-    connect(m_disablePlugIns, SIGNAL(triggered()), this, SLOT(slotDisablePlugIns()));
-    privacyMenu->addAction(m_disablePlugIns);
-    this->addAction(m_disablePlugIns);
-    m_disablePlugIns->setCheckable(true);
 
     // Disable UserAgent
     m_disableUserAgent = new QAction( cmds.AgentTitle(), this);
@@ -2113,7 +2102,7 @@ void BrowserMainWindow::loadPage(const QString &page)
         if (bm)
         {
             // if tags are detected - load all urls, and return
-            QStringList urls = bm->find_tag_urls(NULL, page);
+            QStringList urls = bm->find_tag_urls(nullptr, page);
             if (!urls.isEmpty())
             {
                 for(int i = 0; i < urls.size(); i++)
@@ -2209,7 +2198,7 @@ void BrowserMainWindow::slotAboutToShowForwardMenu()
 
 void BrowserMainWindow::slotAboutToShowWindowMenu()
 {
-    static QAction *downs = NULL, *tors = NULL;
+    static QAction *downs = nullptr, *tors = nullptr;
     bool empty = m_windowMenu->isEmpty();
     if (!empty)
     {
@@ -2413,7 +2402,6 @@ void BrowserMainWindow::slotAboutToShowPrivacyMenu()
     QWebSettings* defaultSettings = QWebSettings::globalSettings();
     m_disableJavaScript->setChecked(!defaultSettings->testAttribute(QWebSettings::JavascriptEnabled));
     m_disableImages->setChecked(!defaultSettings->testAttribute(QWebSettings::AutoLoadImages));
-    m_disablePlugIns->setChecked(!defaultSettings->testAttribute(QWebSettings::PluginsEnabled));
     m_disablePopUps->setChecked(!defaultSettings->testAttribute(QWebSettings::JavascriptCanOpenWindows));
 
     
@@ -2452,16 +2440,6 @@ void BrowserMainWindow::slotDisableImages()
     settings.beginGroup(QLatin1String("websettings"));
     settings.setValue(QLatin1String("autoLoadImages"), enabled);
     checkToolBarButtons();
-}
-
-void BrowserMainWindow::slotDisablePlugIns()
-{
-    bool enabled = !m_disablePlugIns->isChecked();
-    QWebSettings* defaultSettings = QWebSettings::globalSettings();
-    defaultSettings->setAttribute(QWebSettings::PluginsEnabled, enabled);
-    QSettings settings;
-    settings.beginGroup(QLatin1String("websettings"));
-    settings.setValue(QLatin1String("enablePlugins"), enabled);
 }
 
 void BrowserMainWindow::slotDisableCookies()

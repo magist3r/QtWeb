@@ -1,8 +1,12 @@
 # Optional Patch Hook
 
-Drop Qt source patches (`*.patch`) in this directory to support legacy build fixes.
+Store source patches (`*.patch`) under the tree-specific subdirectories:
 
-Behavior in `build-inside-container.sh`:
-1. Run `configure` once.
-2. If `Qt WebKit` is not enabled, apply all patches in lexicographic order.
-3. Run `configure` again and continue only if WebKit is enabled.
+- `qt/` for Qt source patches
+- `qtwebkit/` for QtWebKit source patches
+
+Behavior in `qt5-static-build-entrypoint.sh`:
+1. Apply patches from `patches/qt/` only to the Qt tree.
+2. Apply patches from `patches/qtwebkit/` only to the QtWebKit tree.
+3. Process patches in lexicographic order within that tree.
+4. Fail the build if a patch for that tree is neither applicable nor already applied.

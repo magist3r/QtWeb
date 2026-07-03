@@ -46,13 +46,7 @@ int main(int argc, char **argv)
 
 #ifndef QT_SHARED
     Q_INIT_RESOURCE(WebCore);
-    Q_INIT_RESOURCE(WebKit);
-
-# if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
-    Q_INIT_RESOURCE(InspectorBackendCommands);
-# else
-    Q_INIT_RESOURCE(InspectorBackendStub);
-# endif
+    Q_INIT_RESOURCE(WebInspector);
 #endif
 
     BrowserApplication application(argc, argv);

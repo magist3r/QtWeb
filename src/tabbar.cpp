@@ -76,7 +76,7 @@ int TabShortcut::tab()
 }
 TabBar::TabBar(QWidget *parent)
     : QTabBar(parent)
-    , m_viewTabBarAction(0)
+    , m_viewTabBarAction(nullptr)
     , m_showTabBarWhenOneTab(true)
 {
     setElideMode(Qt::ElideRight);
@@ -122,7 +122,7 @@ void TabBar::setShowTabBarWhenOneTab(bool enabled)
 
 QTabBar::ButtonPosition TabBar::freeSide()
 {
-    QTabBar::ButtonPosition side = (QTabBar::ButtonPosition)style()->styleHint(QStyle::SH_TabBar_CloseButtonPosition, 0, this);
+    QTabBar::ButtonPosition side = (QTabBar::ButtonPosition)style()->styleHint(QStyle::SH_TabBar_CloseButtonPosition, nullptr, this);
     side = (side == QTabBar::LeftSide) ? QTabBar::RightSide : QTabBar::LeftSide;
     return side;
 }
@@ -328,7 +328,7 @@ QSize TabBar::tabSizeHint(int index) const
 
 WebActionMapper::WebActionMapper(QAction *root, QWebPage::WebAction webAction, QObject *parent)
     : QObject(parent)
-    , m_currentParent(0)
+    , m_currentParent(nullptr)
     , m_root(root)
     , m_webAction(webAction)
 {
@@ -341,12 +341,12 @@ WebActionMapper::WebActionMapper(QAction *root, QWebPage::WebAction webAction, Q
 
 void WebActionMapper::rootDestroyed()
 {
-    m_root = 0;
+    m_root = nullptr;
 }
 
 void WebActionMapper::currentDestroyed()
 {
-    updateCurrent(0);
+    updateCurrent(nullptr);
 }
 
 void WebActionMapper::addChild(QAction *action)

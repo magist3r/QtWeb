@@ -1,0 +1,6 @@
+# shellcheck disable=SC2034
+
+LOCK_QT5_WEBKIT_FILE="qtwebkit-2022-09-07-src.tar.xz"
+LOCK_QT5_WEBKIT_SRC_URL="https://github.com/movableink/webkit/releases/download/2022-09-07/qtwebkit-2022-09-07-src.tar.xz"
+LOCK_QT5_WEBKIT_SHA256="1a9f77c3f11a44d147cab6db0fd34aea803f149242e2c217683392aa2f572060"
+LOCK_QT5_WEBKIT_MD5=""

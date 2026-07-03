@@ -307,10 +307,10 @@ bool AutoComplete::complete( QWebFrame * frame)
                     return false;
 
                 started = true;
-                QString pwd = QInputDialog::getText( 0, tr("Master Password"), tr("Type a master password:"), QLineEdit::Password);
+                QString pwd = QInputDialog::getText( nullptr, tr("Master Password"), tr("Type a master password:"), QLineEdit::Password);
                 if ( pwd != DecryptPassword(master))
                 {
-                    QMessageBox::warning(0, tr("Warning"), tr("Invalid password"));
+                    QMessageBox::warning(nullptr, tr("Warning"), tr("Invalid password"));
                     started = false;
                     return false;
                 }

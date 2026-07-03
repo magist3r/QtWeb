@@ -64,7 +64,7 @@ class BrowserMainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
-    BrowserMainWindow(QWidget *parent = 0, Qt::WindowFlags flags = 0);
+    BrowserMainWindow(QWidget *parent = nullptr, Qt::WindowFlags flags = nullptr);
     ~BrowserMainWindow();
     QSize sizeHint() const;
 
@@ -134,7 +134,6 @@ private slots:
     void slotDisableJavaScript();
     void slotDisableImages();
     void slotDisableCookies();
-    void slotDisablePlugIns();
     void slotDisableUserAgent();
     void slotEnableProxy();
     void slotDisablePopUps();
@@ -240,7 +239,6 @@ private:
     QAction *m_disableJavaScript;
     QAction *m_disableImages;
     QAction *m_disableCookies;
-    QAction *m_disablePlugIns;
     QAction *m_disableUserAgent;
     QAction *m_enableProxy;
     QAction *m_disablePopUps;

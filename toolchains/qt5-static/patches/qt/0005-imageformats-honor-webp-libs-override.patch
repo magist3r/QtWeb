@@ -1,0 +1,13 @@
+diff --git a/qtimageformats/src/imageformats/configure.json b/qtimageformats/src/imageformats/configure.json
+index 2a359305..e2c8b2fb 100644
+--- a/qtimageformats/src/imageformats/configure.json
++++ b/qtimageformats/src/imageformats/configure.json
+@@ -115,7 +115,7 @@
+                 ]
+             },
+             "sources": [
+-                { "type": "pkgConfig", "args": "libwebp libwebpmux libwebpdemux" },
++                { "type": "pkgConfig", "condition": "input.webp.libs == ''", "args": "libwebp libwebpmux libwebpdemux" },
+                 { "libs": "-lwebp -lwebpdemux -lwebpmux" }
+             ]
+         }

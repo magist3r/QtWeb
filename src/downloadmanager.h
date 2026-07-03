@@ -57,7 +57,7 @@ signals:
     void statusChanged();
 
 public:
-    DownloadItem(QNetworkReply *reply = 0, bool requestFileName = false, QWidget *parent = 0);
+    DownloadItem(QNetworkReply *reply = nullptr, bool requestFileName = false, QWidget *parent = nullptr);
     ~DownloadItem();
     bool downloading() const;
     bool downloadedSuccessfully() const;
@@ -124,7 +124,7 @@ public:
         SuccessFullDownload
     };
 
-    DownloadManager(QWidget *parent = 0);
+    DownloadManager(QWidget *parent = nullptr);
     ~DownloadManager();
     int activeDownloads() const;
     void load();
@@ -165,7 +165,7 @@ class DownloadModel : public QAbstractListModel
     Q_OBJECT
 
 public:
-    DownloadModel(DownloadManager *downloadManager, QObject *parent = 0);
+    DownloadModel(DownloadManager *downloadManager, QObject *parent = nullptr);
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
     bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex());

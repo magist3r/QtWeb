@@ -1,0 +1,11 @@
+diff --git a/Source/JavaScriptCore/CMakeLists.txt b/Source/JavaScriptCore/CMakeLists.txt
+--- a/Source/JavaScriptCore/CMakeLists.txt
++++ b/Source/JavaScriptCore/CMakeLists.txt
+@@ -1567,4 +1567,6 @@ if (USE_VERSION_STAMPER)
+         VERBATIM)
+ endif ()
+ 
+-add_subdirectory(shell)
++if (NOT QT_STATIC_BUILD)
++    add_subdirectory(shell)
++endif ()

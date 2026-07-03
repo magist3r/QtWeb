@@ -75,7 +75,7 @@ class UrlLineEdit : public ExLineEdit
     Q_OBJECT
 
 public:
-    UrlLineEdit(QWidget *parent = 0);
+    UrlLineEdit(QWidget *parent = nullptr);
     void setWebView(WebView *webView);
 
 protected:

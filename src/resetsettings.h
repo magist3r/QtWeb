@@ -32,7 +32,7 @@ private:
     ToolbarSearch* m_toolbarSearch;
 
 public:
-    ResetSettings(ToolbarSearch*, QWidget *parent = 0);
+    ResetSettings(ToolbarSearch*, QWidget *parent = nullptr);
     ~ResetSettings();
 
 public slots:

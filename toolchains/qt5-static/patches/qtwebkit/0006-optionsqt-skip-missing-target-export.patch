@@ -1,0 +1,11 @@
+diff --git a/Source/cmake/OptionsQt.cmake b/Source/cmake/OptionsQt.cmake
+--- a/Source/cmake/OptionsQt.cmake
++++ b/Source/cmake/OptionsQt.cmake
+@@ -96,7 +96,7 @@ endmacro()
+ 
+ macro(QT_ADD_EXTRA_WEBKIT_TARGET_EXPORT target)
+-    if (QT_STATIC_BUILD OR SHARED_CORE)
++    if ((QT_STATIC_BUILD OR SHARED_CORE) AND TARGET ${target})
+         install(TARGETS ${target} EXPORT WebKitTargets
+             DESTINATION "${LIB_INSTALL_DIR}")
+     endif ()

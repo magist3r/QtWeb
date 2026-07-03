@@ -59,7 +59,7 @@ ToolbarSearch::ToolbarSearch(QWidget *parent)
     : SearchLineEdit(parent)
     , m_maxSavedSearches(10)
     , m_stringListModel(new QStringListModel(this))
-    , m_completer(0)
+    , m_completer(nullptr)
 {
     QMenu *m = menu();
     connect(m, SIGNAL(aboutToShow()), this, SLOT(aboutToShowMenu()));
@@ -236,7 +236,7 @@ void ToolbarSearch::checkGoogleSuggest(bool show_google)
     else
     {
         delete m_completer;
-        m_completer = NULL;
+        m_completer = nullptr;
     }
 }
 
@@ -360,7 +360,7 @@ void ToolbarSearch::addSearches()
         settings.endGroup();
     }
 
-    QAction* searches = m->addAction(tr("Add..."), this, SLOT(addSearch()));
+    m->addAction(tr("Add..."), this, SLOT(addSearch()));
  }
 
 void ToolbarSearch::addSearch()
@@ -411,4 +411,3 @@ void ToolbarSearch::clear()
     m_stringListModel->setStringList(QStringList());
     save();
 }
-

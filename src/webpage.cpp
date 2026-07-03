@@ -57,7 +57,6 @@
 #include <QtNetwork>
 #include <QWebHitTestResult>
 #include <qdesktopservices.h>
-//#include <QtUiTools/QUiLoader>
 #include <QRegExp>
 
 #include <QtCore/QDebug>
@@ -219,7 +218,7 @@ bool WebPage::acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &r
             return false;
     }
 
-    if (frame == NULL && type == QWebPage::NavigationTypeLinkClicked) // Check for open links in tabs
+    if (frame == nullptr && type == QWebPage::NavigationTypeLinkClicked) // Check for open links in tabs
     {
         QSettings settings;
         settings.beginGroup(QLatin1String("general"));
@@ -275,7 +274,7 @@ bool WebPage::extension(QWebPage::Extension extension, const QWebPage::Extension
 
         QBuffer imageBuffer;
         imageBuffer.open(QBuffer::ReadWrite);
-        QIcon icon = view()->style()->standardIcon(QStyle::SP_MessageBoxWarning, 0, view());
+        QIcon icon = view()->style()->standardIcon(QStyle::SP_MessageBoxWarning, nullptr, view());
         QPixmap pixmap = icon.pixmap(QSize(32,32));
         if (pixmap.save(&imageBuffer, "PNG")) {
             html.replace(QLatin1String("IMAGE_BINARY_DATA_HERE"),
@@ -314,17 +313,6 @@ QWebPage *WebPage::createWindow(QWebPage::WebWindowType type)
     return mainWindow->currentTab()->page();
 }
 
-#if !defined(QT_NO_UITOOLS)
-QObject *WebPage::createPlugin(const QString &classId, const QUrl &url, const QStringList &paramNames, const QStringList &paramValues)
-{
-    Q_UNUSED(url);
-    Q_UNUSED(paramNames);
-    Q_UNUSED(paramValues);
-    QUiLoader loader;
-    return loader.createWidget(classId, view());
-}
-#endif // !defined(QT_NO_UITOOLS)
-
 void WebPage::handleUnsupportedContent(QNetworkReply *reply)
 {
     if (reply->error() == QNetworkReply::NoError) 
@@ -340,4 +328,3 @@ void WebPage::handleUnsupportedContent(QNetworkReply *reply)
         return;
     }
 }
-

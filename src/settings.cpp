@@ -170,7 +170,6 @@ void SettingsDialog::loadDefaults()
     downloadsLocation->setText( DefaultDownloadPath( false )  );
 
     enableJavascript->setChecked(defaultSettings->testAttribute(QWebSettings::JavascriptEnabled));
-    enablePlugins->setChecked(defaultSettings->testAttribute(QWebSettings::PluginsEnabled));
     blockPopups->setChecked( ! (defaultSettings->testAttribute(QWebSettings::JavascriptCanOpenWindows)) );
     autoLoadImages->setChecked(defaultSettings->testAttribute(QWebSettings::AutoLoadImages));
 
@@ -326,7 +325,6 @@ void SettingsDialog::loadFromSettings()
     fixedLabel->setText(QString(QLatin1String("%1 %2")).arg(fixedFont.family()).arg(fixedFont.pointSize()));
 
     enableJavascript->setChecked(settings.value(QLatin1String("enableJavascript"), enableJavascript->isChecked()).toBool());
-    enablePlugins->setChecked(settings.value(QLatin1String("enablePlugins"), enablePlugins->isChecked()).toBool());
 
     autoLoadImages->setChecked(settings.value(QLatin1String("autoLoadImages"), autoLoadImages->isChecked()).toBool());
     blockPopups->setChecked(settings.value(QLatin1String("blockPopups"), blockPopups->isChecked()).toBool());
@@ -521,7 +519,6 @@ void SettingsDialog::saveToSettings()
     settings.setValue(QLatin1String("fixedFont"), fixedFont);
     settings.setValue(QLatin1String("standardFont"), standardFont);
     settings.setValue(QLatin1String("enableJavascript"), enableJavascript->isChecked());
-    settings.setValue(QLatin1String("enablePlugins"), enablePlugins->isChecked());
     settings.setValue(QLatin1String("autoLoadImages"), autoLoadImages->isChecked());
     settings.setValue(QLatin1String("blockPopups"), blockPopups->isChecked());
     settings.setValue(QLatin1String("savePasswords"), chkSavePasswords->isChecked());
@@ -729,6 +726,8 @@ void SettingsDialog::warnLangChange(int)
 
 void SettingsDialog::setAppStyle(int index)
 {
+    Q_UNUSED(index);
+
     QString style = comboBoxStyle->currentText();
     QApplication::setStyle(QStyleFactory::create(style));
 }
@@ -869,7 +868,9 @@ void SettingsDialog::removeBlockAdEx()
 void SettingsDialog::addBlockItems(const QLatin1String& filename, QListWidget* listview)
 {
     QFile file(filename);
-    bool isOpened = file.open(QIODevice::ReadOnly | QIODevice::Text);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        return;
+
     QString all = QString(QLatin1String(file.readAll()));
     file.close();
     QStringList lst = all.split("\n");

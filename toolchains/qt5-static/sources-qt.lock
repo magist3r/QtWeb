@@ -1,0 +1,8 @@
+# shellcheck disable=SC2034
+
+LOCK_QT_VERSION="5.15.17"
+
+LOCK_QT5_SRC_FILE="qt-everywhere-opensource-src-5.15.17.tar.xz"
+LOCK_QT5_SRC_URL="https://download.qt.io/archive/qt/5.15/5.15.17/single/qt-everywhere-opensource-src-5.15.17.tar.xz"
+LOCK_QT5_SRC_SHA256="85eb566333d6ba59be3a97c9445a6e52f2af1b52fc3c54b8a2e7f9ea040a7de4"
+LOCK_QT5_SRC_MD5="5f212232bbc41f2eabbdee4fcbc4040e"

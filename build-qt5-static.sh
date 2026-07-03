@@ -1,54 +1,53 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-QT_VERSION="5.5.1"
-DEFAULT_JOBS="$(nproc 2>/dev/null || echo 8)"
-JOBS="${COMPILE_JOBS:-$DEFAULT_JOBS}"
-OUTPUT_DIR=""
-RUNTIME="auto"
-CLEAN=false
-BUILD_TYPE="release"
-IMAGE_TAG="qtweb-qt5-static-poc:${QT_VERSION}"
-
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$SCRIPT_DIR"
 LOCK_FILE="${REPO_ROOT}/toolchains/qt5-static/sources.lock"
 DOCKERFILE="${REPO_ROOT}/toolchains/qt5-static/Dockerfile"
-INNER_SCRIPT="/workspace/toolchains/qt5-static/build-inside-container.sh"
+INNER_SCRIPT="/workspace/toolchains/qt5-static/qt5-static-build-entrypoint.sh"
+
+# shellcheck disable=SC1090
+source "${REPO_ROOT}/toolchains/qt5-static/common.sh"
+
+SCRIPT_NAME="$(basename "$0")"
+
+JOBS="${COMPILE_JOBS:-$(nproc 2>/dev/null || echo 8)}"
+OUTPUT_DIR=""
+RUNTIME="auto"
+CLEAN=false
+BUILD_TYPE="release"
+IMAGE_TAG="${IMAGE_TAG:-$QT5_STATIC_IMAGE_TAG}"
+
+BUILD_SCOPE="${BUILD_SCOPE:-all}"
 
 usage() {
-    cat <<'EOF'
+    cat <<EOF
 Usage: ./build-qt5-static.sh [options]
 
 Options:
   --jobs <N>                 Parallel build jobs (default: nproc)
-  --output-dir <path>        Output directory inside repo (default: artifacts/qt5-static-5.5.1-<release|debug>)
+  --output-dir <path>        Output directory inside repo (default: artifacts/qt5-static-${QT_VERSION}-<release|debug>)
   --runtime <auto|podman|docker>
                              Container runtime selector (default: auto)
   --debug                    Build debug Qt libraries
+  --qt-only                  Build only the static Qt toolchain
+  --qtwebkit-only            Build only QtWebKit against an existing Qt install
   --clean                    Remove output directory before running
   --help                     Show this help message
 
 Environment overrides:
+  IMAGE_TAG
   QT5_SRC_URL
   QT5_SRC_SHA256
   QT5_WEBKIT_SRC_URL
   QT5_WEBKIT_SHA256
-  ICU_SRC_URL
-  ICU_SRC_SHA256
 EOF
 }
 
 fail() {
     echo "error: $*" >&2
     exit 1
-}
-
-abs_path() {
-    case "$1" in
-        /*) printf '%s\n' "$1" ;;
-        *) printf '%s\n' "${REPO_ROOT}/$1" ;;
-    esac
 }
 
 basename_from_url() {
@@ -105,6 +104,33 @@ pick_runtime() {
         fail "requested runtime '$RUNTIME' is not installed"
     fi
     echo "$RUNTIME"
+}
+
+RUN_CONTAINER_NAME=""
+
+cleanup_run_container() {
+    if [[ -n "${RUN_CONTAINER_NAME:-}" && -n "${CONTAINER_RUNTIME:-}" ]]; then
+        echo "cleaning up interrupted build container: $RUN_CONTAINER_NAME"
+        "$CONTAINER_RUNTIME" rm -f "$RUN_CONTAINER_NAME" >/dev/null 2>&1 || true
+    fi
+}
+
+report_run_duration() {
+    local exit_code="$1"
+    local outcome="failed"
+
+    if [[ "$exit_code" -eq 0 ]]; then
+        outcome="completed"
+    fi
+
+    echo "${SCRIPT_NAME} ${outcome} in $(format_duration "${SECONDS}")"
+}
+
+cleanup_and_report() {
+    local exit_code="$1"
+
+    cleanup_run_container
+    report_run_duration "$exit_code"
 }
 
 download_file() {
@@ -179,6 +205,14 @@ while [[ $# -gt 0 ]]; do
             BUILD_TYPE="debug"
             shift
             ;;
+        --qt-only)
+            BUILD_SCOPE="qt"
+            shift
+            ;;
+        --qtwebkit-only)
+            BUILD_SCOPE="qtwebkit"
+            shift
+            ;;
         --clean)
             CLEAN=true
             shift
@@ -195,6 +229,17 @@ done
 
 if [[ "$BUILD_TYPE" != "release" && "$BUILD_TYPE" != "debug" ]]; then
     fail "unsupported build type: $BUILD_TYPE"
+fi
+
+if [[ "$BUILD_SCOPE" != "all" && "$BUILD_SCOPE" != "qt" && "$BUILD_SCOPE" != "qtwebkit" ]]; then
+    fail "unsupported build scope: $BUILD_SCOPE"
+fi
+
+SECONDS=0
+trap 'cleanup_and_report "$?"' EXIT
+
+if [[ "$BUILD_SCOPE" == "qtwebkit" && "$CLEAN" == true ]]; then
+    fail "--qtwebkit-only cannot be combined with --clean because it requires an existing Qt install in the output directory"
 fi
 
 if [[ -z "$OUTPUT_DIR" ]]; then
@@ -215,20 +260,15 @@ QT5_WEBKIT_SRC_URL="${QT5_WEBKIT_SRC_URL:-${LOCK_QT5_WEBKIT_SRC_URL}}"
 QT5_WEBKIT_SHA256="${QT5_WEBKIT_SHA256:-${LOCK_QT5_WEBKIT_SHA256:-}}"
 QT5_WEBKIT_MD5="${LOCK_QT5_WEBKIT_MD5:-}"
 
-ICU_SRC_URL="${ICU_SRC_URL:-${LOCK_ICU_SRC_URL}}"
-ICU_SRC_SHA256="${ICU_SRC_SHA256:-${LOCK_ICU_SRC_SHA256:-}}"
-ICU_SRC_MD5="${LOCK_ICU_SRC_MD5:-}"
-
-if [[ -z "$QT5_SRC_URL" || -z "$QT5_WEBKIT_SRC_URL" || -z "$ICU_SRC_URL" ]]; then
+if [[ -z "$QT5_SRC_URL" || -z "$QT5_WEBKIT_SRC_URL" ]]; then
     fail "source URLs are empty in lock file"
 fi
 
 QT5_SRC_FILE="$(source_file_name "$QT5_SRC_URL" "$LOCK_QT5_SRC_URL" "${LOCK_QT5_SRC_FILE:-}")"
 QT5_WEBKIT_FILE="$(source_file_name "$QT5_WEBKIT_SRC_URL" "$LOCK_QT5_WEBKIT_SRC_URL" "${LOCK_QT5_WEBKIT_FILE:-}")"
-ICU_SRC_FILE="$(source_file_name "$ICU_SRC_URL" "$LOCK_ICU_SRC_URL" "${LOCK_ICU_SRC_FILE:-}")"
 
 REPO_ABS="$(cd "$REPO_ROOT" && pwd -P)"
-OUTPUT_RAW="$(abs_path "$OUTPUT_DIR")"
+OUTPUT_RAW="$(cd "$REPO_ROOT" && realpath -m -- "$OUTPUT_DIR")"
 
 [[ "$JOBS" =~ ^[1-9][0-9]*$ ]] || fail "--jobs must be a positive integer"
 
@@ -238,7 +278,6 @@ if $CLEAN && [[ -d "$OUTPUT_RAW" ]]; then
     rm -rf \
         "${OUTPUT_RAW}/build" \
         "${OUTPUT_RAW}/install" \
-        "${OUTPUT_RAW}/icu-static" \
         "${OUTPUT_RAW}/xkb-config-root" \
         "${OUTPUT_RAW}/logs" \
         "${OUTPUT_RAW}/build-manifest.txt"
@@ -249,12 +288,12 @@ OUTPUT_ABS="$(cd "$OUTPUT_RAW" && pwd -P)"
 
 ensure_output_in_repo "$OUTPUT_ABS" "--output-dir resolves outside repo: $OUTPUT_ABS"
 
-SRC_CACHE_DIR="${OUTPUT_ABS}/src-cache"
+SRC_CACHE_DIR="${REPO_ABS}/artifacts/src-cache"
+ensure_output_in_repo "$SRC_CACHE_DIR" "source cache resolves outside repo: $SRC_CACHE_DIR"
 mkdir -p "$SRC_CACHE_DIR" "${OUTPUT_ABS}/logs" "${OUTPUT_ABS}/build"
 
 QT5_SRC_ARCHIVE="${SRC_CACHE_DIR}/${QT5_SRC_FILE}"
 QT5_WEBKIT_ARCHIVE="${SRC_CACHE_DIR}/${QT5_WEBKIT_FILE}"
-ICU_SRC_ARCHIVE="${SRC_CACHE_DIR}/${ICU_SRC_FILE}"
 
 download_file "$QT5_SRC_URL" "$QT5_SRC_ARCHIVE"
 verify_checksum "$QT5_SRC_ARCHIVE" "$QT5_SRC_SHA256" "$QT5_SRC_MD5" "$QT5_SRC_FILE"
@@ -262,37 +301,48 @@ verify_checksum "$QT5_SRC_ARCHIVE" "$QT5_SRC_SHA256" "$QT5_SRC_MD5" "$QT5_SRC_FI
 download_file "$QT5_WEBKIT_SRC_URL" "$QT5_WEBKIT_ARCHIVE"
 verify_checksum "$QT5_WEBKIT_ARCHIVE" "$QT5_WEBKIT_SHA256" "$QT5_WEBKIT_MD5" "$QT5_WEBKIT_FILE"
 
-download_file "$ICU_SRC_URL" "$ICU_SRC_ARCHIVE"
-verify_checksum "$ICU_SRC_ARCHIVE" "$ICU_SRC_SHA256" "$ICU_SRC_MD5" "$ICU_SRC_FILE"
-
 CONTAINER_RUNTIME="$(pick_runtime)"
 echo "using container runtime: $CONTAINER_RUNTIME"
 
 "$CONTAINER_RUNTIME" build -f "$DOCKERFILE" -t "$IMAGE_TAG" "$REPO_ROOT"
 
+RUN_CONTAINER_NAME="qt5-static-build-$$-$(date +%s)"
+trap cleanup_run_container INT TERM HUP
+
 "$CONTAINER_RUNTIME" run --rm \
+    --name "$RUN_CONTAINER_NAME" \
     --user "$(id -u):$(id -g)" \
     -e JOBS="$JOBS" \
     -e CLEAN="$CLEAN" \
     -e BUILD_TYPE="$BUILD_TYPE" \
+    -e BUILD_SCOPE="$BUILD_SCOPE" \
     -e QT_VERSION="$QT_VERSION" \
     -e OUTPUT_DIR="${OUTPUT_ABS}" \
     -e QT_SRC_ARCHIVE="${QT5_SRC_ARCHIVE}" \
     -e QTWEBKIT_ARCHIVE="${QT5_WEBKIT_ARCHIVE}" \
-    -e ICU_SRC_ARCHIVE="${ICU_SRC_ARCHIVE}" \
     -e QT_SRC_URL="$QT5_SRC_URL" \
     -e QTWEBKIT_URL="$QT5_WEBKIT_SRC_URL" \
-    -e ICU_SRC_URL="$ICU_SRC_URL" \
     -e QT_SRC_SHA256="$QT5_SRC_SHA256" \
     -e QTWEBKIT_SHA256="$QT5_WEBKIT_SHA256" \
-    -e ICU_SRC_SHA256="$ICU_SRC_SHA256" \
     -e QT_SRC_MD5="$QT5_SRC_MD5" \
     -e QTWEBKIT_MD5="$QT5_WEBKIT_MD5" \
-    -e ICU_SRC_MD5="$ICU_SRC_MD5" \
     -v "${REPO_ROOT}:/workspace" \
     -v "${REPO_ROOT}:${REPO_ROOT}" \
     -w /workspace \
     "$IMAGE_TAG" \
     "$INNER_SCRIPT"
 
-echo "static Qt5 POC completed: ${OUTPUT_ABS}"
+RUN_CONTAINER_NAME=""
+trap - INT TERM HUP
+
+case "$BUILD_SCOPE" in
+    all)
+        echo "static Qt5 toolchain completed: ${OUTPUT_ABS}"
+        ;;
+    qt)
+        echo "static Qt build completed: ${OUTPUT_ABS}"
+        ;;
+    qtwebkit)
+        echo "static QtWebKit build completed: ${OUTPUT_ABS}"
+        ;;
+esac
